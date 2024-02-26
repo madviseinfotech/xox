@@ -11,7 +11,9 @@ import '../utils/utility.dart';
 class GameScreen extends StatefulWidget {
   final String? player1;
   final String? player2;
-  const GameScreen({super.key, this.player1, this.player2});
+  final bool playWithComputer;
+  const GameScreen(
+      {super.key, this.player1, this.player2, this.playWithComputer = false});
 
   @override
   _GameScreenState createState() => _GameScreenState();
@@ -37,15 +39,16 @@ class _GameScreenState extends State<GameScreen> {
   int filledBoxes = 0;
 
   randomNumberGenerate() {
-    Random random = new Random();
+    Random random = Random();
     int randomNumber = 0;
     randomNumber = random.nextInt(9);
     print('randomNumber=====$randomNumber');
-    if (displayElement[randomNumber] == '') {
+    if (displayElement[randomNumber] == '' && oTurn == false) {
       _tapped(randomNumber);
     } else {
       randomNumberGenerate();
     }
+    ignoreBoard = false;
     setState(() {});
   }
 
@@ -106,14 +109,27 @@ class _GameScreenState extends State<GameScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           InkWell(
-            onTap: _clearBoard,
+            onTap: () {
+              bool allEmpty =
+                  displayElement.every((element) => element.isEmpty);
+              print("winnerElement == $winnerElement");
+              if (!allEmpty) {
+                _clearBoard();
+              }
+            },
             child: Image.asset(
               'assets/images/undoButton.png',
               height: Get.height * 0.08,
             ),
           ),
           InkWell(
-            onTap: _clearScoreBoard,
+            onTap: () {
+              bool allEmpty =
+                  displayElement.every((element) => element.isEmpty);
+              if (!allEmpty) {
+                _clearScoreBoard();
+              }
+            },
             child: Image.asset(
               'assets/images/restartButton.png',
               height: Get.height * 0.08,
@@ -298,7 +314,7 @@ class _GameScreenState extends State<GameScreen> {
                   right: Get.width / 4,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: const [
                       Text('X',
                           style: TextStyle(
                               color: Colors.white,
@@ -437,25 +453,26 @@ class _GameScreenState extends State<GameScreen> {
 // filling the boxes when tapped with X
 // or O respectively and then checking the winner function
   _tapped(int index) async {
+    print("_tapped No==$index");
     setState(() {
       if (oTurn && displayElement[index] == '') {
         displayElement[index] = 'O';
         filledBoxes++;
-        // setState(() {
-        //   ignoreBoard = true;
-        // });
-        // if (widget.isComputer == true) {
-        //   Future.delayed(Duration(seconds: 3), () {
-        //     if (ignoreBoard == false) {
-        //       randomNumberGenerate();
-        //     }
-        //   });
-        // }
+
+        if (widget.playWithComputer == true) {
+          setState(() {
+            ignoreBoard = true;
+          });
+          Future.delayed(Duration(seconds: 2), () {
+            //if (ignoreBoard == false) {
+            randomNumberGenerate();
+            //}
+          });
+        }
       } else if (!oTurn && displayElement[index] == '') {
         displayElement[index] = 'X';
         filledBoxes++;
       }
-      print('filledBoxes===>${filledBoxes}');
       oTurn = !oTurn;
       _checkWinner();
     });
@@ -490,24 +507,21 @@ class _GameScreenState extends State<GameScreen> {
       }
       Future.delayed(
         Duration(seconds: 1),
-        () {
+        () async {
           setState(() {
             ignoreBoard = false;
           });
+          await _showWinDialog(displayElement[0]);
           _clearBoard();
-          _showWinDialog(displayElement[0]);
         },
       );
-    }
-    if (displayElement[3] == displayElement[4] &&
+    } else if (displayElement[3] == displayElement[4] &&
         displayElement[3] == displayElement[5] &&
         displayElement[3] != '') {
       winnerElement.add(3);
       winnerElement.add(4);
       winnerElement.add(5);
-      setState(() {
-        ignoreBoard = true;
-      });
+
       if (displayElement[3] == 'O') {
         oScore++;
       } else if (displayElement[3] == 'X') {
@@ -520,16 +534,15 @@ class _GameScreenState extends State<GameScreen> {
       }
       Future.delayed(
         Duration(seconds: 1),
-        () {
+        () async {
           setState(() {
             ignoreBoard = false;
           });
+          await _showWinDialog(displayElement[3]);
           _clearBoard();
-          _showWinDialog(displayElement[3]);
         },
       );
-    }
-    if (displayElement[6] == displayElement[7] &&
+    } else if (displayElement[6] == displayElement[7] &&
         displayElement[6] == displayElement[8] &&
         displayElement[6] != '') {
       winnerElement.add(6);
@@ -550,18 +563,19 @@ class _GameScreenState extends State<GameScreen> {
       }
       Future.delayed(
         Duration(seconds: 1),
-        () {
+        () async {
           setState(() {
             ignoreBoard = false;
           });
+
+          await _showWinDialog(displayElement[6]);
           _clearBoard();
-          _showWinDialog(displayElement[6]);
         },
       );
     }
 
     // Checking Column
-    if (displayElement[0] == displayElement[3] &&
+    else if (displayElement[0] == displayElement[3] &&
         displayElement[0] == displayElement[6] &&
         displayElement[0] != '') {
       winnerElement.add(0);
@@ -583,16 +597,16 @@ class _GameScreenState extends State<GameScreen> {
       }
       Future.delayed(
         Duration(seconds: 1),
-        () {
+        () async {
           setState(() {
             ignoreBoard = false;
           });
+
+          await _showWinDialog(displayElement[0]);
           _clearBoard();
-          _showWinDialog(displayElement[0]);
         },
       );
-    }
-    if (displayElement[1] == displayElement[4] &&
+    } else if (displayElement[1] == displayElement[4] &&
         displayElement[1] == displayElement[7] &&
         displayElement[1] != '') {
       winnerElement.add(1);
@@ -613,16 +627,16 @@ class _GameScreenState extends State<GameScreen> {
       }
       Future.delayed(
         Duration(seconds: 1),
-        () {
+        () async {
           setState(() {
             ignoreBoard = false;
           });
+
+          await _showWinDialog(displayElement[1]);
           _clearBoard();
-          _showWinDialog(displayElement[1]);
         },
       );
-    }
-    if (displayElement[2] == displayElement[5] &&
+    } else if (displayElement[2] == displayElement[5] &&
         displayElement[2] == displayElement[8] &&
         displayElement[2] != '') {
       winnerElement.add(2);
@@ -643,18 +657,19 @@ class _GameScreenState extends State<GameScreen> {
       }
       Future.delayed(
         Duration(seconds: 1),
-        () {
+        () async {
           setState(() {
             ignoreBoard = false;
           });
+
+          await _showWinDialog(displayElement[2]);
           _clearBoard();
-          _showWinDialog(displayElement[2]);
         },
       );
     }
 
     // Checking Diagonal
-    if (displayElement[0] == displayElement[4] &&
+    else if (displayElement[0] == displayElement[4] &&
         displayElement[0] == displayElement[8] &&
         displayElement[0] != '') {
       winnerElement.add(0);
@@ -675,16 +690,15 @@ class _GameScreenState extends State<GameScreen> {
       }
       Future.delayed(
         Duration(seconds: 1),
-        () {
+        () async {
           setState(() {
             ignoreBoard = false;
           });
           _clearBoard();
-          _showWinDialog(displayElement[0]);
+          await _showWinDialog(displayElement[0]);
         },
       );
-    }
-    if (displayElement[2] == displayElement[4] &&
+    } else if (displayElement[2] == displayElement[4] &&
         displayElement[2] == displayElement[6] &&
         displayElement[2] != '') {
       winnerElement.add(2);
@@ -703,12 +717,13 @@ class _GameScreenState extends State<GameScreen> {
         await player.setUrl(uri.toString());
         player.play();
       }
-      Future.delayed(Duration(seconds: 1), () {
+      Future.delayed(Duration(seconds: 1), () async {
         setState(() {
           ignoreBoard = false;
         });
+
+        await _showWinDialog(displayElement[2]);
         _clearBoard();
-        _showWinDialog(displayElement[2]);
       });
     } else if (filledBoxes == 9) {
       winnerElement.clear();
@@ -732,7 +747,7 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  void _showWinDialog(String winner) {
+  _showWinDialog(String winner) {
     setState(() {
       ignoreBoard = true;
     });
@@ -787,21 +802,22 @@ class _GameScreenState extends State<GameScreen> {
                           });
                           Navigator.of(context).pop();
 
-                          final snackBar = SnackBar(
-                            backgroundColor: Color(0xff5837B1),
-                            duration: Duration(seconds: 3),
-                            content: Text(
-                              "${winner.toUpperCase() == 'X' ? widget.player2 : widget.player1} it's your turn now!!",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
-                            ),
-                          );
+                          // final snackBar = SnackBar(
+                          //   backgroundColor: Color(0xff5837B1),
+                          //   duration: Duration(seconds: 3),
+                          //   content: Text(
+                          //     "${winner.toUpperCase() == 'X' ? widget.player2 : widget.player1} it's your turn now!!",
+                          //     style: TextStyle(
+                          //         color: Colors.white,
+                          //         fontWeight: FontWeight.bold,
+                          //         fontSize: 18),
+                          //   ),
+                          // );
+                          // ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
                           // Find the ScaffoldMessenger in the widget tree
                           // and use it to show a SnackBar.
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                           // if (oTurn == false) {
                           //   if (widget.isComputer == true) {
                           //     Future.delayed(Duration(seconds: 2), () {
@@ -868,6 +884,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   _clearBoard() async {
+    setState(() {
+      ignoreBoard = false;
+    });
     winnerElement.clear();
     if (Utility.volume == true) {
       Uri uri = Uri.parse("asset:///assets/music/undo.mp3");
@@ -879,6 +898,7 @@ class _GameScreenState extends State<GameScreen> {
       for (int i = 0; i < 9; i++) {
         displayElement[i] = '';
       }
+      oTurn = true;
     });
 
     filledBoxes = 0;

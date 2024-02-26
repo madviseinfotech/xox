@@ -6,9 +6,12 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:xo/utils/utility.dart';
 import 'package:xo/view/appReviewScreen.dart';
 import 'package:xo/view/enter_player_screen.dart';
+
+import 'choose_player_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -104,7 +107,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           player.play();
                         }
 
-                        Get.to(() => EnterPlayerScreen());
+                        Get.to(() => const ChoosePlayerScreen());
                       },
                       child: Image.asset(
                         'assets/images/startButton.png',
@@ -221,10 +224,19 @@ Future<void> showUpdateDialog(BuildContext context) async {
         actions: <Widget>[
           TextButton(
             child: Text('Update Now'),
-            onPressed: () {},
+            onPressed: () {
+              _launchUrl(
+                  "https://play.google.com/store/apps/details?id=com.xox.madvise");
+            },
           ),
         ],
       );
     },
   );
+}
+
+Future<void> _launchUrl(String url) async {
+  if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+    throw Exception('Could not launch $url');
+  }
 }

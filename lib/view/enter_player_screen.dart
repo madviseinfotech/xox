@@ -1,24 +1,122 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:xo/view/gameScreen.dart';
 import 'package:xo/view/service.dart';
 
 import '../utils/utility.dart';
+import 'ad_helper.dart';
 
 class EnterPlayerScreen extends StatefulWidget {
-  const EnterPlayerScreen({Key? key}) : super(key: key);
+  final bool playWithComputer;
+  const EnterPlayerScreen({Key? key, this.playWithComputer = false})
+      : super(key: key);
 
   @override
   State<EnterPlayerScreen> createState() => _EnterPlayerScreenState();
 }
 
 class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
+  final adIntUnitId = 'ca-app-pub-1815279805478806/1864352912';
+  InterstitialAd? _interstitialAd;
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
+  BannerAd? _ad;
   TextEditingController player1Controller = TextEditingController();
   TextEditingController player2Controller = TextEditingController();
+  @override
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    // TODO: Load a banner ad
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _ad = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          // Releases an ad resource when it fails to load
+          ad.dispose();
+          print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    ).load();
+    loadInterstitialAd();
+  }
+
+  @override
+  void dispose() {
+    // TODO: Dispose a BannerAd object
+    _ad?.dispose();
+    _connectivitySubscription.cancel();
+
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      log('Couldn\'t check connectivity status', error: e);
+      return;
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    setState(() {
+      _connectionStatus = result;
+    });
+    print("Connection Status: ${_connectionStatus.toString()}");
+  }
+
+  void loadInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: adIntUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad) {
+            debugPrint('$ad loaded.');
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +144,13 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                if (_ad != null)
+                  Container(
+                    width: _ad!.size.width.toDouble(),
+                    height: 72.0,
+                    alignment: Alignment.center,
+                    child: AdWidget(ad: _ad!),
+                  ),
                 SizedBox(
                   height: 40,
                 ),
@@ -147,6 +252,7 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                                 NoLeadingSpaceFormatter(),
                                 LengthLimitingTextInputFormatter(10)
                               ],
+                              readOnly: widget.playWithComputer,
                               maxLines: 1,
                               style: const TextStyle(
                                   color: Colors.white,
@@ -168,7 +274,9 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                                   prefix: SizedBox(
                                     width: 10,
                                   ),
-                                  hintText: 'Player 1',
+                                  hintText: widget.playWithComputer
+                                      ? 'Computer'
+                                      : 'Player 1',
                                   hintStyle: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -257,7 +365,9 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                                   prefix: SizedBox(
                                     width: 10,
                                   ),
-                                  hintText: 'Player 2',
+                                  hintText: widget.playWithComputer
+                                      ? 'You'
+                                      : 'Player 2',
                                   hintStyle: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -283,15 +393,39 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                       await player.setUrl(uri.toString());
                       player.play();
                     }
-
-                    Get.to(() => GameScreen(
-                          player1: player1Controller.text.isEmpty
-                              ? "Player 1"
-                              : player1Controller.text,
-                          player2: player2Controller.text.isEmpty
-                              ? 'Player 2'
-                              : player2Controller.text,
-                        ));
+                    if (_connectionStatus.toString() !=
+                        "ConnectivityResult.none") {
+                      await _interstitialAd!.show();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      Get.to(() => GameScreen(
+                            playWithComputer: widget.playWithComputer,
+                            player1: player1Controller.text.isEmpty
+                                ? widget.playWithComputer
+                                    ? "computer"
+                                    : "Player 1"
+                                : player1Controller.text,
+                            player2: player2Controller.text.isEmpty
+                                ? widget.playWithComputer
+                                    ? 'You'
+                                    : 'Player 2'
+                                : player2Controller.text,
+                          ));
+                    } else {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      Get.to(() => GameScreen(
+                            playWithComputer: widget.playWithComputer,
+                            player1: player1Controller.text.isEmpty
+                                ? widget.playWithComputer
+                                    ? "computer"
+                                    : "Player 1"
+                                : player1Controller.text,
+                            player2: player2Controller.text.isEmpty
+                                ? widget.playWithComputer
+                                    ? 'You'
+                                    : 'Player 2'
+                                : player2Controller.text,
+                          ));
+                    }
                   },
                   child: Image.asset(
                     'assets/images/playButton.png',
