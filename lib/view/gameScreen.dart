@@ -1,12 +1,18 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+import 'dart:developer' as logg;
 import 'dart:math';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../utils/utility.dart';
+import 'ad_helper.dart';
 
 class GameScreen extends StatefulWidget {
   final String? player1;
@@ -20,14 +26,14 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  // final adIntUnitId = 'ca-app-pub-3940256099942544/1033173712'; test
+  final adIntUnitId = 'ca-app-pub-1815279805478806/1864352912';
+  InterstitialAd? _interstitialAd;
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  BannerAd? _ad;
   final player = AudioPlayer(); // Create a player
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    player.dispose();
-    super.dispose();
-  }
-
 // declarations
   bool oTurn = true;
   bool ignoreBoard = false;
@@ -38,66 +44,142 @@ class _GameScreenState extends State<GameScreen> {
   int xScore = 0;
   int filledBoxes = 0;
 
-  randomNumberGenerate() {
-    Random random = Random();
-    int randomNumber = 0;
-    randomNumber = random.nextInt(9);
-    print('randomNumber=====$randomNumber');
-    if (displayElement[randomNumber] == '' && oTurn == false) {
-      _tapped(randomNumber);
-    } else {
-      randomNumberGenerate();
-    }
-    ignoreBoard = false;
-    setState(() {});
+  @override
+  void initState() {
+    initConnectivity();
+    getConnectivity();
+    // TODO: Load a banner ad
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _ad = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          // Releases an ad resource when it fails to load
+          ad.dispose();
+          // print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    ).load();
+
+    loadInterstitialAd();
+    // TODO: implement initState
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _ad?.dispose();
+    _connectivitySubscription.cancel();
+    _interstitialAd?.dispose();
+    player.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          ///bg image
-          Container(
-            height: Get.height,
-            width: Get.width,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/images/enterPlayerBg.png'),
-                  fit: BoxFit.cover),
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                height: 40,
+    return WillPopScope(
+      onWillPop: () async {
+        // print('_connectionStatus--${_connectionStatus.toString()}');
+        if (_connectionStatus.toString() != "ConnectivityResult.none") {
+          // print('here is');
+          await _interstitialAd!.show().then((value) => Get.back());
+
+          if (Utility.volume == true) {
+            Uri uri = Uri.parse("asset:///assets/music/Click.mp3");
+            await player.setUrl(uri.toString());
+            player.play();
+          }
+        } else {
+          Get.back();
+          if (Utility.volume == true) {
+            Uri uri = Uri.parse("asset:///assets/music/Click.mp3");
+            await player.setUrl(uri.toString());
+            player.play();
+          }
+        }
+        return true;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            ///bg image
+            Container(
+              height: Get.height,
+              width: Get.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/enterPlayerBg.png'),
+                    fit: BoxFit.cover),
               ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: GestureDetector(
-                  onTap: () async {
-                    Get.back();
-                    if (Utility.volume == true) {
-                      Uri uri = Uri.parse("asset:///assets/music/Click.mp3");
-                      await player.setUrl(uri.toString());
-                      player.play();
-                    }
-                  },
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Color(0xff32167D),
-                    child: Icon(Icons.arrow_back_outlined,
-                        size: 30, color: Colors.white),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
+                if (_ad != null)
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: _ad!.size.width.toDouble(),
+                      height: 72.0,
+                      alignment: Alignment.center,
+                      child: AdWidget(ad: _ad!),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: GestureDetector(
+                    onTap: () async {
+                      // print(
+                      //     '_connectionStatus--${_connectionStatus.toString()}');
+                      if (_connectionStatus.toString() !=
+                          "ConnectivityResult.none") {
+                        // print('here is');
+                        await _interstitialAd!
+                            .show()
+                            .then((value) => Get.back());
+
+                        if (Utility.volume == true) {
+                          Uri uri =
+                              Uri.parse("asset:///assets/music/Click.mp3");
+                          await player.setUrl(uri.toString());
+                          player.play();
+                        }
+                      } else {
+                        Get.back();
+                        if (Utility.volume == true) {
+                          Uri uri =
+                              Uri.parse("asset:///assets/music/Click.mp3");
+                          await player.setUrl(uri.toString());
+                          player.play();
+                        }
+                      }
+                    },
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Color(0xff32167D),
+                      child: Icon(Icons.arrow_back_outlined,
+                          size: 30, color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-              playerDetails(),
-              gamingBoard(),
-              bottomBar(),
-            ],
-          ),
-        ],
+                playerDetails(),
+                gamingBoard(),
+                bottomBar(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -112,7 +194,7 @@ class _GameScreenState extends State<GameScreen> {
             onTap: () {
               bool allEmpty =
                   displayElement.every((element) => element.isEmpty);
-              print("winnerElement == $winnerElement");
+              // print("winnerElement == $winnerElement");
               if (!allEmpty) {
                 _clearBoard();
               }
@@ -206,7 +288,7 @@ class _GameScreenState extends State<GameScreen> {
                                   ? Color(0xff37E9BB)
                                   : Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: winnerElement.contains(index) ? 80 : 60),
+                          fontSize: winnerElement.contains(index) ? 70 : 60),
                     ),
                   ),
                 ),
@@ -453,7 +535,7 @@ class _GameScreenState extends State<GameScreen> {
 // filling the boxes when tapped with X
 // or O respectively and then checking the winner function
   _tapped(int index) async {
-    print("_tapped No==$index");
+    // print("_tapped No==$index");
     setState(() {
       if (oTurn && displayElement[index] == '') {
         displayElement[index] = 'O';
@@ -779,7 +861,7 @@ class _GameScreenState extends State<GameScreen> {
                           image: AssetImage('assets/images/winnerDialog.png'))),
                   child: Center(
                     child: Text(
-                        '${winner.toUpperCase() == 'X' ? widget.player1 : widget.player2} you Won!!',
+                        '${winner.toUpperCase() == 'X' ? widget.player1.toString().toUpperCase() : widget.player2.toString().toUpperCase()} WON MATCH!!',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -934,5 +1016,69 @@ class _GameScreenState extends State<GameScreen> {
       }
     });
     filledBoxes = 0;
+  }
+
+  getConnectivity() async {
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      // logg.log('Couldn\'t check connectivity status', error: e);
+      return;
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    setState(() {
+      _connectionStatus = result;
+    });
+    // print("Connection Status: ${_connectionStatus.toString()}");
+  }
+
+  void loadInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: adIntUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad) {
+            // debugPrint('$ad loaded.');
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            // debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
+
+  randomNumberGenerate() {
+    Random random = Random();
+    int randomNumber = 0;
+    randomNumber = random.nextInt(9);
+    // print('randomNumber=====$randomNumber');
+    if (displayElement[randomNumber] == '' && oTurn == false) {
+      _tapped(randomNumber);
+    } else {
+      randomNumberGenerate();
+    }
+    ignoreBoard = false;
+    setState(() {});
   }
 }

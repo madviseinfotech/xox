@@ -25,51 +25,24 @@ class EnterPlayerScreen extends StatefulWidget {
 }
 
 class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
-  final adIntUnitId = 'ca-app-pub-1815279805478806/1864352912';
-  InterstitialAd? _interstitialAd;
+  TextEditingController player1Controller = TextEditingController();
+  TextEditingController player2Controller = TextEditingController();
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
-  BannerAd? _ad;
-  TextEditingController player1Controller = TextEditingController();
-  TextEditingController player2Controller = TextEditingController();
-  @override
   @override
   void initState() {
     super.initState();
     initConnectivity();
-
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-    // TODO: Load a banner ad
-    BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      size: AdSize.banner,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _ad = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          // Releases an ad resource when it fails to load
-          ad.dispose();
-          print('Ad load failed (code=${error.code} message=${error.message})');
-        },
-      ),
-    ).load();
-    loadInterstitialAd();
   }
 
   @override
   void dispose() {
     // TODO: Dispose a BannerAd object
-    _ad?.dispose();
     _connectivitySubscription.cancel();
-
-    _interstitialAd?.dispose();
     super.dispose();
   }
 
@@ -100,24 +73,6 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
     print("Connection Status: ${_connectionStatus.toString()}");
   }
 
-  void loadInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: adIntUnitId,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          // Called when an ad is successfully received.
-          onAdLoaded: (ad) {
-            debugPrint('$ad loaded.');
-            // Keep a reference to the ad so you can show it later.
-            _interstitialAd = ad;
-          },
-          // Called when an ad request failed.
-          onAdFailedToLoad: (LoadAdError error) {
-            debugPrint('InterstitialAd failed to load: $error');
-          },
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     final player = AudioPlayer(); // Create a player
@@ -144,13 +99,6 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (_ad != null)
-                  Container(
-                    width: _ad!.size.width.toDouble(),
-                    height: 72.0,
-                    alignment: Alignment.center,
-                    child: AdWidget(ad: _ad!),
-                  ),
                 SizedBox(
                   height: 40,
                 ),
@@ -393,39 +341,21 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                       await player.setUrl(uri.toString());
                       player.play();
                     }
-                    if (_connectionStatus.toString() !=
-                        "ConnectivityResult.none") {
-                      await _interstitialAd!.show();
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Get.to(() => GameScreen(
-                            playWithComputer: widget.playWithComputer,
-                            player1: player1Controller.text.isEmpty
-                                ? widget.playWithComputer
-                                    ? "computer"
-                                    : "Player 1"
-                                : player1Controller.text,
-                            player2: player2Controller.text.isEmpty
-                                ? widget.playWithComputer
-                                    ? 'You'
-                                    : 'Player 2'
-                                : player2Controller.text,
-                          ));
-                    } else {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Get.to(() => GameScreen(
-                            playWithComputer: widget.playWithComputer,
-                            player1: player1Controller.text.isEmpty
-                                ? widget.playWithComputer
-                                    ? "computer"
-                                    : "Player 1"
-                                : player1Controller.text,
-                            player2: player2Controller.text.isEmpty
-                                ? widget.playWithComputer
-                                    ? 'You'
-                                    : 'Player 2'
-                                : player2Controller.text,
-                          ));
-                    }
+
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    Get.to(() => GameScreen(
+                          playWithComputer: widget.playWithComputer,
+                          player1: player1Controller.text.isEmpty
+                              ? widget.playWithComputer
+                                  ? "Computer"
+                                  : "Player 1"
+                              : player1Controller.text,
+                          player2: player2Controller.text.isEmpty
+                              ? widget.playWithComputer
+                                  ? 'You'
+                                  : 'Player 2'
+                              : player2Controller.text,
+                        ));
                   },
                   child: Image.asset(
                     'assets/images/playButton.png',
