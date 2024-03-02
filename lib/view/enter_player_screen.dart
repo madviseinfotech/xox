@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +9,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:xo/view/gameScreen.dart';
 import 'package:xo/view/service.dart';
-
 import '../utils/utility.dart';
 import 'ad_helper.dart';
 

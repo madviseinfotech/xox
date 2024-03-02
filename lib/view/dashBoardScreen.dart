@@ -118,69 +118,129 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 15,
+                )
               ],
             ),
           ),
-          Positioned(
-            bottom: Get.width / 9,
-            child: SizedBox(
-              width: Get.width,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Get.width * 0.08,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      // width: Get.width,
-                      height: Get.width * 0.15,
-                      child: InkWell(
-                        onTap: () {
-                          Share.share(
-                              "let's have fun with XOX https://play.google.com/store/apps/details?id=com.xox.madvise",
-                              subject: "Let's Play!!");
-                        },
-                        child: Image.asset(
-                          'assets/images/share.png',
-                          // height: Get.height * 0.05,
-                          // width: Get.width,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      // width: Get.width,
-                      height: Get.width * 0.15,
-                      child: InkWell(
-                        onTap: () async {
-                          if (Utility.volume == false) {
-                            Uri uri =
-                                Uri.parse("asset:///assets/music/Click.mp3");
-                            await player.setUrl(uri.toString());
-                            player.play();
-                          }
-
-                          setState(() {
-                            Utility.volume = !Utility.volume;
-                          });
-                        },
-                        child: Image.asset(
-                          Utility.volume
-                              ? 'assets/images/soundButton.png'
-                              : 'assets/images/unmute.png',
-                          // height: Get.height * 0.05,
-                          // width: Get.width,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ],
+          // Positioned(
+          //   bottom: Get.width / 9,
+          //   child: SizedBox(
+          //     width: Get.width,
+          //     child: Padding(
+          //       padding: EdgeInsets.symmetric(
+          //         horizontal: Get.width * 0.08,
+          //       ),
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           SizedBox(
+          //             // width: Get.width,
+          //             height: Get.width * 0.15,
+          //             child: InkWell(
+          //               onTap: () {
+          //                 Share.share(
+          //                     "let's have fun with XOX https://play.google.com/store/apps/details?id=com.xox.madvise",
+          //                     subject: "Let's Play!!");
+          //               },
+          //               child: Image.asset(
+          //                 'assets/images/share.png',
+          //                 // height: Get.height * 0.05,
+          //                 // width: Get.width,
+          //                 fit: BoxFit.cover,
+          //               ),
+          //             ),
+          //           ),
+          //           SizedBox(
+          //             // width: Get.width,
+          //             height: Get.width * 0.15,
+          //             child: InkWell(
+          //               onTap: () async {
+          //                 if (Utility.volume == false) {
+          //                   Uri uri =
+          //                       Uri.parse("asset:///assets/music/Click.mp3");
+          //                   await player.setUrl(uri.toString());
+          //                   player.play();
+          //                 }
+          //
+          //                 setState(() {
+          //                   Utility.volume = !Utility.volume;
+          //                 });
+          //               },
+          //               child: Image.asset(
+          //                 Utility.volume
+          //                     ? 'assets/images/soundButton.png'
+          //                     : 'assets/images/unmute.png',
+          //                 // height: Get.height * 0.05,
+          //                 // width: Get.width,
+          //                 fit: BoxFit.cover,
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        width: Get.width,
+        color: Color(0xff1F1147),
+        child: Padding(
+          padding: EdgeInsets.only(
+              left: Get.width * 0.08,
+              right: Get.width * 0.08,
+              bottom: Get.width * 0.08),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                // width: Get.width,
+                height: Get.width * 0.15,
+                child: InkWell(
+                  onTap: () {
+                    Share.share(
+                        "let's have fun with XOX https://play.google.com/store/apps/details?id=com.xox.madvise",
+                        subject: "Let's Play!!");
+                  },
+                  child: Image.asset(
+                    'assets/images/share.png',
+                    // height: Get.height * 0.05,
+                    // width: Get.width,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
+              SizedBox(
+                // width: Get.width,
+                height: Get.width * 0.15,
+                child: InkWell(
+                  onTap: () async {
+                    if (Utility.volume == false) {
+                      Uri uri = Uri.parse("asset:///assets/music/Click.mp3");
+                      await player.setUrl(uri.toString());
+                      player.play();
+                    }
+
+                    setState(() {
+                      Utility.volume = !Utility.volume;
+                    });
+                  },
+                  child: Image.asset(
+                    Utility.volume
+                        ? 'assets/images/soundButton.png'
+                        : 'assets/images/unmute.png',
+                    // height: Get.height * 0.05,
+                    // width: Get.width,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -188,7 +248,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
 Future<String> getCurrentAppVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  return packageInfo.version;
+  return packageInfo.version.replaceAll('.', '');
 }
 
 Future<void> checkAppUpdate(BuildContext context) async {
@@ -196,19 +256,26 @@ Future<void> checkAppUpdate(BuildContext context) async {
   print("currentVersion == ${currentVersion}");
 
   // Replace 'app_version' with your actual collection name
-  DocumentSnapshot versionSnapshot = await FirebaseFirestore.instance
-      .collection('app_version')
-      .doc('version_info')
-      .get();
+  try {
+    DocumentSnapshot versionSnapshot = await FirebaseFirestore.instance
+        .collection('app_version')
+        .doc('version_info')
+        .get();
 
-  Map<String, dynamic> version = versionSnapshot.data() as Map<String, dynamic>;
-  String latestVersion = version['current_version'];
+    Map<String, dynamic> version =
+        versionSnapshot.data() as Map<String, dynamic>;
+    int latestVersion =
+        int.parse(version['current_version'].toString().replaceAll('.', ''));
 
-  print("latestVersion === ${latestVersion}");
+    print("latestVersion === ${latestVersion}");
 
-  if (currentVersion != latestVersion) {
-    showUpdateDialog(context);
-    // Show the update dialog here
+    // if (currentVersion != latestVersion) {
+    if (latestVersion > int.parse(currentVersion)) {
+      showUpdateDialog(context);
+      // Show the update dialog here
+    }
+  } catch (e) {
+    print("ERROR ==> $e");
   }
 }
 
