@@ -1,5 +1,5 @@
-name: xo
-description: A new Flutter project.
+name: xox_madvise
+description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,10 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.2+2
+version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: ^3.8.1
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,23 +31,21 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
   animated_splash_screen: ^1.3.0
-  share_plus: ^7.0.2
-  in_app_review: ^2.0.6
-
-  just_audio: ^0.9.34
-  get: ^4.6.5
-  package_info_plus: ^4.0.2
-  cloud_firestore: ^4.8.3
-  firebase_core: ^2.15.0
-  google_mobile_ads: ^3.0.0
-  url_launcher: ^6.1.12
-  connectivity_plus: ^4.0.1
-  device_preview: ^1.1.0
+  share_plus: ^11.1.0
+  in_app_review: ^2.0.11
+  just_audio: ^0.10.4
+  get: ^4.7.2
+  package_info_plus: ^8.3.1
+  cloud_firestore: ^6.0.0
+  firebase_core: ^4.0.0
+  google_mobile_ads: ^6.0.0
+  url_launcher: ^6.3.2
+  connectivity_plus: ^6.1.5
+  device_preview: ^1.3.1
 
 dev_dependencies:
   flutter_test:
@@ -58,7 +56,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -71,16 +69,15 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
      - assets/images/
      - assets/music/
 
   # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware
+  # https://flutter.dev/to/resolution-aware-images
 
   # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
+  # https://flutter.dev/to/asset-from-package
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
@@ -100,4 +97,4 @@ flutter:
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+  # see https://flutter.dev/to/font-from-package

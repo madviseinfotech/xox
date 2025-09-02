@@ -3,27 +3,40 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="testRunner" value="GRADLE" />
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/../../../FlutterSDK/flutter_3.32.7/packages/flutter_tools/gradle" name="gradle">
+                <projects>
+                  <project path="$PROJECT_DIR$/../../../FlutterSDK/flutter_3.32.7/packages/flutter_tools/gradle" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/audio_session-0.1.16/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/cloud_firestore-4.8.3/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus-4.0.1/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core-2.15.0/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/google_mobile_ads-3.0.0/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/in_app_review-2.0.6/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/just_audio-0.9.34/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/package_info_plus-4.0.2/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.0.27/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/share_plus-7.0.2/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.0.37/android" />
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_android-3.9.2/android" />
+            <option value="$PROJECT_DIR$/../../../FlutterSDK/flutter_3.32.7/packages/flutter_tools/gradle" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/audio_session-0.2.2/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/cloud_firestore-6.0.0/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/connectivity_plus-6.1.5/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/firebase_core-4.0.0/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/google_mobile_ads-6.0.0/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/in_app_review-2.0.11/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/just_audio-0.10.4/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/package_info_plus-8.3.1/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/path_provider_android-2.2.18/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/share_plus-11.1.0/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/shared_preferences_android-2.4.12/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/url_launcher_android-6.3.18/android" />
+            <option value="$PROJECT_DIR$/../../../flutter_pub_cache/hosted/pub.dev/webview_flutter_android-4.10.1/android" />
           </set>
         </option>
+        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

@@ -7,9 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:xo/utils/utility.dart';
-import 'package:xo/view/appReviewScreen.dart';
-import 'package:xo/view/enter_player_screen.dart';
+import 'package:xox_madvise/utils/utility.dart';
 
 import 'choose_player_screen.dart';
 
@@ -67,17 +65,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   fit: BoxFit.cover,
                   height: Get.width / 5,
                 ),
-                SizedBox(
-                  height: Get.width / 8,
-                ),
+                SizedBox(height: Get.width / 8),
                 Image.asset(
                   'assets/images/board.png',
                   fit: BoxFit.cover,
                   height: Get.width / 2.5,
                 ),
-                SizedBox(
-                  height: Get.width / 8,
-                ),
+                SizedBox(height: Get.width / 8),
                 SizedBox(
                   width: Get.width,
                   child: const Align(
@@ -85,9 +79,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     child: Text(
                       'XOX Mania: Unleash the Challenge!',
                       style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -101,8 +96,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     child: InkWell(
                       onTap: () async {
                         if (Utility.volume == true) {
-                          Uri uri =
-                              Uri.parse("asset:///assets/music/begin.mp3");
+                          Uri uri = Uri.parse(
+                            "asset:///assets/music/begin.mp3",
+                          );
                           await player.setUrl(uri.toString());
                           player.play();
                         }
@@ -118,9 +114,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 15,
-                )
+                SizedBox(height: 15),
               ],
             ),
           ),
@@ -190,9 +184,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         color: Color(0xff1F1147),
         child: Padding(
           padding: EdgeInsets.only(
-              left: Get.width * 0.08,
-              right: Get.width * 0.08,
-              bottom: Get.width * 0.08),
+            left: Get.width * 0.08,
+            right: Get.width * 0.08,
+            bottom: Get.width * 0.08,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -202,8 +197,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 child: InkWell(
                   onTap: () {
                     Share.share(
-                        "let's have fun with XOX https://play.google.com/store/apps/details?id=com.xox.madvise",
-                        subject: "Let's Play!!");
+                      "let's have fun with XOX https://play.google.com/store/apps/details?id=com.xox.madvise",
+                      subject: "Let's Play!!",
+                    );
                   },
                   child: Image.asset(
                     'assets/images/share.png',
@@ -264,8 +260,9 @@ Future<void> checkAppUpdate(BuildContext context) async {
 
     Map<String, dynamic> version =
         versionSnapshot.data() as Map<String, dynamic>;
-    int latestVersion =
-        int.parse(version['current_version'].toString().replaceAll('.', ''));
+    int latestVersion = int.parse(
+      version['current_version'].toString().replaceAll('.', ''),
+    );
 
     print("latestVersion === ${latestVersion}");
 
@@ -287,13 +284,15 @@ Future<void> showUpdateDialog(BuildContext context) async {
       return AlertDialog(
         title: Text('Update Available'),
         content: Text(
-            'A new version of the app is available. Please update to the latest version to continue.'),
+          'A new version of the app is available. Please update to the latest version to continue.',
+        ),
         actions: <Widget>[
           TextButton(
             child: Text('Update Now'),
             onPressed: () {
               _launchUrl(
-                  "https://play.google.com/store/apps/details?id=com.xox.madvise");
+                "https://play.google.com/store/apps/details?id=com.xox.madvise",
+              );
             },
           ),
         ],

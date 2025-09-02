@@ -3,14 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:xo/view/splashScreen.dart';
+import 'package:xox_madvise/view/splashScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-  await Firebase.initializeApp();
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyCt2jSBF21jqZe8BFFGKa_4k9LxJk4ShCo",
+      appId: "1:793622879548:android:5f6ac89f67c47a623c9239",
+      messagingSenderId: "793622879548",
+      projectId: "xoxo-e8eda",
+      storageBucket: "xoxo-e8eda.appspot.com",
+    ),
+  );
+
+  // // That device ID is in your log
+  // MobileAds.instance.updateRequestConfiguration(
+  //   RequestConfiguration(testDeviceIds: ['65AB1C17FDE6CC622A00697FE4B7265C']),
+  // );
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 

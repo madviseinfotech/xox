@@ -1,6 +1,6 @@
 {
-    "name": "xo",
-    "short_name": "xo",
+    "name": "xox_madvise",
+    "short_name": "xox_madvise",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
