@@ -101,10 +101,17 @@ packages:
     dependency: "direct main"
     description:
       name: connectivity_plus
+<<<<<<< Updated upstream
       sha256: b5e72753cf63becce2c61fd04dfe0f1c430cc5278b53a1342dc5ad839eab29ec
       url: "https://pub.dev"
     source: hosted
     version: "6.1.5"
+=======
+      sha256: "77a180d6938f78ca7d2382d2240eb626c0f6a735d0bfdce227d8ffb80f95c48b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.2"
+>>>>>>> Stashed changes
   connectivity_plus_platform_interface:
     dependency: transitive
     description:
@@ -209,6 +216,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+<<<<<<< Updated upstream
   fixnum:
     dependency: transitive
     description:
@@ -217,6 +225,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+=======
+>>>>>>> Stashed changes
   flutter:
     dependency: "direct main"
     description: flutter
@@ -309,6 +319,17 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.2"
+<<<<<<< Updated upstream
+=======
+  js:
+    dependency: transitive
+    description:
+      name: js
+      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.7"
+>>>>>>> Stashed changes
   json_annotation:
     dependency: transitive
     description:
@@ -626,6 +647,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.1"
+<<<<<<< Updated upstream
   sprintf:
     dependency: transitive
     description:
@@ -634,6 +656,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+=======
+>>>>>>> Stashed changes
   stack_trace:
     dependency: transitive
     description:
@@ -843,5 +867,9 @@ packages:
     source: hosted
     version: "6.6.1"
 sdks:
+<<<<<<< Updated upstream
   dart: ">=3.8.1 <4.0.0"
+=======
+  dart: ">=3.8.0 <4.0.0"
+>>>>>>> Stashed changes
   flutter: ">=3.32.0"
