@@ -269,7 +269,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:just_audio/just_audio.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../utils/utility.dart';
@@ -347,24 +348,26 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
 
   Future<void> _clickSound() async {
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/Click.mp3");
-      await _player.setUrl(uri.toString());
-      _player.play();
+      // final uri = Uri.parse("asset:///assets/music/Click.mp3");
+      // await _player.setUrl(uri.toString());
+      // _player.play();
+      await _player.play(AssetSource('music/Click.mp3'));
     }
   }
 
   Future<void> _startSound() async {
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/start.mp3");
-      await _player.setUrl(uri.toString());
-      _player.play();
+      // final uri = Uri.parse("asset:///assets/music/start.mp3");
+      // await _player.setUrl(uri.toString());
+      // _player.play();
+      await _player.play(AssetSource('music/start.mp3'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
-    print("---_bannerAd-----${_bannerAd}");
+    print("---_bannerAd-----$_bannerAd");
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.transparent,

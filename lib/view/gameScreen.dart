@@ -1158,7 +1158,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:just_audio/just_audio.dart';
 
 import '../utils/utility.dart';
 import 'ad_helper.dart';
@@ -1316,9 +1317,10 @@ class _GameScreenState extends State<GameScreen> {
           InkWell(
             onTap: () async {
               if (!Utility.volume) {
-                final uri = Uri.parse("asset:///assets/music/Click.mp3");
-                await player.setUrl(uri.toString());
-                player.play();
+                // final uri = Uri.parse("asset:///assets/music/Click.mp3");
+                // await player.setUrl(uri.toString());
+                // player.play();
+                await player.play(AssetSource('music/Click.mp3'));
               }
               setState(() => Utility.volume = !Utility.volume);
             },
@@ -1665,9 +1667,10 @@ class _GameScreenState extends State<GameScreen> {
 
   Future<void> _checkWinner() async {
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/Click.mp3");
-      await player.setUrl(uri.toString());
-      player.play();
+      // final uri = Uri.parse("asset:///assets/music/Click.mp3");
+      // await player.setUrl(uri.toString());
+      // player.play();
+      await player.play(AssetSource('music/Click.mp3'));
     }
 
     // Winning lines
@@ -1696,9 +1699,10 @@ class _GameScreenState extends State<GameScreen> {
           xScore++;
         }
         if (Utility.volume) {
-          final uri = Uri.parse("asset:///assets/music/winner.mp3");
-          await player.setUrl(uri.toString());
-          player.play();
+          // final uri = Uri.parse("asset:///assets/music/winner.mp3");
+          // await player.setUrl(uri.toString());
+          // player.play();
+          await player.play(AssetSource('music/winner.mp3'));
         }
         Future.delayed(Duration(seconds: 1), () async {
           setState(() => ignoreBoard = false);
@@ -1718,80 +1722,6 @@ class _GameScreenState extends State<GameScreen> {
         _clearBoard();
       });
     }
-  }
-
-  Future<void> _showWinCloseBanner() async {
-    // If no internet, skip quickly.
-    if (_connectionStatus == ConnectivityResult.none) return;
-
-    // Build an anchored adaptive banner (better fill than fixed 320x50)
-    final width = MediaQuery.of(context).size.width.truncate();
-    final adaptive =
-        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(width);
-    final adSize = adaptive ?? AdSize.banner;
-
-    BannerAd? sheetBanner;
-    bool loaded = false;
-
-    sheetBanner = BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId, // use Google's test unit id in debug
-      size: adSize,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          loaded = true;
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          sheetBanner = null;
-        },
-      ),
-    )..load();
-
-    // Show a modal bottom sheet OVER the win dialog (blocks taps behind it)
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // <-- important: show above the dialog
-      isDismissible: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black54, // dim background
-      builder: (ctx) {
-        final bottomInset = MediaQuery.of(ctx).padding.bottom;
-        // StatefulBuilder so we can redraw when the ad finishes loading
-        return StatefulBuilder(
-          builder: (ctx, setStateSheet) {
-            if (!loaded && sheetBanner != null) {
-              // Poll a bit until the ad loads; cheap & effective
-              Future.delayed(const Duration(milliseconds: 100), () {
-                if (ctx.mounted) setStateSheet(() {});
-              });
-            }
-            final h = (sheetBanner?.size.height.toDouble() ?? 50);
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: EdgeInsets.only(bottom: bottomInset + 8),
-                // Keep it transparent so your background is visible
-                color: Colors.transparent,
-                height: h + bottomInset + 8,
-                child: Center(
-                  child: (loaded && sheetBanner != null)
-                      ? SizedBox(
-                          width: sheetBanner!.size.width.toDouble(),
-                          height: sheetBanner!.size.height.toDouble(),
-                          child: AdWidget(ad: sheetBanner!),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-
-    // Clean up after the sheet is dismissed
-    sheetBanner?.dispose();
   }
 
   Future<void> _showWinDialog(String winner) async {
@@ -1834,10 +1764,13 @@ class _GameScreenState extends State<GameScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(30),
                       onTap: () async {
-                        await _showWinCloseBanner();
-                        _clearBoard();
-                        setState(() => ignoreBoard = false);
-                        Navigator.of(context).pop();
+                        // Same logic as back button - with ad integration
+                        await _maybeShowInterstitialThen(() async {
+                          await _playClickIfEnabled();
+                          _clearBoard();
+                          setState(() => ignoreBoard = false);
+                          Navigator.of(context).pop();
+                        });
                       },
                       child: Image.asset(
                         'assets/images/cancelButton.png',
@@ -1858,9 +1791,10 @@ class _GameScreenState extends State<GameScreen> {
     setState(() => ignoreBoard = false);
     winnerElement.clear();
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/undo.mp3");
-      await player.setUrl(uri.toString());
-      player.play();
+      // final uri = Uri.parse("asset:///assets/music/undo.mp3");
+      // await player.setUrl(uri.toString());
+      // player.play();
+      await player.play(AssetSource('music/undo.mp3'));
     }
     for (int i = 0; i < 9; i++) {
       displayElement[i] = '';
@@ -1887,9 +1821,10 @@ class _GameScreenState extends State<GameScreen> {
       ),
     );
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/refresh.mp3");
-      await player.setUrl(uri.toString());
-      player.play();
+      // final uri = Uri.parse("asset:///assets/music/refresh.mp3");
+      // await player.setUrl(uri.toString());
+      // player.play();
+      await player.play(AssetSource('music/refresh.mp3'));
     }
     xScore = 0;
     oScore = 0;
@@ -2053,9 +1988,10 @@ class _GameScreenState extends State<GameScreen> {
 
   Future<void> _playClickIfEnabled() async {
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/Click.mp3");
-      await player.setUrl(uri.toString());
-      player.play();
+      // final uri = Uri.parse("asset:///assets/music/Click.mp3");
+      // await player.setUrl(uri.toString());
+      // player.play();
+      await player.play(AssetSource('music/Click.mp3'));
     }
   }
 }

@@ -3,12 +3,11 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xox_madvise/utils/utility.dart';
-
 import 'choose_player_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -27,15 +26,24 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     super.initState();
   }
 
+  // initData() async {
+  //   if (Utility.volume == true) {
+  //     Uri uri = Uri.parse("asset:///assets/music/start.mp3");
+  //     await player.setUrl(uri.toString());
+  //     player.play();
+  //   }
+  // }
   initData() async {
-    if (Utility.volume == true) {
-      Uri uri = Uri.parse("asset:///assets/music/start.mp3");
-      await player.setUrl(uri.toString());
-      player.play();
+    if (!Utility.volume) return;
+
+    try {
+      await player.play(AssetSource('music/start.mp3'));
+    } catch (e) {
+      debugPrint("Audio error: $e");
     }
   }
 
-  final player = AudioPlayer(); // Create a player
+  final player = AudioPlayer();
   @override
   void dispose() {
     // TODO: implement dispose
@@ -94,17 +102,29 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       vertical: Get.width * 0.1,
                     ),
                     child: InkWell(
+                      // onTap: () async {
+                      //   if (Utility.volume == true) {
+                      //     Uri uri = Uri.parse(
+                      //       "asset:///assets/music/begin.mp3",
+                      //     );
+                      //     await player.setUrl(uri.toString());
+                      //     player.play();
+                      //   }
+                      //
+                      //   Get.to(() => const ChoosePlayerScreen());
+                      // },
                       onTap: () async {
-                        if (Utility.volume == true) {
-                          Uri uri = Uri.parse(
-                            "asset:///assets/music/begin.mp3",
-                          );
-                          await player.setUrl(uri.toString());
-                          player.play();
+                        if (Utility.volume) {
+                          try {
+                            await player.play(AssetSource('music/begin.mp3'));
+                          } catch (e) {
+                            debugPrint("Audio error: $e");
+                          }
                         }
 
                         Get.to(() => const ChoosePlayerScreen());
                       },
+
                       child: Image.asset(
                         'assets/images/startButton.png',
                         // height: Get.height * 0.05,
@@ -213,17 +233,31 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 // width: Get.width,
                 height: Get.width * 0.15,
                 child: InkWell(
+                  // onTap: () async {
+                  //   if (Utility.volume == false) {
+                  //     Uri uri = Uri.parse("asset:///assets/music/Click.mp3");
+                  //     await player.setUrl(uri.toString());
+                  //     player.play();
+                  //   }
+                  //
+                  //   setState(() {
+                  //     Utility.volume = !Utility.volume;
+                  //   });
+                  // },
                   onTap: () async {
-                    if (Utility.volume == false) {
-                      Uri uri = Uri.parse("asset:///assets/music/Click.mp3");
-                      await player.setUrl(uri.toString());
-                      player.play();
+                    if (!Utility.volume) {
+                      try {
+                        await player.play(AssetSource('music/Click.mp3'));
+                      } catch (e) {
+                        debugPrint("Audio error: $e");
+                      }
                     }
 
                     setState(() {
                       Utility.volume = !Utility.volume;
                     });
                   },
+
                   child: Image.asset(
                     Utility.volume
                         ? 'assets/images/soundButton.png'

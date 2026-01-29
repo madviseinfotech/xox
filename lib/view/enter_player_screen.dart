@@ -391,30 +391,20 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:just_audio/just_audio.dart';
 import 'package:xox_madvise/view/gameScreen.dart';
 import 'package:xox_madvise/view/service.dart';
 import '../utils/utility.dart';
 
 // ignore_for_file: prefer_const_constructors
-
-import 'dart:async';
 import 'dart:developer' as logg;
-
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:just_audio/just_audio.dart';
-
-import '../utils/utility.dart';
 import 'ad_helper.dart'; // returns your banner unit id
 
 class EnterPlayerScreen extends StatefulWidget {
   final bool playWithComputer;
-  const EnterPlayerScreen({Key? key, this.playWithComputer = false})
-    : super(key: key);
+  const EnterPlayerScreen({super.key, this.playWithComputer = false});
 
   @override
   State<EnterPlayerScreen> createState() => _EnterPlayerScreenState();
@@ -553,11 +543,12 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                         onTap: () async {
                           Get.back();
                           if (Utility.volume) {
-                            final uri = Uri.parse(
-                              "asset:///assets/music/Click.mp3",
-                            );
-                            await _player.setUrl(uri.toString());
-                            _player.play();
+                            // final uri = Uri.parse(
+                            //   "asset:///assets/music/Click.mp3",
+                            // );
+                            // await _player.setUrl(uri.toString());
+                            // _player.play();
+                            await _player.play(AssetSource('music/Click.mp3'));
                           }
                         },
                         child: CircleAvatar(
@@ -796,11 +787,12 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                   InkWell(
                     onTap: () async {
                       if (Utility.volume) {
-                        final uri = Uri.parse(
-                          "asset:///assets/music/start.mp3",
-                        );
-                        await _player.setUrl(uri.toString());
-                        _player.play();
+                        // final uri = Uri.parse(
+                        //   "asset:///assets/music/start.mp3",
+                        // );
+                        // await _player.setUrl(uri.toString());
+                        // _player.play();
+                        await _player.play(AssetSource('music/start.mp3'));
                       }
                       FocusManager.instance.primaryFocus?.unfocus();
                       Get.to(
