@@ -11,7 +11,7 @@ import 'package:xox_madvise/utils/utility.dart';
 import 'choose_player_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
-  const DashBoardScreen({Key? key}) : super(key: key);
+  const DashBoardScreen({super.key});
 
   @override
   State<DashBoardScreen> createState() => _DashBoardScreenState();
@@ -283,7 +283,7 @@ Future<String> getCurrentAppVersion() async {
 
 Future<void> checkAppUpdate(BuildContext context) async {
   String currentVersion = await getCurrentAppVersion();
-  print("currentVersion == ${currentVersion}");
+  print("currentVersion == $currentVersion");
 
   // Replace 'app_version' with your actual collection name
   try {
@@ -298,7 +298,7 @@ Future<void> checkAppUpdate(BuildContext context) async {
       version['current_version'].toString().replaceAll('.', ''),
     );
 
-    print("latestVersion === ${latestVersion}");
+    print("latestVersion === $latestVersion");
 
     // if (currentVersion != latestVersion) {
     if (latestVersion > int.parse(currentVersion)) {

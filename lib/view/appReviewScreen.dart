@@ -6,7 +6,7 @@ import 'package:in_app_review/in_app_review.dart';
 enum Availability { loading, available, unavailable }
 
 class InAppReviewExampleApp extends StatefulWidget {
-  const InAppReviewExampleApp({Key? key}) : super(key: key);
+  const InAppReviewExampleApp({super.key});
 
   @override
   InAppReviewExampleAppState createState() => InAppReviewExampleAppState();

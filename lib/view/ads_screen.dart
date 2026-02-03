@@ -27,6 +27,8 @@ const String testDevice = 'YOUR_DEVICE_ID';
 const int maxFailedLoadAttempts = 3;
 
 class AdScreen extends StatefulWidget {
+  const AdScreen({super.key});
+
   @override
   _AdScreenState createState() => _AdScreenState();
 }

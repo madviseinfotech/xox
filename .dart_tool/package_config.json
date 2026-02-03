@@ -201,7 +201,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter3.35.5/packages/flutter",
+      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter_3.38.9/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -213,19 +213,19 @@
     },
     {
       "name": "flutter_localizations",
-      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter3.35.5/packages/flutter_localizations",
+      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter_3.38.9/packages/flutter_localizations",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter3.35.5/packages/flutter_test",
+      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter_3.38.9/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter3.35.5/packages/flutter_web_plugins",
+      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter_3.38.9/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -321,9 +321,9 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/avadhkatrodiya/.pub-cache/hosted/pub.dev/meta-1.16.0",
+      "rootUri": "file:///Users/avadhkatrodiya/.pub-cache/hosted/pub.dev/meta-1.17.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.5"
     },
     {
       "name": "mime",
@@ -483,7 +483,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter3.35.5/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///Users/avadhkatrodiya/Downloads/flutter_3.38.9/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -531,7 +531,7 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/avadhkatrodiya/.pub-cache/hosted/pub.dev/test_api-0.7.6",
+      "rootUri": "file:///Users/avadhkatrodiya/.pub-cache/hosted/pub.dev/test_api-0.7.7",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -663,8 +663,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.9.2",
-  "flutterRoot": "file:///Users/avadhkatrodiya/Downloads/flutter3.35.5",
-  "flutterVersion": "3.35.5",
+  "generatorVersion": "3.10.8",
+  "flutterRoot": "file:///Users/avadhkatrodiya/Downloads/flutter_3.38.9",
+  "flutterVersion": "3.38.9",
   "pubCache": "file:///Users/avadhkatrodiya/.pub-cache"
 }
