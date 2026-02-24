@@ -23,6 +23,7 @@ Future<void> main() async {
   //   RequestConfiguration(testDeviceIds: ['65AB1C17FDE6CC622A00697FE4B7265C']),
   // );
 
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

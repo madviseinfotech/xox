@@ -1152,15 +1152,12 @@
 
 import 'dart:async';
 import 'dart:math';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:audioplayers/audioplayers.dart';
-// import 'package:just_audio/just_audio.dart';
-
 import '../utils/utility.dart';
 import 'ad_helper.dart';
 
@@ -1183,6 +1180,9 @@ class _GameScreenState extends State<GameScreen> {
   // ---------------- Ads ----------------
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
+  
+  BannerAd? _bottomBannerAd;
+  bool _isBottomBannerReady = false;
 
   InterstitialAd? _interstitialAd;
   final String _interstitialUnitId = 'ca-app-pub-1815279805478806/1864352912';
@@ -1215,12 +1215,14 @@ class _GameScreenState extends State<GameScreen> {
 
     // Ads
     _loadBanner();
+    _loadBottomBanner();
     _loadInterstitial();
   }
 
   @override
   void dispose() {
     _bannerAd?.dispose();
+    _bottomBannerAd?.dispose();
     _interstitialAd?.dispose();
     _connectivitySubscription.cancel();
     player.dispose();
@@ -1283,6 +1285,13 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ],
         ),
+        bottomNavigationBar: _isBottomBannerReady && _bottomBannerAd != null
+            ? Container(
+                color: Color(0xff1F1147),
+                height: _bottomBannerAd!.size.height.toDouble(),
+                child: AdWidget(ad: _bottomBannerAd!),
+              )
+            : null,
       ),
     );
   }
@@ -1900,6 +1909,33 @@ class _GameScreenState extends State<GameScreen> {
         },
       ),
     )..load();
+  }
+
+  void _loadBottomBanner() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final width = MediaQuery.of(context).size.width.truncate();
+      final adaptiveSize =
+          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(width);
+
+      final adSize = adaptiveSize ?? AdSize.banner;
+      _bottomBannerAd = BannerAd(
+        adUnitId: AdHelper.bannerAdUnitId,
+        size: adSize,
+        request: const AdRequest(),
+        listener: BannerAdListener(
+          onAdLoaded: (ad) {
+            setState(() => _isBottomBannerReady = true);
+          },
+          onAdFailedToLoad: (ad, error) {
+            ad.dispose();
+            setState(() {
+              _bottomBannerAd = null;
+              _isBottomBannerReady = false;
+            });
+          },
+        ),
+      )..load();
+    });
   }
 
   void _loadInterstitial() {

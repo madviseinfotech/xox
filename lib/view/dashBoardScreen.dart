@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,8 +5,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:xox_madvise/utils/utility.dart';
 import 'choose_player_screen.dart';
+import 'ad_helper.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({super.key});
@@ -18,12 +18,17 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
+  BannerAd? _bannerAd;
+  bool _isBannerReady = false;
+
   @override
   void initState() {
-    checkAppUpdate(context);
-    initData();
-    // TODO: implement initState
     super.initState();
+    initData();
+    _loadBanner();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAppUpdate(context);
+    });
   }
 
   // initData() async {
@@ -33,6 +38,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   //     player.play();
   //   }
   // }
+
   initData() async {
     if (!Utility.volume) return;
 
@@ -44,15 +50,57 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   }
 
   final player = AudioPlayer();
+
+  Future<void> _loadBanner() async {
+    debugPrint('🔵 Dashboard: Starting to load banner...');
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final width = MediaQuery.of(context).size.width.truncate();
+      final adaptiveSize =
+          await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(width);
+
+      final adSize = adaptiveSize ?? AdSize.banner;
+      debugPrint('🔵 Dashboard: Banner size = ${adSize.width}x${adSize.height}');
+      
+      final ad = BannerAd(
+        adUnitId: AdHelper.bannerAdUnitId,
+        size: adSize,
+        request: const AdRequest(),
+        listener: BannerAdListener(
+          onAdLoaded: (ad) {
+            debugPrint('✅ Dashboard: Banner loaded successfully!');
+            _bannerAd = ad as BannerAd;
+            setState(() => _isBannerReady = true);
+            debugPrint(
+              '✅ Dashboard: Banner ready - ${_bannerAd!.adUnitId} '
+              'size=${_bannerAd!.size.width}x${_bannerAd!.size.height}',
+            );
+          },
+          onAdFailedToLoad: (ad, error) {
+            debugPrint('❌ Dashboard: Banner failed - ${error.code} ${error.message}');
+            ad.dispose();
+            setState(() {
+              _bannerAd = null;
+              _isBannerReady = false;
+            });
+          },
+        ),
+      );
+
+      setState(() => _bannerAd = ad);
+      ad.load();
+    });
+  }
+
   @override
   void dispose() {
-    // TODO: implement dispose
+    _bannerAd?.dispose();
     player.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🔄 Dashboard build: _isBannerReady=$_isBannerReady, _bannerAd=${_bannerAd != null}');
     return Scaffold(
       body: Stack(
         children: [
@@ -200,76 +248,70 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        width: Get.width,
         color: Color(0xff1F1147),
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: Get.width * 0.08,
-            right: Get.width * 0.08,
-            bottom: Get.width * 0.08,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                // width: Get.width,
-                height: Get.width * 0.15,
-                child: InkWell(
-                  onTap: () {
-                    Share.share(
-                      "let's have fun with XOX https://play.google.com/store/apps/details?id=com.xox.madvise",
-                      subject: "Let's Play!!",
-                    );
-                  },
-                  child: Image.asset(
-                    'assets/images/share.png',
-                    // height: Get.height * 0.05,
-                    // width: Get.width,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: Get.width * 0.08,
+                right: Get.width * 0.08,
+                top: Get.width * 0.04,
+                bottom: Get.width * 0.04,
               ),
-              SizedBox(
-                // width: Get.width,
-                height: Get.width * 0.15,
-                child: InkWell(
-                  // onTap: () async {
-                  //   if (Utility.volume == false) {
-                  //     Uri uri = Uri.parse("asset:///assets/music/Click.mp3");
-                  //     await player.setUrl(uri.toString());
-                  //     player.play();
-                  //   }
-                  //
-                  //   setState(() {
-                  //     Utility.volume = !Utility.volume;
-                  //   });
-                  // },
-                  onTap: () async {
-                    if (!Utility.volume) {
-                      try {
-                        await player.play(AssetSource('music/Click.mp3'));
-                      } catch (e) {
-                        debugPrint("Audio error: $e");
-                      }
-                    }
-
-                    setState(() {
-                      Utility.volume = !Utility.volume;
-                    });
-                  },
-
-                  child: Image.asset(
-                    Utility.volume
-                        ? 'assets/images/soundButton.png'
-                        : 'assets/images/unmute.png',
-                    // height: Get.height * 0.05,
-                    // width: Get.width,
-                    fit: BoxFit.cover,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    height: Get.width * 0.15,
+                    child: InkWell(
+                      onTap: () {
+                        Share.share(
+                          "let's have fun with XOX https://play.google.com/store/apps/details?id=com.xox.madvise",
+                          subject: "Let's Play!!",
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/images/share.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(
+                    height: Get.width * 0.15,
+                    child: InkWell(
+                      onTap: () async {
+                        if (!Utility.volume) {
+                          try {
+                            await player.play(AssetSource('music/Click.mp3'));
+                          } catch (e) {
+                            debugPrint("Audio error: $e");
+                          }
+                        }
+
+                        setState(() {
+                          Utility.volume = !Utility.volume;
+                        });
+                      },
+                      child: Image.asset(
+                        Utility.volume
+                            ? 'assets/images/soundButton.png'
+                            : 'assets/images/unmute.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            if (_isBannerReady && _bannerAd != null)
+              Container(
+                margin: EdgeInsets.only(bottom: 8),
+                height: _bannerAd!.size.height.toDouble(),
+                width: _bannerAd!.size.width.toDouble(),
+                child: AdWidget(ad: _bannerAd!),
+              ),
+          ],
         ),
       ),
     );
