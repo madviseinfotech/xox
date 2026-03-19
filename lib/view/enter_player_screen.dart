@@ -395,8 +395,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:xox_madvise/view/gameScreen.dart';
 import 'package:xox_madvise/view/service.dart';
 import '../utils/utility.dart';
+import 'back_interstitial_controller.dart';
 
-// ignore_for_file: prefer_const_constructors
 import 'dart:developer' as logg;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'ad_helper.dart'; // returns your banner unit id
@@ -414,7 +414,6 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   final TextEditingController player2Controller = TextEditingController();
 
   // Connectivity (map List<ConnectivityResult> -> single value)
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
@@ -425,11 +424,14 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
   static const double _kBannerFallbackHeight = 50.0; // AdSize.banner
+  final BackInterstitialController _backAdController =
+      BackInterstitialController();
 
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
+    _backAdController.load();
 
     initConnectivity();
     _connectivitySubscription = _connectivity.onConnectivityChanged
@@ -446,6 +448,7 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   void dispose() {
     _connectivitySubscription.cancel();
     _bannerAd?.dispose();
+    _backAdController.dispose();
     _player.dispose();
     player1Controller.dispose();
     player2Controller.dispose();
@@ -454,6 +457,7 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
 
   // Anchored adaptive banner (better fill than fixed 320x50)
   Future<void> _loadBanner() async {
+    if (!AdHelper.shouldShowBannerAds) return;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final width = MediaQuery.of(context).size.width.truncate();
@@ -497,8 +501,19 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() => _connectionStatus = result);
-    // print("Connection Status: $_connectionStatus");
+    if (!mounted) return;
+  }
+
+  Future<void> _handleBack() async {
+    await _backAdController.showThen(() async {
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        return;
+      }
+      await Navigator.of(context, rootNavigator: true).maybePop();
+    });
   }
 
   @override
@@ -507,11 +522,17 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
     final bannerHeight =
         _bannerAd?.size.height.toDouble() ?? _kBannerFallbackHeight;
 
-    return Scaffold(
-      extendBody: true, // background extends under system nav bar
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
+        extendBody: true, // background extends under system nav bar
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
           /// Background
           Positioned.fill(
             child: DecoratedBox(
@@ -540,7 +561,6 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                     children: [
                       GestureDetector(
                         onTap: () async {
-                          Get.back();
                           if (Utility.volume) {
                             // final uri = Uri.parse(
                             //   "asset:///assets/music/Click.mp3",
@@ -549,6 +569,7 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
                             // _player.play();
                             await _player.play(AssetSource('music/Click.mp3'));
                           }
+                          await _handleBack();
                         },
                         child: CircleAvatar(
                           radius: 20,
@@ -858,6 +879,7 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

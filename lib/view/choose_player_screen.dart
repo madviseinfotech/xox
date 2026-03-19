@@ -274,6 +274,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../utils/utility.dart';
+import 'back_interstitial_controller.dart';
 import 'enter_player_screen.dart';
 import 'ad_helper.dart'; // must return LIVE banner unit id
 
@@ -294,16 +295,20 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
   // Banner ad (LIVE)
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
+  final BackInterstitialController _backAdController =
+      BackInterstitialController();
 
   @override
   void initState() {
     super.initState();
+    _backAdController.load();
     _loadBanner();
   }
 
   @override
   void dispose() {
     _bannerAd?.dispose();
+    _backAdController.dispose();
     _player.dispose();
     player1Controller.dispose();
     player2Controller.dispose();
@@ -311,6 +316,7 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
   }
 
   Future<void> _loadBanner() async {
+    if (!AdHelper.shouldShowBannerAds) return;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final width = MediaQuery.of(context).size.width.truncate();
       final adaptiveSize =
@@ -364,15 +370,32 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
     }
   }
 
+  Future<void> _handleBack() async {
+    await _backAdController.showThen(() async {
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        return;
+      }
+      await Navigator.of(context, rootNavigator: true).maybePop();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
-    print("---_bannerAd-----$_bannerAd");
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
           // Background
           Positioned.fill(
             child: DecoratedBox(
@@ -399,8 +422,8 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
                     children: [
                       GestureDetector(
                         onTap: () async {
-                          Get.back();
                           await _clickSound();
+                          await _handleBack();
                         },
                         child: CircleAvatar(
                           radius: 20,
@@ -542,6 +565,7 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

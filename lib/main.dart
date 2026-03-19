@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:xox_madvise/services/daily_notification_service.dart';
+import 'package:xox_madvise/theme/app_theme.dart';
 import 'package:xox_madvise/view/splashScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  await DailyNotificationService.initialize();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: "AIzaSyCt2jSBF21jqZe8BFFGKa_4k9LxJk4ShCo",
@@ -23,11 +26,11 @@ Future<void> main() async {
   //   RequestConfiguration(testDeviceIds: ['65AB1C17FDE6CC622A00697FE4B7265C']),
   // );
 
-
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await DailyNotificationService.registerAppLaunch();
   runApp(const MyApp());
 }
 
@@ -40,10 +43,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'XOX',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.build(),
       home: const SplashScreen(),
     );
   }

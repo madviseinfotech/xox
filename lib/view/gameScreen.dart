@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 // // ignore_for_file: prefer_const_constructors
 //
 // import 'dart:async';
@@ -1150,15 +1152,13 @@
 // }
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:async';
 import 'dart:math';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../utils/utility.dart';
+import 'back_interstitial_controller.dart';
 import 'ad_helper.dart';
 
 class GameScreen extends StatefulWidget {
@@ -1184,13 +1184,8 @@ class _GameScreenState extends State<GameScreen> {
   BannerAd? _bottomBannerAd;
   bool _isBottomBannerReady = false;
 
-  InterstitialAd? _interstitialAd;
-  final String _interstitialUnitId = 'ca-app-pub-1815279805478806/1864352912';
-
-  // ---------------- Connectivity ----------------
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  final BackInterstitialController _backAdController =
+      BackInterstitialController();
 
   // ---------------- Audio ----------------
   final player = AudioPlayer();
@@ -1209,22 +1204,17 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
 
-    // Connectivity
-    _initConnectivity();
-    _listenConnectivity();
-
     // Ads
     _loadBanner();
     _loadBottomBanner();
-    _loadInterstitial();
+    _backAdController.load();
   }
 
   @override
   void dispose() {
     _bannerAd?.dispose();
     _bottomBannerAd?.dispose();
-    _interstitialAd?.dispose();
-    _connectivitySubscription.cancel();
+    _backAdController.dispose();
     player.dispose();
     super.dispose();
   }
@@ -1232,8 +1222,12 @@ class _GameScreenState extends State<GameScreen> {
   // --------------- Build ---------------
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _handleBackWithAd,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBackWithAd();
+      },
       child: Scaffold(
         body: Stack(
           children: [
@@ -1372,7 +1366,7 @@ class _GameScreenState extends State<GameScreen> {
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 5,
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       offset: Offset(0, 0),
                     ),
                   ],
@@ -1735,6 +1729,7 @@ class _GameScreenState extends State<GameScreen> {
 
   Future<void> _showWinDialog(String winner) async {
     setState(() => ignoreBoard = true);
+    final navigator = Navigator.of(context);
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -1774,11 +1769,11 @@ class _GameScreenState extends State<GameScreen> {
                       borderRadius: BorderRadius.circular(30),
                       onTap: () async {
                         // Same logic as back button - with ad integration
-                        await _maybeShowInterstitialThen(() async {
+                        await _backAdController.showThen(() async {
                           await _playClickIfEnabled();
                           _clearBoard();
                           setState(() => ignoreBoard = false);
-                          Navigator.of(context).pop();
+                          navigator.pop();
                         });
                       },
                       child: Image.asset(
@@ -1863,35 +1858,9 @@ class _GameScreenState extends State<GameScreen> {
     setState(() {});
   }
 
-  // --------------- Connectivity ---------------
-  void _listenConnectivity() {
-    _connectivitySubscription = _connectivity.onConnectivityChanged
-        .map(
-          (results) =>
-              results.isNotEmpty ? results.first : ConnectivityResult.none,
-        )
-        .listen(_updateConnectionStatus);
-  }
-
-  Future<void> _initConnectivity() async {
-    try {
-      final results = await _connectivity.checkConnectivity();
-      final result = results.isNotEmpty
-          ? results.first
-          : ConnectivityResult.none;
-      if (!mounted) return;
-      await _updateConnectionStatus(result);
-    } on PlatformException {
-      // ignore
-    }
-  }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() => _connectionStatus = result);
-  }
-
   // --------------- Ads ---------------
   void _loadBanner() {
+    if (!AdHelper.shouldShowBannerAds) return;
     _bannerAd = BannerAd(
       adUnitId: AdHelper.bannerAdUnitId,
       size: AdSize.banner,
@@ -1912,6 +1881,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _loadBottomBanner() {
+    if (!AdHelper.shouldShowBannerAds) return;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final width = MediaQuery.of(context).size.width.truncate();
       final adaptiveSize =
@@ -1938,88 +1908,30 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
-  void _loadInterstitial() {
-    InterstitialAd.load(
-      adUnitId: _interstitialUnitId,
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          _interstitialAd = ad;
-          _interstitialAd?.setImmersiveMode(true);
-          _interstitialAd?.fullScreenContentCallback =
-              FullScreenContentCallback(
-                onAdDismissedFullScreenContent: (ad) {
-                  ad.dispose();
-                  _interstitialAd = null;
-                  _loadInterstitial(); // preload next
-                },
-                onAdFailedToShowFullScreenContent: (ad, error) {
-                  ad.dispose();
-                  _interstitialAd = null;
-                  _loadInterstitial();
-                },
-              );
-        },
-        onAdFailedToLoad: (error) {
-          _interstitialAd = null;
-          // You could retry after some delay if needed.
-        },
-      ),
-    );
-  }
-
-  Future<bool> _handleBackWithAd() async {
-    await _maybeShowInterstitialThen(() async {
+  Future<void> _handleBackWithAd() async {
+    await _backAdController.showThen(() async {
       await _playClickIfEnabled();
-      if (Get.isOverlaysOpen) Get.back(); // just in case a dialog/sheet is open
-      if (Get.key.currentState?.canPop() ?? false) Get.back();
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        return;
+      }
+      await Navigator.of(context, rootNavigator: true).maybePop();
     });
-    return false; // we handle popping ourselves
   }
 
   void _onBackPress() async {
-    await _maybeShowInterstitialThen(() async {
+    await _backAdController.showThen(() async {
       await _playClickIfEnabled();
-      if (Get.isOverlaysOpen) Get.back();
-      if (Get.key.currentState?.canPop() ?? false) Get.back();
-    });
-  }
-
-  Future<void> _maybeShowInterstitialThen(Future<void> Function() next) async {
-    final hasNet = _connectionStatus != ConnectivityResult.none;
-    final ad = _interstitialAd;
-
-    if (hasNet && ad != null) {
-      var continued = false;
-      Future<void> safeNext() async {
-        if (continued) return;
-        continued = true;
-        await next();
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        return;
       }
-
-      // Wire callbacks BEFORE show()
-      ad.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (ad) async {
-          ad.dispose();
-          _interstitialAd = null;
-          _loadInterstitial(); // preload next one
-          await safeNext(); // continue (go back) AFTER dismiss
-        },
-        onAdFailedToShowFullScreenContent: (ad, error) async {
-          ad.dispose();
-          _interstitialAd = null;
-          _loadInterstitial();
-          await safeNext(); // continue even if showing failed
-        },
-      );
-
-      ad.setImmersiveMode(true);
-      ad.show(); // DO NOT await
-      // Optional: fail-safe in case callback never fires (rare)
-      Future.delayed(const Duration(seconds: 10), safeNext);
-    } else {
-      await next(); // no ad → just continue
-    }
+      await Navigator.of(context, rootNavigator: true).maybePop();
+    });
   }
 
   Future<void> _playClickIfEnabled() async {
