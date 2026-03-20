@@ -16,6 +16,15 @@ class GameStatsSnapshot {
     required this.snakesAndLaddersWins,
     required this.balloonPopBestScore,
     required this.colorMatchBestScore,
+    required this.turboTrafficBestScore,
+    required this.bikeSprintBestDistance,
+    required this.cycleDashBestDistance,
+    required this.avatarRushBestScore,
+    required this.brickBreakerBestScore,
+    required this.candyMatchBestScore,
+    required this.mathEquationLevel,
+    required this.wordBlankLevel,
+    required this.picturePuzzleLevel,
     required this.totalMiniGamesPlayed,
   });
 
@@ -33,6 +42,15 @@ class GameStatsSnapshot {
   final int snakesAndLaddersWins;
   final int balloonPopBestScore;
   final int colorMatchBestScore;
+  final int turboTrafficBestScore;
+  final int bikeSprintBestDistance;
+  final int cycleDashBestDistance;
+  final int avatarRushBestScore;
+  final int brickBreakerBestScore;
+  final int candyMatchBestScore;
+  final int mathEquationLevel;
+  final int wordBlankLevel;
+  final int picturePuzzleLevel;
   final int totalMiniGamesPlayed;
 }
 
@@ -55,6 +73,15 @@ class GameStatsStore {
   static const _snakesAndLaddersWinsKey = 'stats_snakes_and_ladders_wins';
   static const _balloonPopBestScoreKey = 'stats_balloon_pop_best_score';
   static const _colorMatchBestScoreKey = 'stats_color_match_best_score';
+  static const _turboTrafficBestScoreKey = 'stats_turbo_traffic_best_score';
+  static const _bikeSprintBestDistanceKey = 'stats_bike_sprint_best_distance';
+  static const _cycleDashBestDistanceKey = 'stats_cycle_dash_best_distance';
+  static const _avatarRushBestScoreKey = 'stats_avatar_rush_best_score';
+  static const _brickBreakerBestScoreKey = 'stats_brick_breaker_best_score';
+  static const _candyMatchBestScoreKey = 'stats_candy_match_best_score';
+  static const _mathEquationLevelKey = 'stats_math_equation_level';
+  static const _wordBlankLevelKey = 'stats_word_blank_level';
+  static const _picturePuzzleLevelKey = 'stats_picture_puzzle_level';
   static const _totalMiniGamesPlayedKey = 'stats_total_mini_games_played';
 
   Future<SharedPreferences> get _prefs async => SharedPreferences.getInstance();
@@ -76,6 +103,15 @@ class GameStatsStore {
       snakesAndLaddersWins: prefs.getInt(_snakesAndLaddersWinsKey) ?? 0,
       balloonPopBestScore: prefs.getInt(_balloonPopBestScoreKey) ?? 0,
       colorMatchBestScore: prefs.getInt(_colorMatchBestScoreKey) ?? 0,
+      turboTrafficBestScore: prefs.getInt(_turboTrafficBestScoreKey) ?? 0,
+      bikeSprintBestDistance: prefs.getInt(_bikeSprintBestDistanceKey) ?? 0,
+      cycleDashBestDistance: prefs.getInt(_cycleDashBestDistanceKey) ?? 0,
+      avatarRushBestScore: prefs.getInt(_avatarRushBestScoreKey) ?? 0,
+      brickBreakerBestScore: prefs.getInt(_brickBreakerBestScoreKey) ?? 0,
+      candyMatchBestScore: prefs.getInt(_candyMatchBestScoreKey) ?? 0,
+      mathEquationLevel: prefs.getInt(_mathEquationLevelKey) ?? 1,
+      wordBlankLevel: prefs.getInt(_wordBlankLevelKey) ?? 1,
+      picturePuzzleLevel: prefs.getInt(_picturePuzzleLevelKey) ?? 1,
       totalMiniGamesPlayed: prefs.getInt(_totalMiniGamesPlayedKey) ?? 0,
     );
   }
@@ -185,6 +221,78 @@ class GameStatsStore {
     final current = prefs.getInt(_colorMatchBestScoreKey) ?? 0;
     if (score > current) {
       await prefs.setInt(_colorMatchBestScoreKey, score);
+    }
+  }
+
+  Future<void> recordTurboTrafficBestScore(int score) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_turboTrafficBestScoreKey) ?? 0;
+    if (score > current) {
+      await prefs.setInt(_turboTrafficBestScoreKey, score);
+    }
+  }
+
+  Future<void> recordBikeSprintBestDistance(int distance) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_bikeSprintBestDistanceKey) ?? 0;
+    if (distance > current) {
+      await prefs.setInt(_bikeSprintBestDistanceKey, distance);
+    }
+  }
+
+  Future<void> recordCycleDashBestDistance(int distance) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_cycleDashBestDistanceKey) ?? 0;
+    if (distance > current) {
+      await prefs.setInt(_cycleDashBestDistanceKey, distance);
+    }
+  }
+
+  Future<void> recordAvatarRushBestScore(int score) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_avatarRushBestScoreKey) ?? 0;
+    if (score > current) {
+      await prefs.setInt(_avatarRushBestScoreKey, score);
+    }
+  }
+
+  Future<void> recordBrickBreakerBestScore(int score) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_brickBreakerBestScoreKey) ?? 0;
+    if (score > current) {
+      await prefs.setInt(_brickBreakerBestScoreKey, score);
+    }
+  }
+
+  Future<void> recordCandyMatchBestScore(int score) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_candyMatchBestScoreKey) ?? 0;
+    if (score > current) {
+      await prefs.setInt(_candyMatchBestScoreKey, score);
+    }
+  }
+
+  Future<void> recordMathEquationLevel(int level) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_mathEquationLevelKey) ?? 1;
+    if (level > current || level == 1) {
+      await prefs.setInt(_mathEquationLevelKey, level);
+    }
+  }
+
+  Future<void> recordWordBlankLevel(int level) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_wordBlankLevelKey) ?? 1;
+    if (level > current || level == 1) {
+      await prefs.setInt(_wordBlankLevelKey, level);
+    }
+  }
+
+  Future<void> recordPicturePuzzleLevel(int level) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_picturePuzzleLevelKey) ?? 1;
+    if (level > current || level == 1) {
+      await prefs.setInt(_picturePuzzleLevelKey, level);
     }
   }
 }

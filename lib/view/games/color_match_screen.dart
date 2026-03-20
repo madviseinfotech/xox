@@ -19,9 +19,12 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
     _ColorChoice('Blue', Color(0xff3b82f6)),
     _ColorChoice('Green', Color(0xff22c55e)),
     _ColorChoice('Yellow', Color(0xfffacc15)),
+    _ColorChoice('Purple', Color(0xffa855f7)),
+    _ColorChoice('Orange', Color(0xfff97316)),
   ];
 
   late _ColorChoice _target;
+  int _level = 1;
   int _score = 0;
   int _bestScore = 0;
   int _rounds = 0;
@@ -43,9 +46,17 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
     });
   }
 
+  List<_ColorChoice> get _activeChoices {
+    final count = (_level + 3).clamp(4, _choices.length);
+    return _choices.take(count).toList(growable: false);
+  }
+
+  int get _targetScore => 4 + _level;
+
   void _nextTarget() {
     setState(() {
-      _target = _choices[_random.nextInt(_choices.length)];
+      final activeChoices = _activeChoices;
+      _target = activeChoices[_random.nextInt(activeChoices.length)];
     });
   }
 
@@ -69,11 +80,21 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
       });
     }
 
+    if (correct && nextScore >= _targetScore) {
+      if (!mounted) return;
+      setState(() {
+        _level += 1;
+        _score = 0;
+        _message = 'Level clear. Level $_level unlocked.';
+      });
+    }
+
     _nextTarget();
   }
 
   void _resetGame() {
     setState(() {
+      _level = 1;
       _score = 0;
       _rounds = 0;
       _message = 'Tap the color that matches the card.';
@@ -90,11 +111,11 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
       child: Column(
         children: [
           ScorePanel(
-            leftLabel: 'Streak',
-            leftValue: _score.toString(),
+            leftLabel: 'Level',
+            leftValue: _level.toString(),
             rightLabel: 'Best',
             rightValue: _bestScore.toString(),
-            footer: 'Rounds played: $_rounds',
+            footer: 'Streak $_score/$_targetScore • Rounds played: $_rounds',
           ),
           const SizedBox(height: 20),
           GamePanel(
@@ -147,7 +168,7 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: 2.1,
-            children: _choices
+            children: _activeChoices
                 .map(
                   (choice) => ElevatedButton(
                     style: ElevatedButton.styleFrom(

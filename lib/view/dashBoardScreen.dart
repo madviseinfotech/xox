@@ -17,17 +17,25 @@ import 'package:xox_madvise/view/games/dice_duel_screen.dart';
 import 'package:xox_madvise/view/games/cricket_chase_screen.dart';
 import 'package:xox_madvise/view/games/game_stats_store.dart';
 import 'package:xox_madvise/view/games/balloon_pop_screen.dart';
+import 'package:xox_madvise/view/games/brick_breaker_screen.dart';
+import 'package:xox_madvise/view/games/candy_match_screen.dart';
+import 'package:xox_madvise/view/games/card_games_pack.dart';
+import 'package:xox_madvise/view/games/chess_screen.dart';
 import 'package:xox_madvise/view/games/color_match_screen.dart';
 import 'package:xox_madvise/view/games/heads_or_tails_screen.dart';
 import 'package:xox_madvise/view/games/higher_lower_screen.dart';
 import 'package:xox_madvise/view/games/memory_match_screen.dart';
+import 'package:xox_madvise/view/games/math_equation_screen.dart';
 import 'package:xox_madvise/view/games/number_guess_screen.dart';
+import 'package:xox_madvise/view/games/picture_puzzle_screen.dart';
 import 'package:xox_madvise/view/games/quick_tap_screen.dart';
 import 'package:xox_madvise/view/games/range_picker_screen.dart';
 import 'package:xox_madvise/view/games/rock_paper_scissors_screen.dart';
+import 'package:xox_madvise/view/games/racing_games_pack.dart';
 import 'package:xox_madvise/view/games/snake_screen.dart';
 import 'package:xox_madvise/view/games/snakes_and_ladders_screen.dart';
 import 'package:xox_madvise/view/games/sudoku_screen.dart';
+import 'package:xox_madvise/view/games/word_blank_screen.dart';
 import 'package:xox_madvise/view/games/learning_games_pack.dart';
 import 'package:xox_madvise/view/retention_prompts.dart';
 
@@ -40,8 +48,10 @@ class DashBoardScreen extends StatefulWidget {
   State<DashBoardScreen> createState() => _DashBoardScreenState();
 }
 
-class _DashBoardScreenState extends State<DashBoardScreen> {
+class _DashBoardScreenState extends State<DashBoardScreen>
+    with WidgetsBindingObserver {
   final AudioPlayer _player = AudioPlayer();
+  final TextEditingController _searchController = TextEditingController();
   AudioPlayer? _musicPlayer;
   static const List<String> _categories = [
     'All',
@@ -49,32 +59,45 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'Learning',
     '2 Player',
     'Puzzle',
+    'Cards',
     'Arcade',
+    'Racing',
   ];
 
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
   GameStatsSnapshot? _stats;
   String _selectedCategory = 'All';
+  String _searchQuery = '';
   bool _musicEnabled = Utility.volume;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _setupDashboardMusic();
     _loadBanner();
     _loadStats();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkAppUpdate(context);
+      checkAppUpdate(context, showFeedback: false);
     });
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _bannerAd?.dispose();
     _musicPlayer?.dispose();
+    _searchController.dispose();
     _player.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _musicEnabled) {
+      _playDashboardMusic();
+    }
   }
 
   bool _matchesCategory(_HubGame game, String category) {
@@ -100,6 +123,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           'Number Guess',
           'Sudoku Mini',
           'Higher or Lower',
+          'Candy Match',
+          'Chess',
+          'Picture Puzzle',
+        }.contains(game.title);
+      case 'Cards':
+        return {
+          'Higher or Lower',
+          'Blackjack',
+          'War Cards',
         }.contains(game.title);
       case 'Arcade':
         return {
@@ -108,11 +140,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           'Heads or Tails',
           'Range Picker',
           'Balloon Pop',
+          'Brick Breaker',
+          'Candy Match',
+          'Turbo Traffic',
+          'Bike Sprint',
+          'Cycle Dash',
+          'Avatar Rush',
         }.contains(game.title);
+      case 'Racing':
+        return game.badge == 'Racing';
       case 'All':
       default:
         return true;
     }
+  }
+
+  bool _matchesSearch(_HubGame game, String query) {
+    if (query.isEmpty) return true;
+    final value = query.toLowerCase();
+    return game.title.toLowerCase().contains(value) ||
+        game.subtitle.toLowerCase().contains(value) ||
+        game.badge.toLowerCase().contains(value) ||
+        game.spotlightLabel.toLowerCase().contains(value);
   }
 
   List<_HubGame> _games(GameStatsSnapshot stats) => [
@@ -150,6 +199,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ? 'No best score yet'
           : 'Best clear: ${stats.memoryBestMoves} moves',
       buildPage: () => const MemoryMatchScreen(),
+    ),
+    _HubGame(
+      title: 'Math Equation',
+      subtitle: 'Solve endless equations and keep climbing saved levels.',
+      badge: 'Learning',
+      spotlightLabel: 'Math',
+      icon: Icons.calculate_rounded,
+      colors: const [Color(0xffef4444), Color(0xfff97316)],
+      artStyle: _GameArtStyle.mathEquation,
+      statLine: 'Saved level: ${stats.mathEquationLevel}',
+      buildPage: () => const MathEquationScreen(),
     ),
     _HubGame(
       title: 'Number Guess',
@@ -202,7 +262,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     _HubGame(
       title: 'Higher or Lower',
       subtitle: 'Predict the next card and build a hot streak.',
-      badge: 'Arcade Cards',
+      badge: 'Cards',
       spotlightLabel: 'New',
       icon: Icons.style_rounded,
       colors: const [Color(0xfff97316), Color(0xfffacc15)],
@@ -211,6 +271,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ? 'Best streak waiting'
           : 'Best streak: ${stats.higherLowerBestStreak}',
       buildPage: () => const HigherLowerScreen(),
+    ),
+    _HubGame(
+      title: 'Blackjack',
+      subtitle: 'Hit or stand and try to beat the dealer at 21.',
+      badge: 'Cards',
+      spotlightLabel: 'Casino',
+      icon: Icons.style_rounded,
+      colors: const [Color(0xff166534), Color(0xff14532d)],
+      artStyle: _GameArtStyle.blackjack,
+      statLine: 'Classic 21 card game',
+      buildPage: () => const BlackjackScreen(),
+    ),
+    _HubGame(
+      title: 'War Cards',
+      subtitle: 'Flip one card each and win with the higher card.',
+      badge: 'Cards',
+      spotlightLabel: 'Battle',
+      icon: Icons.auto_awesome_rounded,
+      colors: const [Color(0xfff97316), Color(0xffef4444)],
+      artStyle: _GameArtStyle.warCards,
+      statLine: 'Fast head-to-head card game',
+      buildPage: () => const WarCardsScreen(),
     ),
     _HubGame(
       title: 'Quick Tap',
@@ -269,6 +351,107 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       artStyle: _GameArtStyle.snakesLadders,
       statLine: 'Races won: ${stats.snakesAndLaddersWins}',
       buildPage: () => const SnakesAndLaddersScreen(),
+    ),
+    _HubGame(
+      title: 'Turbo Traffic',
+      subtitle: 'Dodge lane traffic and hold your nerve as the road speeds up.',
+      badge: 'Racing',
+      spotlightLabel: 'Drive',
+      icon: Icons.directions_car_filled_rounded,
+      colors: const [Color(0xfffb7185), Color(0xfff97316)],
+      artStyle: _GameArtStyle.turboTraffic,
+      statLine: stats.turboTrafficBestScore == 0
+          ? 'No clean runs yet'
+          : 'Best dodges: ${stats.turboTrafficBestScore}',
+      buildPage: () => const TurboTrafficScreen(),
+    ),
+    _HubGame(
+      title: 'Bike Sprint',
+      subtitle: 'Hit the boost zone and chain perfect pedal bursts.',
+      badge: 'Racing',
+      spotlightLabel: 'Bike',
+      icon: Icons.two_wheeler_rounded,
+      colors: const [Color(0xff38bdf8), Color(0xff2563eb)],
+      artStyle: _GameArtStyle.bikeSprint,
+      statLine: stats.bikeSprintBestDistance == 0
+          ? 'Sprint record waiting'
+          : 'Best distance: ${stats.bikeSprintBestDistance} m',
+      buildPage: () => const BikeSprintScreen(),
+    ),
+    _HubGame(
+      title: 'Cycle Dash',
+      subtitle:
+          'Manage energy across checkpoints and save boosts for the finish.',
+      badge: 'Racing',
+      spotlightLabel: 'Cycle',
+      icon: Icons.pedal_bike_rounded,
+      colors: const [Color(0xff22c55e), Color(0xff84cc16)],
+      artStyle: _GameArtStyle.cycleDash,
+      statLine: stats.cycleDashBestDistance == 0
+          ? 'No stage cleared yet'
+          : 'Best stage: ${stats.cycleDashBestDistance} m',
+      buildPage: () => const CycleDashScreen(),
+    ),
+    _HubGame(
+      title: 'Avatar Rush',
+      subtitle: 'Make the right move to keep your runner alive.',
+      badge: 'Racing',
+      spotlightLabel: 'Runner',
+      icon: Icons.directions_run_rounded,
+      colors: const [Color(0xff8b5cf6), Color(0xffec4899)],
+      artStyle: _GameArtStyle.avatarRush,
+      statLine: stats.avatarRushBestScore == 0
+          ? 'No runner streak yet'
+          : 'Best dodges: ${stats.avatarRushBestScore}',
+      buildPage: () => const AvatarRushScreen(),
+    ),
+    _HubGame(
+      title: 'Brick Breaker',
+      subtitle: 'Bounce the ball, move the paddle, and clear every brick.',
+      badge: 'Arcade',
+      spotlightLabel: 'Classic',
+      icon: Icons.sports_esports_rounded,
+      colors: const [Color(0xff38bdf8), Color(0xff8b5cf6)],
+      artStyle: _GameArtStyle.brickBreaker,
+      statLine: stats.brickBreakerBestScore == 0
+          ? 'No wall cleared yet'
+          : 'Best score: ${stats.brickBreakerBestScore}',
+      buildPage: () => const BrickBreakerScreen(),
+    ),
+    _HubGame(
+      title: 'Candy Match',
+      subtitle: 'Drag candies into place, crush combos, and chase score goals.',
+      badge: 'Puzzle',
+      spotlightLabel: 'Sweet',
+      icon: Icons.cake_rounded,
+      colors: const [Color(0xfffb7185), Color(0xffa855f7)],
+      artStyle: _GameArtStyle.candyMatch,
+      statLine: stats.candyMatchBestScore == 0
+          ? 'No sweet streak yet'
+          : 'Best score: ${stats.candyMatchBestScore}',
+      buildPage: () => const CandyMatchScreen(),
+    ),
+    _HubGame(
+      title: 'Picture Puzzle',
+      subtitle: 'Swap shuffled tiles to rebuild a fresh random picture.',
+      badge: 'Puzzle',
+      spotlightLabel: 'Touch',
+      icon: Icons.grid_on_rounded,
+      colors: const [Color(0xff22c55e), Color(0xff38bdf8)],
+      artStyle: _GameArtStyle.picturePuzzle,
+      statLine: 'Saved level: ${stats.picturePuzzleLevel}',
+      buildPage: () => const PicturePuzzleScreen(),
+    ),
+    _HubGame(
+      title: 'Chess',
+      subtitle: 'Play a full two-player chess board with real piece movement.',
+      badge: 'Strategy',
+      spotlightLabel: 'Board',
+      icon: Icons.grid_4x4_rounded,
+      colors: const [Color(0xffd4a373), Color(0xff7f5539)],
+      artStyle: _GameArtStyle.chess,
+      statLine: 'Local two-player classic',
+      buildPage: () => const ChessScreen(),
     ),
     _HubGame(
       title: 'Balloon Pop',
@@ -357,6 +540,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       buildPage: () => const WordBuilderScreen(),
     ),
     _HubGame(
+      title: 'Word Blank',
+      subtitle: 'Fill the blank, celebrate the word, and learn what it means.',
+      badge: 'Learning',
+      spotlightLabel: 'Words',
+      icon: Icons.spellcheck_rounded,
+      colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
+      statLine: 'Saved level: ${stats.wordBlankLevel}',
+      buildPage: () => const WordBlankScreen(),
+    ),
+    _HubGame(
       title: 'Pattern Play',
       subtitle: 'Find the next item in repeating patterns.',
       badge: 'Learning',
@@ -410,13 +603,40 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     final player = AudioPlayer();
     _musicPlayer = player;
     try {
+      await player.setPlayerMode(PlayerMode.mediaPlayer);
       await player.setReleaseMode(ReleaseMode.loop);
       await player.setVolume(0.28);
-      if (_musicEnabled) {
-        await player.play(AssetSource('music/bg.mp3'));
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_musicEnabled) return;
+        _playDashboardMusic();
+      });
+      Future<void>.delayed(const Duration(milliseconds: 350), () {
+        if (!mounted || !_musicEnabled) return;
+        _playDashboardMusic();
+      });
     } catch (e) {
       debugPrint('Audio error: $e');
+    }
+  }
+
+  Future<void> _playDashboardMusic() async {
+    final player = _musicPlayer;
+    if (player == null || !_musicEnabled) return;
+
+    try {
+      await player.stop();
+      await player.setVolume(0.28);
+      await player.setSource(AssetSource('music/bg.mp3'));
+      await player.resume();
+    } catch (e) {
+      debugPrint('Dashboard bg.mp3 failed, falling back: $e');
+      try {
+        await player.stop();
+        await player.setSource(AssetSource('music/begin.mp3'));
+        await player.resume();
+      } catch (fallbackError) {
+        debugPrint('Dashboard fallback music failed: $fallbackError');
+      }
     }
   }
 
@@ -475,7 +695,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     });
     if (_musicEnabled) {
       try {
-        await _musicPlayer?.play(AssetSource('music/bg.mp3'));
+        await _playDashboardMusic();
       } catch (e) {
         debugPrint('Audio error: $e');
       }
@@ -503,11 +723,21 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             snakesAndLaddersWins: 0,
             balloonPopBestScore: 0,
             colorMatchBestScore: 0,
+            turboTrafficBestScore: 0,
+            bikeSprintBestDistance: 0,
+            cycleDashBestDistance: 0,
+            avatarRushBestScore: 0,
+            brickBreakerBestScore: 0,
+            candyMatchBestScore: 0,
+            mathEquationLevel: 1,
+            wordBlankLevel: 1,
+            picturePuzzleLevel: 1,
             totalMiniGamesPlayed: 0,
           ),
     );
     final games = allGames
         .where((game) => _matchesCategory(game, _selectedCategory))
+        .where((game) => _matchesSearch(game, _searchQuery))
         .toList();
     return PopScope(
       canPop: false,
@@ -607,6 +837,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       snakesAndLaddersWins: 0,
                                       balloonPopBestScore: 0,
                                       colorMatchBestScore: 0,
+                                      turboTrafficBestScore: 0,
+                                      bikeSprintBestDistance: 0,
+                                      cycleDashBestDistance: 0,
+                                      avatarRushBestScore: 0,
+                                      brickBreakerBestScore: 0,
+                                      candyMatchBestScore: 0,
+                                      mathEquationLevel: 1,
+                                      wordBlankLevel: 1,
+                                      picturePuzzleLevel: 1,
                                       totalMiniGamesPlayed: 0,
                                     ),
                               ),
@@ -633,12 +872,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       snakesAndLaddersWins: 0,
                                       balloonPopBestScore: 0,
                                       colorMatchBestScore: 0,
+                                      turboTrafficBestScore: 0,
+                                      bikeSprintBestDistance: 0,
+                                      cycleDashBestDistance: 0,
+                                      avatarRushBestScore: 0,
+                                      brickBreakerBestScore: 0,
+                                      candyMatchBestScore: 0,
+                                      mathEquationLevel: 1,
+                                      wordBlankLevel: 1,
+                                      picturePuzzleLevel: 1,
                                       totalMiniGamesPlayed: 0,
                                     ),
                               ),
                             ),
                           ),
                           const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                          SliverToBoxAdapter(
+                            child: _EntranceReveal(
+                              delay: const Duration(milliseconds: 280),
+                              child: _buildSearchField(),
+                            ),
+                          ),
+                          const SliverToBoxAdapter(child: SizedBox(height: 10)),
                           SliverToBoxAdapter(
                             child: Row(
                               children: [
@@ -730,7 +985,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             if (_musicEnabled) {
               await _playClickSound();
               try {
-                await _musicPlayer?.play(AssetSource('music/bg.mp3'));
+                await _playDashboardMusic();
               } catch (e) {
                 debugPrint('Audio error: $e');
               }
@@ -1043,6 +1298,50 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
+  Widget _buildSearchField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value.trim();
+          });
+        },
+        style: const TextStyle(color: Colors.white),
+        cursorColor: const Color(0xff67e8f9),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: 'Search games',
+          hintStyle: TextStyle(
+            color: Colors.white.withValues(alpha: 0.45),
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: Colors.white.withValues(alpha: 0.7),
+          ),
+          suffixIcon: _searchQuery.isEmpty
+              ? null
+              : IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _searchQuery = '';
+                    });
+                    _searchController.clear();
+                  },
+                  icon: const Icon(Icons.close_rounded, color: Colors.white70),
+                ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+        ),
+      ),
+    );
+  }
+
   Widget _buildAnimatedGameGrid(List<_HubGame> games) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -1070,7 +1369,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             );
           },
           child: GridView.builder(
-            key: ValueKey<String>(_selectedCategory),
+            key: ValueKey<String>('$_selectedCategory|$_searchQuery'),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: games.length,
@@ -1139,6 +1438,34 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             ? '--/4'
             : '${stats.numberGuessBestAttempts}/4',
         icon: Icons.pin_rounded,
+      ),
+      _Achievement(
+        title: 'Street Survivor',
+        description: 'Dodge 12 cars in Turbo Traffic',
+        unlocked: stats.turboTrafficBestScore >= 12,
+        progressLabel: '${stats.turboTrafficBestScore}/12',
+        icon: Icons.local_fire_department_rounded,
+      ),
+      _Achievement(
+        title: 'Sprint Specialist',
+        description: 'Reach 220 m in Bike Sprint',
+        unlocked: stats.bikeSprintBestDistance >= 220,
+        progressLabel: '${stats.bikeSprintBestDistance}/220',
+        icon: Icons.two_wheeler_rounded,
+      ),
+      _Achievement(
+        title: 'Stage Tactician',
+        description: 'Reach 170 m in Cycle Dash',
+        unlocked: stats.cycleDashBestDistance >= 170,
+        progressLabel: '${stats.cycleDashBestDistance}/170',
+        icon: Icons.pedal_bike_rounded,
+      ),
+      _Achievement(
+        title: 'Rush Reflex',
+        description: 'Survive 10 obstacles in Avatar Rush',
+        unlocked: stats.avatarRushBestScore >= 10,
+        progressLabel: '${stats.avatarRushBestScore}/10',
+        icon: Icons.directions_run_rounded,
       ),
     ];
   }
@@ -1339,7 +1666,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             icon: Icons.system_update_alt_rounded,
             title: 'Update',
             subtitle: 'Check',
-            onTap: () => checkAppUpdate(context),
+            onTap: () => checkAppUpdate(context, showFeedback: true),
           ),
         ),
       ],
@@ -1395,6 +1722,17 @@ enum _GameArtStyle {
   snakesLadders,
   balloonPop,
   colorMatch,
+  brickBreaker,
+  candyMatch,
+  picturePuzzle,
+  mathEquation,
+  blackjack,
+  warCards,
+  chess,
+  turboTraffic,
+  bikeSprint,
+  cycleDash,
+  avatarRush,
 }
 
 class _GameArt extends StatelessWidget {
@@ -1424,6 +1762,7 @@ class _GameArt extends StatelessWidget {
         ),
       ),
       child: Stack(
+        clipBehavior: Clip.none,
         fit: StackFit.expand,
         children: [
           _ArtShimmer(
@@ -1441,11 +1780,11 @@ class _GameArt extends StatelessWidget {
                   ),
           ),
           Positioned(
-            right: -8,
-            bottom: -4,
+            right: 4,
+            bottom: 4,
             child: Icon(
               icon,
-              size: 42,
+              size: 36,
               color: Colors.white.withValues(alpha: 0.22),
             ),
           ),
@@ -1819,6 +2158,412 @@ class _FallbackGameArt extends StatelessWidget {
             ],
           ),
         );
+      case _GameArtStyle.brickBreaker:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 10 : 12,
+              right: compact ? 10 : 12,
+              top: compact ? 12 : 14,
+              child: Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children:
+                    [
+                          const Color(0xfffb7185),
+                          const Color(0xfff59e0b),
+                          const Color(0xff22c55e),
+                          const Color(0xff38bdf8),
+                          const Color(0xffa78bfa),
+                          const Color(0xfff97316),
+                        ]
+                        .map((color) {
+                          return Container(
+                            height: compact ? 8 : 10,
+                            width: compact ? 16 : 18,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: color,
+                            ),
+                          );
+                        })
+                        .toList(growable: false),
+              ),
+            ),
+            Positioned(
+              left: compact ? 18 : 22,
+              right: compact ? 18 : 22,
+              bottom: compact ? 12 : 14,
+              child: Container(
+                height: compact ? 8 : 10,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: const Color(0xff67e8f9),
+                ),
+              ),
+            ),
+            Positioned(
+              right: compact ? 16 : 22,
+              bottom: compact ? 26 : 30,
+              child: Container(
+                height: compact ? 10 : 12,
+                width: compact ? 10 : 12,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.candyMatch:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 12 : 14,
+              top: compact ? 12 : 14,
+              child: _MiniCandy(
+                color: const Color(0xfffb7185),
+                compact: compact,
+              ),
+            ),
+            Positioned(
+              right: compact ? 12 : 14,
+              top: compact ? 20 : 24,
+              child: _MiniCandy(
+                color: const Color(0xffa855f7),
+                compact: compact,
+              ),
+            ),
+            Positioned(
+              left: compact ? 26 : 32,
+              bottom: compact ? 12 : 14,
+              child: _MiniCandy(
+                color: const Color(0xfff59e0b),
+                compact: compact,
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.picturePuzzle:
+        return Padding(
+          padding: EdgeInsets.all(compact ? 10 : 12),
+          child: GridView.count(
+            crossAxisCount: 2,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            children: const [
+              _MiniPuzzleTile(color: Color(0xff38bdf8), label: 'A'),
+              _MiniPuzzleTile(color: Color(0xff22c55e), label: 'D'),
+              _MiniPuzzleTile(color: Color(0xfffacc15), label: 'C'),
+              _MiniPuzzleTile(color: Color(0xff0f172a), label: 'B'),
+            ],
+          ),
+        );
+      case _GameArtStyle.mathEquation:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(
+              child: Text(
+                '8 + 6',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  fontSize: compact ? 18 : 22,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Positioned(
+              right: compact ? 12 : 16,
+              bottom: compact ? 12 : 14,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white.withValues(alpha: 0.18),
+                ),
+                child: Text(
+                  '= ?',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: compact ? 11 : 13,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.blackjack:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 14 : 18,
+              top: compact ? 12 : 16,
+              child: _MiniCardToken(
+                label: 'A',
+                angle: -0.12,
+                color: const Color(0xff166534),
+                compact: compact,
+              ),
+            ),
+            Positioned(
+              right: compact ? 12 : 16,
+              bottom: compact ? 12 : 14,
+              child: _MiniCardToken(
+                label: 'K',
+                angle: 0.14,
+                color: const Color(0xffdc2626),
+                compact: compact,
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.warCards:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 12 : 16,
+              top: compact ? 16 : 18,
+              child: _MiniCardToken(
+                label: 'Q',
+                angle: -0.16,
+                color: const Color(0xfff97316),
+                compact: compact,
+              ),
+            ),
+            Positioned(
+              right: compact ? 12 : 16,
+              top: compact ? 20 : 24,
+              child: _MiniCardToken(
+                label: 'A',
+                angle: 0.16,
+                color: const Color(0xffef4444),
+                compact: compact,
+              ),
+            ),
+            Center(
+              child: Icon(
+                Icons.flash_on_rounded,
+                color: Colors.white.withValues(alpha: 0.7),
+                size: compact ? 24 : 30,
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.chess:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(compact ? 10 : 12),
+              child: GridView.count(
+                crossAxisCount: 2,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4,
+                children: const [
+                  _MiniGridTile(label: '♔'),
+                  _MiniGridTile(label: '♞'),
+                  _MiniGridTile(label: '♟'),
+                  _MiniGridTile(label: '♕'),
+                ],
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.turboTraffic:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: compact ? 18 : 22,
+                  vertical: compact ? 8 : 10,
+                ),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.black.withValues(alpha: 0.18),
+                  ),
+                  child: Column(
+                    children: List.generate(
+                      3,
+                      (_) => Expanded(
+                        child: Center(
+                          child: Container(
+                            height: 8,
+                            width: 3,
+                            color: Colors.white.withValues(alpha: 0.32),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: compact ? 14 : 16,
+              top: compact ? 12 : 14,
+              child: Icon(
+                Icons.local_shipping_rounded,
+                color: Colors.white.withValues(alpha: 0.84),
+                size: compact ? 20 : 24,
+              ),
+            ),
+            Positioned(
+              right: compact ? 18 : 20,
+              bottom: compact ? 10 : 12,
+              child: Icon(
+                Icons.directions_car_filled_rounded,
+                color: const Color(0xffe0f2fe),
+                size: compact ? 28 : 34,
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.bikeSprint:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 12 : 16,
+              right: compact ? 12 : 16,
+              bottom: compact ? 12 : 14,
+              child: Container(
+                height: compact ? 10 : 12,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: Colors.white.withValues(alpha: 0.16),
+                ),
+                child: Align(
+                  alignment: const Alignment(0.12, 0),
+                  child: FractionallySizedBox(
+                    widthFactor: 0.28,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        color: const Color(0xff22c55e).withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: Icon(
+                Icons.two_wheeler_rounded,
+                color: Colors.white.withValues(alpha: 0.9),
+                size: compact ? 32 : 40,
+              ),
+            ),
+            Positioned(
+              left: compact ? 30 : 36,
+              top: compact ? 8 : 10,
+              child: Container(
+                height: compact ? 22 : 28,
+                width: 4,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: const Color(0xfff8fafc),
+                ),
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.cycleDash:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 10 : 14,
+              right: compact ? 10 : 14,
+              top: compact ? 14 : 18,
+              child: Row(
+                children: List.generate(
+                  4,
+                  (index) => Expanded(
+                    child: Container(
+                      height: compact ? 16 : 20,
+                      margin: EdgeInsets.only(right: index == 3 ? 0 : 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        color: index < 3
+                            ? const Color(0xffd9f99d)
+                            : Colors.white.withValues(alpha: 0.16),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: compact ? 24 : 28,
+              bottom: compact ? 10 : 12,
+              child: Icon(
+                Icons.pedal_bike_rounded,
+                color: Colors.white.withValues(alpha: 0.92),
+                size: compact ? 28 : 34,
+              ),
+            ),
+            Positioned(
+              right: compact ? 12 : 16,
+              bottom: compact ? 12 : 14,
+              child: Icon(
+                Icons.bolt_rounded,
+                color: const Color(0xfffef08a),
+                size: compact ? 18 : 22,
+              ),
+            ),
+          ],
+        );
+      case _GameArtStyle.avatarRush:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 12 : 16,
+              bottom: compact ? 10 : 14,
+              child: Icon(
+                Icons.directions_run_rounded,
+                color: Colors.white.withValues(alpha: 0.92),
+                size: compact ? 30 : 38,
+              ),
+            ),
+            Positioned(
+              right: compact ? 12 : 16,
+              bottom: compact ? 10 : 14,
+              child: Container(
+                height: compact ? 24 : 30,
+                width: compact ? 18 : 22,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: Colors.white.withValues(alpha: 0.3),
+                ),
+              ),
+            ),
+            Positioned(
+              right: compact ? 22 : 28,
+              top: compact ? 12 : 16,
+              child: Container(
+                height: compact ? 10 : 12,
+                width: compact ? 34 : 42,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: const Color(0xfff9a8d4).withValues(alpha: 0.88),
+                ),
+              ),
+            ),
+          ],
+        );
       case _GameArtStyle.standard:
         return DecoratedBox(
           decoration: BoxDecoration(
@@ -1872,6 +2617,40 @@ class _MiniBalloon extends StatelessWidget {
   }
 }
 
+class _MiniPuzzleTile extends StatelessWidget {
+  const _MiniPuzzleTile({required this.color, required this.label});
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withValues(alpha: 0.9),
+            Color.lerp(color, Colors.white, 0.2)!,
+          ],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _MiniColorDot extends StatelessWidget {
   const _MiniColorDot({required this.color});
 
@@ -1884,6 +2663,46 @@ class _MiniColorDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(999),
+      ),
+    );
+  }
+}
+
+class _MiniCandy extends StatelessWidget {
+  const _MiniCandy({required this.color, required this.compact});
+
+  final Color color;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: 0.35,
+      child: Container(
+        height: compact ? 18 : 22,
+        width: compact ? 18 : 22,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(7),
+          boxShadow: [
+            BoxShadow(color: color.withValues(alpha: 0.24), blurRadius: 8),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              width: compact ? 4 : 5,
+              height: compact ? 8 : 10,
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
+            Container(
+              width: compact ? 4 : 5,
+              height: compact ? 8 : 10,
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -2552,7 +3371,10 @@ Future<String> getCurrentAppVersion() async {
   return packageInfo.version.replaceAll('.', '');
 }
 
-Future<void> checkAppUpdate(BuildContext context) async {
+Future<void> checkAppUpdate(
+  BuildContext context, {
+  bool showFeedback = false,
+}) async {
   final currentVersion = await getCurrentAppVersion();
   if (!context.mounted) return;
 
@@ -2563,7 +3385,12 @@ Future<void> checkAppUpdate(BuildContext context) async {
         .get();
 
     final version = versionSnapshot.data();
-    if (version == null) return;
+    if (version == null) {
+      if (showFeedback && context.mounted) {
+        _showUpdateSnackBar(context, 'Could not check for updates right now.');
+      }
+      return;
+    }
 
     final latestVersion = int.parse(
       version['current_version'].toString().replaceAll('.', ''),
@@ -2572,10 +3399,30 @@ Future<void> checkAppUpdate(BuildContext context) async {
     if (latestVersion > int.parse(currentVersion)) {
       if (!context.mounted) return;
       showUpdateDialog(context);
+      return;
+    }
+
+    if (showFeedback && context.mounted) {
+      _showUpdateSnackBar(context, 'App is up to date.');
     }
   } catch (e) {
     debugPrint('Update check failed: $e');
+    if (showFeedback && context.mounted) {
+      _showUpdateSnackBar(context, 'Could not check for updates right now.');
+    }
   }
+}
+
+void _showUpdateSnackBar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
 }
 
 Future<void> showUpdateDialog(BuildContext context) async {

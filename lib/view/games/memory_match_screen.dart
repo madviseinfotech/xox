@@ -17,6 +17,7 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
 
   late List<_MemoryCard> _cards;
   int? _firstIndex;
+  int _level = 1;
   int _moves = 0;
   int _matches = 0;
   bool _busy = false;
@@ -27,9 +28,16 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
     _setupBoard();
   }
 
+  List<String> get _symbolsForLevel {
+    const symbols = ['🎯', '🎲', '🚀', '🌟', '🎮', '⚡', '🔥', '🧠', '🎵', '🍀'];
+    final pairCount = (_level + 3).clamp(4, symbols.length);
+    return symbols.take(pairCount).toList(growable: false);
+  }
+
+  int get _pairCount => _symbolsForLevel.length;
+
   void _setupBoard() {
-    const symbols = ['🎯', '🎲', '🚀', '🌟', '🎮', '⚡', '🔥', '🧠'];
-    final items = [...symbols, ...symbols]..shuffle(_random);
+    final items = [..._symbolsForLevel, ..._symbolsForLevel]..shuffle(_random);
 
     final cards = items
         .map((symbol) => _MemoryCard(symbol: symbol))
@@ -75,8 +83,13 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
         _cards[index] = _cards[index].copyWith(isMatched: true);
         _matches += 1;
       });
-      if (_matches == 8) {
-        GameStatsStore.instance.recordMemoryBest(_moves);
+      if (_matches == _pairCount) {
+        await GameStatsStore.instance.recordMemoryBest(_moves);
+        if (!mounted) return;
+        setState(() {
+          _level += 1;
+        });
+        _setupBoard();
       }
       return;
     }
@@ -94,7 +107,7 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final completed = _matches == 8;
+    final completed = _matches == _pairCount;
 
     return GameScaffold(
       title: 'Memory Match',
@@ -103,13 +116,13 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
       child: Column(
         children: [
           ScorePanel(
-            leftLabel: 'Moves',
-            leftValue: _moves.toString(),
+            leftLabel: 'Level',
+            leftValue: _level.toString(),
             rightLabel: 'Pairs',
-            rightValue: '$_matches/8',
+            rightValue: '$_matches/$_pairCount',
             footer: completed
-                ? 'Board cleared. Shuffle and play again.'
-                : 'Find all matching pairs.',
+                ? 'Board cleared. Next level loading.'
+                : 'Moves $_moves • Find all matching pairs.',
           ),
           const SizedBox(height: 20),
           GamePanel(
@@ -185,7 +198,7 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
           const SizedBox(height: 22),
           StatusCard(
             message: completed
-                ? 'Board cleared in $_moves moves. Shuffle for a new round.'
+                ? 'Board cleared in $_moves moves. Level $_level is coming up.'
                 : _busy
                 ? 'Cards are flipping back. Keep track of the symbols.'
                 : _firstIndex == null
@@ -195,8 +208,13 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
           ),
           const SizedBox(height: 18),
           ElevatedButton(
-            onPressed: _setupBoard,
-            child: const Text('Shuffle board'),
+            onPressed: () {
+              setState(() {
+                _level = 1;
+              });
+              _setupBoard();
+            },
+            child: const Text('Restart levels'),
           ),
         ],
       ),

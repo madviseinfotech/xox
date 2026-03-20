@@ -14,15 +14,15 @@ class BalloonPopScreen extends StatefulWidget {
 }
 
 class _BalloonPopScreenState extends State<BalloonPopScreen> {
-  static const int _roundSeconds = 20;
   static const int _cellCount = 9;
 
   final Random _random = Random();
 
   Timer? _timer;
+  int _level = 1;
   int _score = 0;
   int _bestScore = 0;
-  int _timeLeft = _roundSeconds;
+  int _timeLeft = 20;
   String _message = 'Pop the bright balloons before time runs out.';
   bool _running = false;
   Set<int> _activeCells = {1, 5};
@@ -47,13 +47,16 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
     });
   }
 
+  int get _levelSeconds => max(8, 20 - ((_level - 1) * 2));
+  int get _targetScore => 8 + ((_level - 1) * 3);
+
   void _startRound() {
     _timer?.cancel();
     setState(() {
       _score = 0;
-      _timeLeft = _roundSeconds;
+      _timeLeft = _levelSeconds;
       _running = true;
-      _message = 'Go. Tap the balloons as fast as you can.';
+      _message = 'Level $_level: pop $_targetScore balloons.';
       _activeCells = _randomCells();
     });
 
@@ -73,7 +76,7 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
           }
           _message = isBest
               ? 'New best. You popped $_score balloons.'
-              : 'Round over. You popped $_score balloons.';
+              : 'Time up. You popped $_score balloons.';
         });
         return;
       }
@@ -95,10 +98,42 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
 
   void _popBalloon(int index) {
     if (!_running || !_activeCells.contains(index)) return;
+    final nextScore = _score + 1;
+    final isBest = nextScore > _bestScore;
+    if (nextScore >= _targetScore) {
+      _timer?.cancel();
+      setState(() {
+        _score = nextScore;
+        _running = false;
+        _level += 1;
+        if (isBest) {
+          _bestScore = nextScore;
+        }
+        _message = 'Level clear. Level $_level is ready.';
+        _activeCells = _randomCells();
+      });
+      if (isBest) {
+        GameStatsStore.instance.recordBalloonPopBestScore(nextScore);
+      }
+      return;
+    }
+
     setState(() {
-      _score += 1;
+      _score = nextScore;
       _activeCells = _randomCells();
-      _message = 'Nice pop. Keep going.';
+      _message = 'Nice pop. ${_targetScore - nextScore} to go.';
+    });
+  }
+
+  void _resetGame() {
+    _timer?.cancel();
+    setState(() {
+      _level = 1;
+      _score = 0;
+      _timeLeft = _levelSeconds;
+      _running = false;
+      _activeCells = _randomCells();
+      _message = 'Pop the bright balloons before time runs out.';
     });
   }
 
@@ -111,11 +146,11 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
       child: Column(
         children: [
           ScorePanel(
-            leftLabel: 'Score',
-            leftValue: _score.toString(),
+            leftLabel: 'Level',
+            leftValue: _level.toString(),
             rightLabel: 'Best',
             rightValue: _bestScore.toString(),
-            footer: 'Time left: ${_timeLeft}s',
+            footer: 'Score $_score/$_targetScore • Time left: ${_timeLeft}s',
           ),
           const SizedBox(height: 18),
           GamePanel(
@@ -173,11 +208,11 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: _running ? null : _startRound,
-              child: Text(_running ? 'Round running...' : 'Start round'),
+              child: Text(_running ? 'Round running...' : 'Start level'),
             ),
           ),
           const SizedBox(height: 10),
-          ResetActionButton(label: 'Play again', onPressed: _startRound),
+          ResetActionButton(label: 'Reset levels', onPressed: _resetGame),
         ],
       ),
     );
