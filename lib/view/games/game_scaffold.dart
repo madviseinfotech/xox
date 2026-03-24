@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -141,12 +143,20 @@ class _GameScaffoldState extends State<GameScaffold> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.padding.top;
+    final bottomInset = mediaQuery.padding.bottom;
+    final viewBottomInset = mediaQuery.viewPadding.bottom;
+    final gestureBottomInset = mediaQuery.systemGestureInsets.bottom;
+    final safeBottomInset = math.max(
+      bottomInset,
+      math.max(viewBottomInset, gestureBottomInset),
+    );
     final bannerHeight = _bannerAd?.size.height.toDouble() ?? 50.0;
     final showBanner =
         widget.showBannerAd && _isBannerReady && _bannerAd != null;
     final bottomPadding =
-        24.0 + (showBanner ? bannerHeight + bottomInset + 12 : 0.0);
+        24.0 + safeBottomInset + (showBanner ? bannerHeight + 12 : 0.0);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -189,13 +199,24 @@ class _GameScaffoldState extends State<GameScaffold> {
               ),
             ),
             SafeArea(
+              bottom: false,
               child: widget.scrollable
                   ? SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPadding),
+                      padding: EdgeInsets.fromLTRB(
+                        20,
+                        topInset > 0 ? 12 : 20,
+                        20,
+                        bottomPadding,
+                      ),
                       child: _buildScaffoldBody(textTheme, false),
                     )
                   : Padding(
-                      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPadding),
+                      padding: EdgeInsets.fromLTRB(
+                        20,
+                        topInset > 0 ? 12 : 20,
+                        20,
+                        bottomPadding,
+                      ),
                       child: _buildScaffoldBody(textTheme, true),
                     ),
             ),
@@ -203,7 +224,7 @@ class _GameScaffoldState extends State<GameScaffold> {
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: bottomInset,
+                bottom: safeBottomInset,
                 child: Container(
                   color: AppColors.panel,
                   padding: const EdgeInsets.only(top: 10, bottom: 10),

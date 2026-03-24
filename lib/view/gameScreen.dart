@@ -1180,7 +1180,7 @@ class _GameScreenState extends State<GameScreen> {
   // ---------------- Ads ----------------
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
-  
+
   BannerAd? _bottomBannerAd;
   bool _isBottomBannerReady = false;
 
@@ -1222,6 +1222,9 @@ class _GameScreenState extends State<GameScreen> {
   // --------------- Build ---------------
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.padding.top;
+    final bottomInset = mediaQuery.padding.bottom;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -1245,36 +1248,44 @@ class _GameScreenState extends State<GameScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 20),
-                // Banner (render only when ready)
-                if (_isBannerReady && _bannerAd != null)
-                  Align(
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: _bannerAd!.size.width.toDouble(),
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(ad: _bannerAd!),
-                    ),
-                  ),
-                // Back btn
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: GestureDetector(
-                    onTap: _onBackPress,
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Color(0xff32167D),
-                      child: Icon(
-                        Icons.arrow_back_outlined,
-                        size: 30,
-                        color: Colors.white,
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: topInset > 0 ? 4 : 20),
+                      // Banner (render only when ready)
+                      if (_isBannerReady && _bannerAd != null)
+                        Align(
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            width: _bannerAd!.size.width.toDouble(),
+                            height: _bannerAd!.size.height.toDouble(),
+                            child: AdWidget(ad: _bannerAd!),
+                          ),
+                        ),
+                      // Back btn
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: GestureDetector(
+                          onTap: _onBackPress,
+                          child: CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Color(0xff32167D),
+                            child: Icon(
+                              Icons.arrow_back_outlined,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      _playerDetails(),
+                      _gamingBoard(),
+                      _bottomBar(bottomInset),
+                    ],
                   ),
                 ),
-                _playerDetails(),
-                _gamingBoard(),
-                _bottomBar(),
               ],
             ),
           ],
@@ -1291,9 +1302,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // --------------- Widgets ---------------
-  Padding _bottomBar() {
+  Padding _bottomBar(double bottomInset) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 30),
+      padding: EdgeInsets.only(bottom: bottomInset + 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [

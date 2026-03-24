@@ -30,6 +30,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await DailyNotificationService.registerAppLaunch();
   runApp(const MyApp());
 }
