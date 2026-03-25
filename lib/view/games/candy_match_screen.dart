@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
+import 'reward_action_button.dart';
 
 class CandyMatchScreen extends StatefulWidget {
   const CandyMatchScreen({super.key});
@@ -57,6 +59,7 @@ class _CandyMatchScreenState extends State<CandyMatchScreen> {
   int _movesLeft = 18;
   int _lastMatchCount = 0;
   bool _isBusy = false;
+  bool _rewardMovesUsed = false;
   String _message = 'Drag a candy into a neighbor to make a match.';
   Offset? _dragStartLocal;
   int? _dragStartRow;
@@ -88,6 +91,7 @@ class _CandyMatchScreenState extends State<CandyMatchScreen> {
     _selectedCol = null;
     _movesLeft = max(10, 18 - ((_level - 1) ~/ 2));
     _lastMatchCount = 0;
+    _rewardMovesUsed = false;
     _clearExistingMatches();
   }
 
@@ -352,6 +356,8 @@ class _CandyMatchScreenState extends State<CandyMatchScreen> {
         _isBusy = false;
         _message = 'Sugar rush. Level $nextLevel is ready.';
       });
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
       await Future<void>.delayed(const Duration(milliseconds: 320));
       if (!mounted) return;
       setState(() {
@@ -380,8 +386,28 @@ class _CandyMatchScreenState extends State<CandyMatchScreen> {
       _score = 0;
       _message = 'Drag a candy into a neighbor to make a match.';
       _isBusy = false;
+      _rewardMovesUsed = false;
       _resetLevel();
     });
+  }
+
+  Future<void> _watchAdForExtraMoves() async {
+    if (_isBusy || _rewardMovesUsed) return;
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () {
+        if (!mounted) return;
+        setState(() {
+          _movesLeft += 3;
+          _rewardMovesUsed = true;
+          _message = 'Reward unlocked. You got 3 extra moves.';
+        });
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock extra moves.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Extra moves were not unlocked this time.');
+    }
   }
 
   @override
@@ -438,6 +464,13 @@ class _CandyMatchScreenState extends State<CandyMatchScreen> {
               child: const Text('Reset level'),
             ),
           ),
+          if (_movesLeft <= 3 && !_rewardMovesUsed) ...[
+            const SizedBox(height: 10),
+            RewardActionButton(
+              label: 'Watch ad for 3 extra moves',
+              onPressed: _isBusy ? null : _watchAdForExtraMoves,
+            ),
+          ],
           const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(14),

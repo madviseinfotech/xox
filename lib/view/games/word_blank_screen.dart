@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
+import 'reward_action_button.dart';
 
 class WordBlankScreen extends StatefulWidget {
   const WordBlankScreen({super.key});
@@ -23,6 +25,7 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
   int? _selectedIndex;
   bool _answered = false;
   bool _correctAnswer = false;
+  bool _rewardRevealUsed = false;
   String _message = 'Pick the missing letter to complete the word.';
 
   @override
@@ -85,6 +88,7 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
     if (round == null) return;
     final picked = round.options[index];
     final correct = picked == round.answer;
+    final levelCleared = correct && (_completed + 1) >= _goalPerLevel;
     var nextMessage = _message;
     var nextCompleted = _completed;
     var nextLevel = _level;
@@ -113,8 +117,13 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
       _correctAnswer = correct;
       _completed = nextCompleted;
       _level = nextLevel;
+      _rewardRevealUsed = false;
       _message = nextMessage;
     });
+    if (levelCleared) {
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
+    }
   }
 
   Future<void> _goNext() async {
@@ -122,6 +131,7 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
     if (!mounted) return;
     setState(() {
       _message = 'Pick the missing letter to complete the word.';
+      _rewardRevealUsed = false;
     });
   }
 
@@ -135,7 +145,55 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
     if (!mounted) return;
     setState(() {
       _message = 'Progress reset to level 1.';
+      _rewardRevealUsed = false;
     });
+  }
+
+  Future<void> _revealLetterWithReward() async {
+    if (_answered || _rewardRevealUsed) return;
+    final round = _round;
+    if (round == null) return;
+    final correctIndex = round.options.indexOf(round.answer);
+    if (correctIndex == -1) return;
+
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () async {
+        if (!mounted) return;
+        final levelCleared = (_completed + 1) >= _goalPerLevel;
+        var nextCompleted = _completed + 1;
+        var nextLevel = _level;
+        var nextMessage =
+            'Hint used. ${round.entry.word}: ${round.entry.description} ${round.entry.intro}';
+        if (nextCompleted >= _goalPerLevel) {
+          nextLevel += 1;
+          nextCompleted = 0;
+          await GameStatsStore.instance.recordWordBlankLevel(nextLevel);
+          _bestLevel = max(_bestLevel, nextLevel);
+          nextMessage =
+              'Hint used. Level clear. ${round.entry.word}: ${round.entry.description} ${round.entry.intro}';
+        }
+        if (!mounted) return;
+        setState(() {
+          _selectedIndex = correctIndex;
+          _answered = true;
+          _correctAnswer = true;
+          _rewardRevealUsed = true;
+          _completed = nextCompleted;
+          _level = nextLevel;
+          _message = nextMessage;
+        });
+        if (levelCleared) {
+          GameInterstitialService.instance.registerRoundCompletion();
+          await GameInterstitialService.instance.maybeShow();
+        }
+      },
+      unavailableMessage:
+          'Add a rewarded ad unit to unlock reveal-letter rewards.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Letter reveal was not unlocked this time.');
+    }
   }
 
   String get _promptWord {
@@ -179,6 +237,13 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
               ),
             ),
           if (_answered) const SizedBox(height: 10),
+          if (!_answered) ...[
+            RewardActionButton(
+              label: 'Watch ad to reveal the letter',
+              onPressed: _revealLetterWithReward,
+            ),
+            const SizedBox(height: 10),
+          ],
           ResetActionButton(
             label: 'Reset to level 1',
             onPressed: _resetProgress,

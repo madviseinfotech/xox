@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -65,6 +66,8 @@ class _HigherLowerScreenState extends State<HigherLowerScreen> {
       _current = next;
       _currentStreak = newStreak;
     });
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   String _labelFor(int value) {

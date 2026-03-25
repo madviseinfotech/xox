@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -67,7 +68,7 @@ class _SnakeScreenState extends State<SnakeScreen> {
     _timer = Timer.periodic(const Duration(milliseconds: 220), (_) => _tick());
   }
 
-  void _tick() {
+  Future<void> _tick() async {
     if (!_running) return;
     _direction = _queuedDirection;
     final head = _snake.first;
@@ -86,7 +87,7 @@ class _SnakeScreenState extends State<SnakeScreen> {
     final hitSelf = _snake.contains(next) && next != _snake.last;
 
     if (hitWall || hitSelf) {
-      _endGame();
+      await _endGame();
       return;
     }
 
@@ -110,7 +111,7 @@ class _SnakeScreenState extends State<SnakeScreen> {
     });
   }
 
-  void _endGame() {
+  Future<void> _endGame() async {
     _timer?.cancel();
     setState(() {
       _running = false;
@@ -118,6 +119,8 @@ class _SnakeScreenState extends State<SnakeScreen> {
       _message = 'Game over. Final length ${_snake.length}.';
     });
     GameStatsStore.instance.recordSnakeBestLength(_snake.length);
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   void _placeFood() {
@@ -181,44 +184,6 @@ class _SnakeScreenState extends State<SnakeScreen> {
                 compact: true,
               ),
               const SizedBox(height: 6),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(child: _DirectionPad(onPressed: _changeDirection)),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: math.min(132, constraints.maxWidth * 0.32),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _running ? null : _startGame,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 13),
-                            ),
-                            child: Text(_running ? 'Running...' : 'Start'),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextButton(
-                            onPressed: _startGame,
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: const Text('Restart'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
               Expanded(
                 child: Center(
                   child: ConstrainedBox(
@@ -262,6 +227,44 @@ class _SnakeScreenState extends State<SnakeScreen> {
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: _DirectionPad(onPressed: _changeDirection)),
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: math.min(132, constraints.maxWidth * 0.32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _running ? null : _startGame,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 13),
+                            ),
+                            child: Text(_running ? 'Running...' : 'Start'),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextButton(
+                            onPressed: _startGame,
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text('Restart'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           );

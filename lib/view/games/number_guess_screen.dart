@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -42,7 +43,7 @@ class _NumberGuessScreenState extends State<NumberGuessScreen> {
     });
   }
 
-  void _submitGuess() {
+  Future<void> _submitGuess() async {
     final guess = int.tryParse(_controller.text);
     if (guess == null || guess < 1 || guess > 50) {
       setState(() {
@@ -66,6 +67,10 @@ class _NumberGuessScreenState extends State<NumberGuessScreen> {
         _message = 'Too high. Move lower.';
       }
     });
+    if (guess == _target) {
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
+    }
   }
 
   @override

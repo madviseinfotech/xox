@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -67,6 +68,8 @@ class _QuickTapScreenState extends State<QuickTapScreen> {
               ? 'New record. $_score taps in $_roundSeconds seconds.'
               : 'Round over. You landed $_score taps.';
         });
+        GameInterstitialService.instance.registerRoundCompletion();
+        await GameInterstitialService.instance.maybeShow();
         return;
       }
 

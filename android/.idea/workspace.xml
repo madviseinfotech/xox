@@ -9,7 +9,37 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d4598c4-5c41-49bc-ae99-31852fe58a44" name="Changes" comment="" />
+    <list default="true" id="9d4598c4-5c41-49bc-ae99-31852fe58a44" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/ad_helper.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/ad_helper.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/dashBoardScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/dashBoardScreen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/balloon_pop_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/balloon_pop_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/brick_breaker_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/brick_breaker_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/candy_match_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/candy_match_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/card_games_pack.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/card_games_pack.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/chess_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/chess_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/color_match_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/color_match_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/cricket_chase_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/cricket_chase_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/dice_duel_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/dice_duel_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/game_scaffold.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/game_scaffold.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/game_stats_store.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/game_stats_store.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/heads_or_tails_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/heads_or_tails_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/higher_lower_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/higher_lower_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/math_equation_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/math_equation_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/memory_match_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/memory_match_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/number_guess_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/number_guess_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/picture_puzzle_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/picture_puzzle_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/quick_tap_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/quick_tap_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/racing_games_pack.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/racing_games_pack.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/rock_paper_scissors_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/rock_paper_scissors_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/snake_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/snake_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/snakes_and_ladders_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/snakes_and_ladders_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/sudoku_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/sudoku_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/view/games/word_blank_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/view/games/word_blank_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../release/release/app-release.aab" beforeDir="false" afterPath="$PROJECT_DIR$/../release/release/app-release.aab" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

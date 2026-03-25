@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -89,6 +90,8 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
         setState(() {
           _level += 1;
         });
+        GameInterstitialService.instance.registerRoundCompletion();
+        await GameInterstitialService.instance.maybeShow();
         _setupBoard();
       }
       return;

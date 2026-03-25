@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
+import 'reward_action_button.dart';
 
 class PicturePuzzleScreen extends StatefulWidget {
   const PicturePuzzleScreen({super.key});
@@ -21,6 +23,7 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
   int _seed = 1;
   int? _selectedTile;
   bool _celebrating = false;
+  bool _hintVisible = false;
   String _message = 'Tap one tile, then tap another tile to swap them.';
 
   @override
@@ -51,6 +54,7 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
       _seed = _random.nextInt(1 << 31);
       _selectedTile = null;
       _celebrating = false;
+      _hintVisible = false;
       _message = 'Swap the tiles to rebuild the full picture.';
     });
   }
@@ -103,6 +107,8 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
       _bestUnlockedLevel = nextLevel;
       await GameStatsStore.instance.recordPicturePuzzleLevel(nextLevel);
     }
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
     await Future<void>.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
     _startLevel(nextLevel);
@@ -110,6 +116,31 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
 
   void _restartLevel() {
     _startLevel(_level);
+  }
+
+  Future<void> _showHintWithReward() async {
+    if (_celebrating || _hintVisible) return;
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () {
+        if (!mounted) return;
+        setState(() {
+          _hintVisible = true;
+          _message = 'Hint unlocked. Compare the full avatar with the tiles.';
+        });
+        Future<void>.delayed(const Duration(seconds: 5), () {
+          if (!mounted) return;
+          setState(() {
+            _hintVisible = false;
+            _message = 'Hint ended. Keep rebuilding the picture.';
+          });
+        });
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock picture hints.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Picture hint was not unlocked this time.');
+    }
   }
 
   @override
@@ -136,6 +167,15 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
               onPressed: _celebrating ? null : _restartLevel,
               child: const Text('Shuffle this level again'),
             ),
+          ),
+          const SizedBox(height: 10),
+          RewardActionButton(
+            label: _hintVisible
+                ? 'Full image hint active'
+                : 'Watch ad for full image hint',
+            onPressed: _hintVisible || _celebrating
+                ? null
+                : _showHintWithReward,
           ),
           const SizedBox(height: 18),
           GamePanel(
@@ -178,8 +218,8 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(16),
                             child: SizedBox(
-                              width: 112,
-                              height: 112,
+                              width: _hintVisible ? 144 : 112,
+                              height: _hintVisible ? 144 : 112,
                               child: CustomPaint(
                                 painter: _PictureReferencePainter(seed: _seed),
                               ),

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_mode_selector.dart';
 import 'game_scaffold.dart';
@@ -95,6 +96,8 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen> {
       setState(() {
         _wins += 1;
       });
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
       return;
     }
 
@@ -119,6 +122,10 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen> {
             'You rolled $playerRoll, CPU rolled $cpuRoll. Keep climbing.';
       }
     });
+    if (cpuWon) {
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
+    }
   }
 
   Future<void> _rollTwoPlayerTurn() async {
@@ -153,6 +160,8 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen> {
         setState(() {
           _wins += 1;
         });
+        GameInterstitialService.instance.registerRoundCompletion();
+        await GameInterstitialService.instance.maybeShow();
       }
       return;
     }
@@ -175,6 +184,10 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen> {
         _message = 'Player 2 rolled $roll. Player 1, your turn.';
       }
     });
+    if (playerTwoWon) {
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
+    }
   }
 
   Future<int> _animateMove({
@@ -183,7 +196,21 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen> {
     required String actorLabel,
   }) async {
     final start = isPlayer ? _playerPos : _opponentPos;
-    final landed = min(start + roll, _boardEnd);
+    final attempted = start + roll;
+    if (attempted > _boardEnd) {
+      if (mounted) {
+        setState(() {
+          _message =
+              '$actorLabel rolled $roll, but needs exact steps to reach 100.';
+          _jumpSource = null;
+          _jumpTarget = null;
+        });
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 320));
+      return start;
+    }
+
+    final landed = attempted;
     if (mounted) {
       setState(() {
         _message = '$actorLabel rolled $roll. Moving...';

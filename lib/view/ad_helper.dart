@@ -23,4 +23,15 @@ class AdHelper {
     }
     throw UnsupportedError("Unsupported platform");
   }
+
+  static String? get rewardedAdUnitId {
+    if (Platform.isAndroid) {
+      if (kDebugMode) {
+        return 'ca-app-pub-3940256099942544/5224354917';
+      }
+      // Add your live rewarded ad unit here when it is ready.
+      return null;
+    }
+    throw UnsupportedError("Unsupported platform");
+  }
 }

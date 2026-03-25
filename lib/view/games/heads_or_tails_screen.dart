@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -80,6 +81,8 @@ class _HeadsOrTailsScreenState extends State<HeadsOrTailsScreen> {
     });
 
     await GameStatsStore.instance.recordHeadsOrTailsStreak(nextStreak);
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   void _resetSession() {

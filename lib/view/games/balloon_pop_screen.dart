@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -78,6 +79,8 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
               ? 'New best. You popped $_score balloons.'
               : 'Time up. You popped $_score balloons.';
         });
+        GameInterstitialService.instance.registerRoundCompletion();
+        await GameInterstitialService.instance.maybeShow();
         return;
       }
       setState(() {
@@ -115,6 +118,8 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
       if (isBest) {
         GameStatsStore.instance.recordBalloonPopBestScore(nextScore);
       }
+      GameInterstitialService.instance.registerRoundCompletion();
+      GameInterstitialService.instance.maybeShow();
       return;
     }
 

@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
+import 'reward_action_button.dart';
 
 class MathEquationScreen extends StatefulWidget {
   const MathEquationScreen({super.key});
@@ -21,6 +23,7 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
   int _bestLevel = 1;
   int? _selectedIndex;
   bool _answered = false;
+  bool _rewardSkipUsed = false;
   String _message = 'Solve equations to unlock the next level.';
 
   @override
@@ -91,6 +94,7 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
     if (_answered) return;
     final picked = round.options[index];
     final correct = picked == round.answer;
+    final levelCleared = correct && (_correct + 1) >= _goalCorrect;
     var nextLevel = _level;
     var nextCorrect = _correct;
     var nextMessage = _message;
@@ -115,14 +119,20 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
       _answered = true;
       _level = nextLevel;
       _correct = nextCorrect;
+      _rewardSkipUsed = false;
       _message = nextMessage;
     });
+    if (levelCleared) {
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
+    }
   }
 
   void _nextQuestion() {
     setState(() {
       _selectedIndex = null;
       _answered = false;
+      _rewardSkipUsed = false;
       _round = _generateRound();
       if (_message.startsWith('Level clear')) {
         _message = 'Level $_level: solve $_goalCorrect equations.';
@@ -141,9 +151,48 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
       _correct = 0;
       _selectedIndex = null;
       _answered = false;
+      _rewardSkipUsed = false;
       _round = _generateRound();
       _message = 'Progress reset to level 1.';
     });
+  }
+
+  Future<void> _skipQuestionWithReward() async {
+    if (_answered || _rewardSkipUsed) return;
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () async {
+        if (!mounted) return;
+        final levelCleared = (_correct + 1) >= _goalCorrect;
+        var nextLevel = _level;
+        var nextCorrect = _correct + 1;
+        var nextMessage = 'Reward used. This question was skipped.';
+        if (nextCorrect >= _goalCorrect) {
+          nextLevel += 1;
+          nextCorrect = 0;
+          await GameStatsStore.instance.recordMathEquationLevel(nextLevel);
+          _bestLevel = max(_bestLevel, nextLevel);
+          nextMessage = 'Reward used. Level clear. Level $nextLevel unlocked.';
+        }
+        if (!mounted) return;
+        setState(() {
+          _answered = true;
+          _rewardSkipUsed = true;
+          _selectedIndex = null;
+          _level = nextLevel;
+          _correct = nextCorrect;
+          _message = nextMessage;
+        });
+        if (levelCleared) {
+          GameInterstitialService.instance.registerRoundCompletion();
+          await GameInterstitialService.instance.maybeShow();
+        }
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock skip rewards.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Skip reward was not unlocked this time.');
+    }
   }
 
   @override
@@ -177,6 +226,13 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
               ),
             ),
           if (_answered) const SizedBox(height: 10),
+          if (!_answered) ...[
+            RewardActionButton(
+              label: 'Watch ad to skip this question',
+              onPressed: _skipQuestionWithReward,
+            ),
+            const SizedBox(height: 10),
+          ],
           ResetActionButton(
             label: 'Reset to level 1',
             onPressed: _resetProgress,

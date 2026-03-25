@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
+import 'reward_action_button.dart';
 
 class TurboTrafficScreen extends StatefulWidget {
   const TurboTrafficScreen({super.key});
@@ -34,6 +36,7 @@ class _TurboTrafficScreenState extends State<TurboTrafficScreen> {
   double _dashOffset = 0;
   bool _running = false;
   bool _crashed = false;
+  bool _rewardContinueUsed = false;
   _TrafficSkin _selectedSkin = _TrafficSkin.cyan;
   String _message = 'Use left and right to stay clear of traffic.';
 
@@ -83,9 +86,14 @@ class _TurboTrafficScreenState extends State<TurboTrafficScreen> {
       _dashOffset = 0;
       _running = true;
       _crashed = false;
+      _rewardContinueUsed = false;
       _message = 'Race on. Grab coins and hit boost pads when the road opens.';
       _resetRace();
     });
+    _runLoop();
+  }
+
+  void _runLoop() {
     _timer = Timer.periodic(const Duration(milliseconds: 40), (timer) async {
       if (!mounted || !_running) return;
       final boosted = _boostFrames > 0;
@@ -241,6 +249,41 @@ class _TurboTrafficScreenState extends State<TurboTrafficScreen> {
           ? 'Crash, but new best. You dodged $_score cars.'
           : 'Crash. You dodged $_score cars over ${(_distance / 10).floor()} m.';
     });
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
+  }
+
+  Future<void> _continueAfterCrash() async {
+    if (_running || !_crashed || _rewardContinueUsed) return;
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () {
+        if (!mounted) return;
+        final clearFromY = _trackHeight - _playerCarHeight - 120;
+        setState(() {
+          _crashed = false;
+          _running = true;
+          _rewardContinueUsed = true;
+          _boostFrames = max(_boostFrames, 20);
+          _obstacles.removeWhere(
+            (obstacle) =>
+                obstacle.lane == _playerLane && obstacle.y >= clearFromY,
+          );
+          _pickups.removeWhere(
+            (pickup) => pickup.lane == _playerLane && pickup.y >= clearFromY,
+          );
+          _message = 'Bonus continue unlocked. Back into traffic.';
+        });
+        _runLoop();
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock continue rewards.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(
+        context,
+        'Continue reward was not unlocked this time.',
+      );
+    }
   }
 
   void _shiftLane(int delta) {
@@ -421,6 +464,13 @@ class _TurboTrafficScreenState extends State<TurboTrafficScreen> {
           const SizedBox(height: 18),
           StatusCard(message: _message, accent: const Color(0xffef4444)),
           const SizedBox(height: 14),
+          if (_crashed && !_running && !_rewardContinueUsed) ...[
+            RewardActionButton(
+              label: 'Watch ad to continue the race',
+              onPressed: _continueAfterCrash,
+            ),
+            const SizedBox(height: 14),
+          ],
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -681,6 +731,7 @@ class _BikeSprintScreenState extends State<BikeSprintScreen> {
   int _combo = 0;
   int _perfectBoosts = 0;
   bool _running = false;
+  bool _rewardBoostUsed = false;
   String _message = 'Tap boost while the needle is inside the green zone.';
 
   @override
@@ -715,6 +766,7 @@ class _BikeSprintScreenState extends State<BikeSprintScreen> {
       _distance = 0;
       _combo = 0;
       _perfectBoosts = 0;
+      _rewardBoostUsed = false;
       _needle = 0.2;
       _direction = 0.08 + ((_level - 1) * 0.006);
       _message = 'Level $_level: ride to $_targetDistance m.';
@@ -751,6 +803,8 @@ class _BikeSprintScreenState extends State<BikeSprintScreen> {
               ? 'Photo finish. New best distance: $_distance m.'
               : 'Ride complete. You covered $_distance m.';
         });
+        GameInterstitialService.instance.registerRoundCompletion();
+        await GameInterstitialService.instance.maybeShow();
         return;
       }
       setState(() {
@@ -800,6 +854,8 @@ class _BikeSprintScreenState extends State<BikeSprintScreen> {
       if (nextDistance > _bestDistance) {
         GameStatsStore.instance.recordBikeSprintBestDistance(nextDistance);
       }
+      GameInterstitialService.instance.registerRoundCompletion();
+      GameInterstitialService.instance.maybeShow();
       return;
     }
 
@@ -823,8 +879,52 @@ class _BikeSprintScreenState extends State<BikeSprintScreen> {
       _running = false;
       _needle = 0.2;
       _direction = 0.08;
+      _rewardBoostUsed = false;
       _message = 'Tap boost while the needle is inside the green zone.';
     });
+  }
+
+  Future<void> _watchAdForBonusBoost() async {
+    if (!_running || _rewardBoostUsed) return;
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () {
+        if (!mounted) return;
+        final nextDistance = _distance + 35;
+        final reachedGoal = nextDistance >= _targetDistance;
+        setState(() {
+          _rewardBoostUsed = true;
+          _distance = nextDistance;
+          _combo += 1;
+          _message = reachedGoal
+              ? 'Reward boost launched you across the finish line.'
+              : 'Reward boost unlocked. +35 m distance.';
+        });
+        if (reachedGoal) {
+          _timer?.cancel();
+          _meterTimer?.cancel();
+          final finalDistance = _distance;
+          final beatBest = finalDistance > _bestDistance;
+          setState(() {
+            _running = false;
+            _level += 1;
+            if (beatBest) {
+              _bestDistance = finalDistance;
+            }
+            _message = 'Reward boost clear. Level $_level is ready.';
+          });
+          if (beatBest) {
+            GameStatsStore.instance.recordBikeSprintBestDistance(finalDistance);
+          }
+          GameInterstitialService.instance.registerRoundCompletion();
+          GameInterstitialService.instance.maybeShow();
+        }
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock bonus boosts.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Bonus boost was not unlocked this time.');
+    }
   }
 
   @override
@@ -943,6 +1043,13 @@ class _BikeSprintScreenState extends State<BikeSprintScreen> {
             ),
           ),
           const SizedBox(height: 10),
+          if (_running && !_rewardBoostUsed) ...[
+            RewardActionButton(
+              label: 'Watch ad for bonus boost',
+              onPressed: _watchAdForBonusBoost,
+            ),
+            const SizedBox(height: 10),
+          ],
           ResetActionButton(label: 'Reset levels', onPressed: _resetSprint),
         ],
       ),
@@ -971,6 +1078,7 @@ class _CycleDashScreenState extends State<CycleDashScreen> {
   int _hearts = 3;
   double _scrollOffset = 0;
   bool _running = false;
+  bool _rewardContinueUsed = false;
   String _message = 'Tap start, then move left or right to collect stars.';
 
   @override
@@ -1002,6 +1110,7 @@ class _CycleDashScreenState extends State<CycleDashScreen> {
       _hearts = 3;
       _scrollOffset = 0;
       _running = false;
+      _rewardContinueUsed = false;
       _items.clear();
       _message = 'Tap start, then move left or right to collect stars.';
     });
@@ -1016,9 +1125,14 @@ class _CycleDashScreenState extends State<CycleDashScreen> {
       _hearts = 3;
       _scrollOffset = 0;
       _running = true;
+      _rewardContinueUsed = false;
       _items.clear();
       _message = 'Ride on. Grab stars and avoid puddles.';
     });
+    _runRideLoop();
+  }
+
+  void _runRideLoop() {
     _timer = Timer.periodic(const Duration(milliseconds: 120), (timer) async {
       if (!mounted || !_running) return;
 
@@ -1083,6 +1197,8 @@ class _CycleDashScreenState extends State<CycleDashScreen> {
               ? 'New best ride. You reached ${nextDistance}m.'
               : 'Oops, splash. You reached ${nextDistance}m.';
         });
+        GameInterstitialService.instance.registerRoundCompletion();
+        await GameInterstitialService.instance.maybeShow();
         return;
       }
 
@@ -1101,6 +1217,30 @@ class _CycleDashScreenState extends State<CycleDashScreen> {
             : 'Keep riding.';
       });
     });
+  }
+
+  Future<void> _continueRideWithReward() async {
+    if (_running || _hearts > 0 || _rewardContinueUsed) return;
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () {
+        if (!mounted) return;
+        setState(() {
+          _hearts = 1;
+          _running = true;
+          _rewardContinueUsed = true;
+          _items.removeWhere(
+            (item) => item.lane == _lane && item.y >= _trackHeight - 90,
+          );
+          _message = 'Extra heart unlocked. Ride again.';
+        });
+        _runRideLoop();
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock continue rewards.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Ride continue was not unlocked this time.');
+    }
   }
 
   void _move(int delta) {
@@ -1307,6 +1447,13 @@ class _CycleDashScreenState extends State<CycleDashScreen> {
             ],
           ),
           const SizedBox(height: 10),
+          if (_hearts == 0 && !_running && !_rewardContinueUsed) ...[
+            RewardActionButton(
+              label: 'Watch ad to restore 1 heart',
+              onPressed: _continueRideWithReward,
+            ),
+            const SizedBox(height: 10),
+          ],
           ResetActionButton(label: 'Reset ride', onPressed: _resetRide),
         ],
       ),
@@ -1353,6 +1500,7 @@ class _AvatarRushScreenState extends State<AvatarRushScreen> {
   int _stars = 0;
   double _scrollOffset = 0;
   bool _running = false;
+  bool _rewardContinueUsed = false;
   String _message = 'Tap start, then move left or right to catch stars.';
 
   @override
@@ -1384,6 +1532,7 @@ class _AvatarRushScreenState extends State<AvatarRushScreen> {
       _stars = 0;
       _scrollOffset = 0;
       _running = false;
+      _rewardContinueUsed = false;
       _items.clear();
       _message = 'Tap start, then move left or right to catch stars.';
     });
@@ -1398,9 +1547,14 @@ class _AvatarRushScreenState extends State<AvatarRushScreen> {
       _stars = 0;
       _scrollOffset = 0;
       _running = true;
+      _rewardContinueUsed = false;
       _items.clear();
       _message = 'Run fast. Catch stars and dodge blocks.';
     });
+    _runLoop();
+  }
+
+  void _runLoop() {
     _timer = Timer.periodic(const Duration(milliseconds: 120), (timer) async {
       if (!mounted || !_running) return;
 
@@ -1464,6 +1618,8 @@ class _AvatarRushScreenState extends State<AvatarRushScreen> {
               ? 'New best run. You reached $nextScore.'
               : 'Oops, you were bumped. Score $nextScore.';
         });
+        GameInterstitialService.instance.registerRoundCompletion();
+        await GameInterstitialService.instance.maybeShow();
         return;
       }
 
@@ -1482,6 +1638,30 @@ class _AvatarRushScreenState extends State<AvatarRushScreen> {
             : 'Keep running.';
       });
     });
+  }
+
+  Future<void> _continueRunWithReward() async {
+    if (_running || _lives > 0 || _rewardContinueUsed) return;
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () {
+        if (!mounted) return;
+        setState(() {
+          _lives = 1;
+          _running = true;
+          _rewardContinueUsed = true;
+          _items.removeWhere(
+            (item) => item.lane == _lane && item.y >= _trackHeight - 92,
+          );
+          _message = 'Bonus continue unlocked. Back on the track.';
+        });
+        _runLoop();
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock continue rewards.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Run continue was not unlocked this time.');
+    }
   }
 
   void _move(int delta) {
@@ -1685,6 +1865,13 @@ class _AvatarRushScreenState extends State<AvatarRushScreen> {
             ],
           ),
           const SizedBox(height: 10),
+          if (_lives == 0 && !_running && !_rewardContinueUsed) ...[
+            RewardActionButton(
+              label: 'Watch ad to continue the run',
+              onPressed: _continueRunWithReward,
+            ),
+            const SizedBox(height: 10),
+          ],
           ResetActionButton(label: 'Reset run', onPressed: _resetRun),
         ],
       ),

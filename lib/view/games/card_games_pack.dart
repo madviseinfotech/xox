@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 
@@ -85,7 +86,7 @@ class _BlackjackScreenState extends State<BlackjackScreen> {
     return total;
   }
 
-  void _hit() {
+  Future<void> _hit() async {
     if (_roundOver) return;
     setState(() {
       _playerHand.add(_drawCard());
@@ -96,10 +97,12 @@ class _BlackjackScreenState extends State<BlackjackScreen> {
         _roundOver = true;
         _message = 'Bust. Dealer wins this round.';
       });
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
     }
   }
 
-  void _stand() {
+  Future<void> _stand() async {
     if (_roundOver) return;
     while (_scoreHand(_dealerHand) < 17) {
       _dealerHand.add(_drawCard());
@@ -116,6 +119,8 @@ class _BlackjackScreenState extends State<BlackjackScreen> {
         _message = 'Dealer wins this round.';
       }
     });
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   @override
@@ -263,7 +268,7 @@ class _WarCardsScreenState extends State<WarCardsScreen> {
     return order[card.rank]!;
   }
 
-  void _flipCards() {
+  Future<void> _flipCards() async {
     final player = _drawCard();
     final cpu = _drawCard();
     final playerValue = _value(player);
@@ -282,6 +287,8 @@ class _WarCardsScreenState extends State<WarCardsScreen> {
         _message = 'Tie. Flip again.';
       }
     });
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   @override

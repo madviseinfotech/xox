@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
+import 'reward_action_button.dart';
 
 class BrickBreakerScreen extends StatefulWidget {
   const BrickBreakerScreen({super.key});
@@ -36,6 +38,7 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
   int _score = 0;
   int _bestScore = 0;
   int _lives = 3;
+  bool _rewardContinueUsed = false;
   String _message = 'Tap start, bounce the ball, and break every brick.';
 
   @override
@@ -71,6 +74,7 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
     _ballDy = -(0.0105 + ((_level - 1) * 0.0007));
     _running = false;
     _roundStarted = !resetProgress;
+    _rewardContinueUsed = false;
   }
 
   List<_Brick> _buildBricks(int level) {
@@ -236,6 +240,8 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
       _message = 'Level ${_level - 1} clear. Level $_level is ready.';
       _prepareLevel();
     });
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   Future<void> _finishRound({
@@ -255,6 +261,8 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
       }
       _message = isBest ? 'New best. $message' : message;
     });
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   void _movePaddleTo(double localDx, double width) {
@@ -278,6 +286,30 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
       _message = 'Tap start, bounce the ball, and break every brick.';
       _prepareLevel(resetProgress: true);
     });
+  }
+
+  Future<void> _watchAdForExtraLife() async {
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () {
+        if (!mounted) return;
+        setState(() {
+          _lives = 1;
+          _running = false;
+          _rewardContinueUsed = true;
+          _ballX = _paddleX;
+          _ballY = 0.7;
+          _ballDx = _random.nextBool() ? 0.008 : -0.008;
+          _ballDy = -(0.0105 + ((_level - 1) * 0.0007));
+          _message = 'Bonus life unlocked. Tap Start to continue the wall.';
+        });
+      },
+      unavailableMessage:
+          'Add a rewarded ad unit to unlock extra-life rewards.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Extra life was not unlocked this time.');
+    }
   }
 
   @override
@@ -307,6 +339,13 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
             ),
           ),
           const SizedBox(height: 10),
+          if (_lives == 0 && !_running && !_rewardContinueUsed) ...[
+            RewardActionButton(
+              label: 'Watch ad for 1 extra life',
+              onPressed: _watchAdForExtraLife,
+            ),
+            const SizedBox(height: 10),
+          ],
           ResetActionButton(label: 'Restart game', onPressed: _restartGame),
           const SizedBox(height: 18),
           GamePanel(

@@ -14,6 +14,7 @@ class GameStatsSnapshot {
     required this.sudokuSolvedBoards,
     required this.cricketWins,
     required this.snakesAndLaddersWins,
+    required this.ludoWins,
     required this.balloonPopBestScore,
     required this.colorMatchBestScore,
     required this.turboTrafficBestScore,
@@ -40,6 +41,7 @@ class GameStatsSnapshot {
   final int sudokuSolvedBoards;
   final int cricketWins;
   final int snakesAndLaddersWins;
+  final int ludoWins;
   final int balloonPopBestScore;
   final int colorMatchBestScore;
   final int turboTrafficBestScore;
@@ -71,6 +73,7 @@ class GameStatsStore {
   static const _sudokuSolvedBoardsKey = 'stats_sudoku_solved_boards';
   static const _cricketWinsKey = 'stats_cricket_wins';
   static const _snakesAndLaddersWinsKey = 'stats_snakes_and_ladders_wins';
+  static const _ludoWinsKey = 'stats_ludo_wins';
   static const _balloonPopBestScoreKey = 'stats_balloon_pop_best_score';
   static const _colorMatchBestScoreKey = 'stats_color_match_best_score';
   static const _turboTrafficBestScoreKey = 'stats_turbo_traffic_best_score';
@@ -83,6 +86,7 @@ class GameStatsStore {
   static const _wordBlankLevelKey = 'stats_word_blank_level';
   static const _picturePuzzleLevelKey = 'stats_picture_puzzle_level';
   static const _totalMiniGamesPlayedKey = 'stats_total_mini_games_played';
+  static const _favoriteGamesKey = 'stats_favorite_games';
 
   Future<SharedPreferences> get _prefs async => SharedPreferences.getInstance();
 
@@ -101,6 +105,7 @@ class GameStatsStore {
       sudokuSolvedBoards: prefs.getInt(_sudokuSolvedBoardsKey) ?? 0,
       cricketWins: prefs.getInt(_cricketWinsKey) ?? 0,
       snakesAndLaddersWins: prefs.getInt(_snakesAndLaddersWinsKey) ?? 0,
+      ludoWins: prefs.getInt(_ludoWinsKey) ?? 0,
       balloonPopBestScore: prefs.getInt(_balloonPopBestScoreKey) ?? 0,
       colorMatchBestScore: prefs.getInt(_colorMatchBestScoreKey) ?? 0,
       turboTrafficBestScore: prefs.getInt(_turboTrafficBestScoreKey) ?? 0,
@@ -208,6 +213,12 @@ class GameStatsStore {
     await prefs.setInt(_snakesAndLaddersWinsKey, current + 1);
   }
 
+  Future<void> incrementLudoWins() async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_ludoWinsKey) ?? 0;
+    await prefs.setInt(_ludoWinsKey, current + 1);
+  }
+
   Future<void> recordBalloonPopBestScore(int score) async {
     final prefs = await _prefs;
     final current = prefs.getInt(_balloonPopBestScoreKey) ?? 0;
@@ -294,5 +305,25 @@ class GameStatsStore {
     if (level > current || level == 1) {
       await prefs.setInt(_picturePuzzleLevelKey, level);
     }
+  }
+
+  Future<Set<String>> loadFavoriteGames() async {
+    final prefs = await _prefs;
+    return (prefs.getStringList(_favoriteGamesKey) ?? const <String>[]).toSet();
+  }
+
+  Future<void> toggleFavoriteGame(String title) async {
+    final prefs = await _prefs;
+    final favorites =
+        (prefs.getStringList(_favoriteGamesKey) ?? const <String>[]).toSet();
+    if (favorites.contains(title)) {
+      favorites.remove(title);
+    } else {
+      favorites.add(title);
+    }
+    await prefs.setStringList(
+      _favoriteGamesKey,
+      favorites.toList(growable: false),
+    );
   }
 }

@@ -10,6 +10,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:xox_madvise/services/daily_notification_service.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 import 'package:xox_madvise/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xox_madvise/utils/utility.dart';
@@ -29,6 +30,7 @@ import 'package:xox_madvise/view/games/memory_match_screen.dart';
 import 'package:xox_madvise/view/games/math_equation_screen.dart';
 import 'package:xox_madvise/view/games/number_guess_screen.dart';
 import 'package:xox_madvise/view/games/picture_puzzle_screen.dart';
+import 'package:xox_madvise/view/games/ludo_screen.dart';
 import 'package:xox_madvise/view/games/quick_tap_screen.dart';
 import 'package:xox_madvise/view/games/range_picker_screen.dart';
 import 'package:xox_madvise/view/games/rock_paper_scissors_screen.dart';
@@ -56,6 +58,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   AudioPlayer? _musicPlayer;
   static const List<String> _categories = [
     'All',
+    'Favorites',
     'Kids',
     'Learning',
     '2 Player',
@@ -71,6 +74,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   String _selectedCategory = 'All';
   String _searchQuery = '';
   bool _musicEnabled = Utility.volume;
+  Set<String> _favoriteTitles = const <String>{};
 
   @override
   void initState() {
@@ -79,6 +83,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     _setupDashboardMusic();
     _loadBanner();
     _loadStats();
+    _loadFavorites();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkAppUpdate(context, showFeedback: false);
       Future<void>.delayed(const Duration(milliseconds: 900), () async {
@@ -107,6 +112,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   bool _matchesCategory(_HubGame game, String category) {
     switch (category) {
+      case 'Favorites':
+        return _favoriteTitles.contains(game.title);
       case 'Kids':
         return game.badge == 'Kids' ||
             game.badge == 'Learning' ||
@@ -121,6 +128,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           'Dice Duel',
           'Cricket Chase',
           'Snakes & Ladders',
+          'Ludo',
         }.contains(game.title);
       case 'Puzzle':
         return {
@@ -356,6 +364,17 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       artStyle: _GameArtStyle.snakesLadders,
       statLine: 'Races won: ${stats.snakesAndLaddersWins}',
       buildPage: () => const SnakesAndLaddersScreen(),
+    ),
+    _HubGame(
+      title: 'Ludo',
+      subtitle: 'Roll a 6 to enter, race your token home, and beat the rival.',
+      badge: 'Board Race',
+      spotlightLabel: 'Ludo',
+      icon: Icons.blur_circular_rounded,
+      colors: const [Color(0xffef4444), Color(0xff2563eb)],
+      artStyle: _GameArtStyle.ludo,
+      statLine: 'Ludo wins: ${stats.ludoWins}',
+      buildPage: () => const LudoScreen(),
     ),
     _HubGame(
       title: 'Turbo Traffic',
@@ -604,6 +623,53 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     });
   }
 
+  Future<void> _loadFavorites() async {
+    final favorites = await GameStatsStore.instance.loadFavoriteGames();
+    if (!mounted) return;
+    setState(() {
+      _favoriteTitles = favorites;
+    });
+  }
+
+  Future<void> _toggleFavorite(_HubGame game) async {
+    await _playClickSound();
+    await GameStatsStore.instance.toggleFavoriteGame(game.title);
+    if (!mounted) return;
+    setState(() {
+      if (_favoriteTitles.contains(game.title)) {
+        _favoriteTitles = {..._favoriteTitles}..remove(game.title);
+      } else {
+        _favoriteTitles = {..._favoriteTitles, game.title};
+      }
+    });
+  }
+
+  int _popularityRank(_HubGame game) {
+    const ranks = <String, int>{
+      'Ludo': 100,
+      'XOX Arena': 99,
+      'Snakes & Ladders': 97,
+      'Candy Match': 96,
+      'Brick Breaker': 95,
+      'Turbo Traffic': 94,
+      'Snake': 93,
+      'Chess': 92,
+      'Memory Match': 91,
+      'Sudoku Mini': 90,
+      'Rock Paper Scissors': 89,
+      'Blackjack': 88,
+      'War Cards': 87,
+      'Cricket Chase': 86,
+      'Bike Sprint': 85,
+      'Picture Puzzle': 84,
+      'Math Equation': 83,
+      'Word Blank': 82,
+      'Balloon Pop': 81,
+      'Color Match': 80,
+    };
+    return ranks[game.title] ?? 10;
+  }
+
   Future<void> _setupDashboardMusic() async {
     final player = AudioPlayer();
     _musicPlayer = player;
@@ -658,6 +724,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   Future<void> _loadBanner() async {
     if (!AdHelper.shouldShowBannerAds) return;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
       final width = MediaQuery.of(context).size.width.truncate();
       final adaptiveSize =
           await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(width);
@@ -669,6 +736,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         listener: BannerAdListener(
           onAdLoaded: (ad) {
             _bannerAd = ad as BannerAd;
+            debugPrint('Dashboard banner loaded successfully.');
             setState(() => _isBannerReady = true);
           },
           onAdFailedToLoad: (ad, error) {
@@ -679,6 +747,10 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             setState(() {
               _bannerAd = null;
               _isBannerReady = false;
+            });
+            Future<void>.delayed(const Duration(seconds: 8), () {
+              if (!mounted || _isBannerReady || _bannerAd != null) return;
+              _loadBanner();
             });
           },
         ),
@@ -692,6 +764,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   Future<void> _openGame(_HubGame game) async {
     await _playClickSound();
     await _musicPlayer?.stop();
+    await GameInterstitialService.instance.maybeShow();
+    if (!mounted) return;
     await GameStatsStore.instance.recordGameLaunch();
     await Get.to(game.buildPage);
     if (!mounted) return;
@@ -710,6 +784,18 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final bottomInset = mediaQuery.padding.bottom;
+    final viewBottomInset = mediaQuery.viewPadding.bottom;
+    final gestureBottomInset = mediaQuery.systemGestureInsets.bottom;
+    final safeBottomInset = math.max(
+      bottomInset,
+      math.max(viewBottomInset, gestureBottomInset),
+    );
+    final showBanner = _isBannerReady && _bannerAd != null;
+    final bannerHeight = _bannerAd?.size.height.toDouble() ?? 50.0;
+    final dashboardBottomPadding =
+        18.0 + safeBottomInset + (showBanner ? bannerHeight + 12 : 0.0);
     final stats = _stats;
     final allGames = _games(
       stats ??
@@ -726,6 +812,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             sudokuSolvedBoards: 0,
             cricketWins: 0,
             snakesAndLaddersWins: 0,
+            ludoWins: 0,
             balloonPopBestScore: 0,
             colorMatchBestScore: 0,
             turboTrafficBestScore: 0,
@@ -740,10 +827,21 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             totalMiniGamesPlayed: 0,
           ),
     );
-    final games = allGames
-        .where((game) => _matchesCategory(game, _selectedCategory))
-        .where((game) => _matchesSearch(game, _searchQuery))
-        .toList();
+    final games =
+        allGames
+            .where((game) => _matchesCategory(game, _selectedCategory))
+            .where((game) => _matchesSearch(game, _searchQuery))
+            .toList()
+          ..sort((a, b) {
+            final aFavorite = _favoriteTitles.contains(a.title) ? 1 : 0;
+            final bFavorite = _favoriteTitles.contains(b.title) ? 1 : 0;
+            if (aFavorite != bFavorite) {
+              return bFavorite.compareTo(aFavorite);
+            }
+            final popularity = _popularityRank(b).compareTo(_popularityRank(a));
+            if (popularity != 0) return popularity;
+            return a.title.compareTo(b.title);
+          });
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -825,76 +923,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                           SliverToBoxAdapter(
                             child: _EntranceReveal(
                               delay: const Duration(milliseconds: 220),
-                              child: _buildProgressSection(
-                                stats ??
-                                    const GameStatsSnapshot(
-                                      memoryBestMoves: 0,
-                                      numberGuessBestAttempts: 0,
-                                      rangePickerLargestRange: 0,
-                                      headsOrTailsBestStreak: 0,
-                                      rockPaperScissorsWins: 0,
-                                      diceDuelWins: 0,
-                                      higherLowerBestStreak: 0,
-                                      quickTapBestScore: 0,
-                                      snakeBestLength: 0,
-                                      sudokuSolvedBoards: 0,
-                                      cricketWins: 0,
-                                      snakesAndLaddersWins: 0,
-                                      balloonPopBestScore: 0,
-                                      colorMatchBestScore: 0,
-                                      turboTrafficBestScore: 0,
-                                      bikeSprintBestDistance: 0,
-                                      cycleDashBestDistance: 0,
-                                      avatarRushBestScore: 0,
-                                      brickBreakerBestScore: 0,
-                                      candyMatchBestScore: 0,
-                                      mathEquationLevel: 1,
-                                      wordBlankLevel: 1,
-                                      picturePuzzleLevel: 1,
-                                      totalMiniGamesPlayed: 0,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                          SliverToBoxAdapter(
-                            child: _EntranceReveal(
-                              delay: const Duration(milliseconds: 260),
-                              child: _buildBadgeShowcase(
-                                stats ??
-                                    const GameStatsSnapshot(
-                                      memoryBestMoves: 0,
-                                      numberGuessBestAttempts: 0,
-                                      rangePickerLargestRange: 0,
-                                      headsOrTailsBestStreak: 0,
-                                      rockPaperScissorsWins: 0,
-                                      diceDuelWins: 0,
-                                      higherLowerBestStreak: 0,
-                                      quickTapBestScore: 0,
-                                      snakeBestLength: 0,
-                                      sudokuSolvedBoards: 0,
-                                      cricketWins: 0,
-                                      snakesAndLaddersWins: 0,
-                                      balloonPopBestScore: 0,
-                                      colorMatchBestScore: 0,
-                                      turboTrafficBestScore: 0,
-                                      bikeSprintBestDistance: 0,
-                                      cycleDashBestDistance: 0,
-                                      avatarRushBestScore: 0,
-                                      brickBreakerBestScore: 0,
-                                      candyMatchBestScore: 0,
-                                      mathEquationLevel: 1,
-                                      wordBlankLevel: 1,
-                                      picturePuzzleLevel: 1,
-                                      totalMiniGamesPlayed: 0,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                          SliverToBoxAdapter(
-                            child: _EntranceReveal(
-                              delay: const Duration(milliseconds: 280),
                               child: _buildSearchField(),
                             ),
                           ),
@@ -926,29 +954,109 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                           const SliverToBoxAdapter(child: SizedBox(height: 12)),
                           SliverToBoxAdapter(
                             child: _EntranceReveal(
+                              delay: const Duration(milliseconds: 320),
+                              child: _buildProgressSection(
+                                stats ??
+                                    const GameStatsSnapshot(
+                                      memoryBestMoves: 0,
+                                      numberGuessBestAttempts: 0,
+                                      rangePickerLargestRange: 0,
+                                      headsOrTailsBestStreak: 0,
+                                      rockPaperScissorsWins: 0,
+                                      diceDuelWins: 0,
+                                      higherLowerBestStreak: 0,
+                                      quickTapBestScore: 0,
+                                      snakeBestLength: 0,
+                                      sudokuSolvedBoards: 0,
+                                      cricketWins: 0,
+                                      snakesAndLaddersWins: 0,
+                                      ludoWins: 0,
+                                      balloonPopBestScore: 0,
+                                      colorMatchBestScore: 0,
+                                      turboTrafficBestScore: 0,
+                                      bikeSprintBestDistance: 0,
+                                      cycleDashBestDistance: 0,
+                                      avatarRushBestScore: 0,
+                                      brickBreakerBestScore: 0,
+                                      candyMatchBestScore: 0,
+                                      mathEquationLevel: 1,
+                                      wordBlankLevel: 1,
+                                      picturePuzzleLevel: 1,
+                                      totalMiniGamesPlayed: 0,
+                                    ),
+                              ),
+                            ),
+                          ),
+                          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                          SliverToBoxAdapter(
+                            child: _EntranceReveal(
+                              delay: const Duration(milliseconds: 360),
+                              child: _buildBadgeShowcase(
+                                stats ??
+                                    const GameStatsSnapshot(
+                                      memoryBestMoves: 0,
+                                      numberGuessBestAttempts: 0,
+                                      rangePickerLargestRange: 0,
+                                      headsOrTailsBestStreak: 0,
+                                      rockPaperScissorsWins: 0,
+                                      diceDuelWins: 0,
+                                      higherLowerBestStreak: 0,
+                                      quickTapBestScore: 0,
+                                      snakeBestLength: 0,
+                                      sudokuSolvedBoards: 0,
+                                      cricketWins: 0,
+                                      snakesAndLaddersWins: 0,
+                                      ludoWins: 0,
+                                      balloonPopBestScore: 0,
+                                      colorMatchBestScore: 0,
+                                      turboTrafficBestScore: 0,
+                                      bikeSprintBestDistance: 0,
+                                      cycleDashBestDistance: 0,
+                                      avatarRushBestScore: 0,
+                                      brickBreakerBestScore: 0,
+                                      candyMatchBestScore: 0,
+                                      mathEquationLevel: 1,
+                                      wordBlankLevel: 1,
+                                      picturePuzzleLevel: 1,
+                                      totalMiniGamesPlayed: 0,
+                                    ),
+                              ),
+                            ),
+                          ),
+                          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                          SliverToBoxAdapter(
+                            child: _EntranceReveal(
                               delay: const Duration(milliseconds: 420),
                               child: _buildActionStrip(),
                             ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: SizedBox(height: dashboardBottomPadding),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  if (_isBannerReady && _bannerAd != null)
-                    Container(
-                      color: const Color(0xff111827),
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      child: Center(
-                        child: SizedBox(
-                          width: _bannerAd!.size.width.toDouble(),
-                          height: _bannerAd!.size.height.toDouble(),
-                          child: AdWidget(ad: _bannerAd!),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
+            if (showBanner)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: safeBottomInset,
+                child: Container(
+                  color: const Color(0xff111827),
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: Center(
+                    child: SizedBox(
+                      width: _bannerAd!.size.width.toDouble(),
+                      height: _bannerAd!.size.height.toDouble(),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -1552,6 +1660,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   }
 
   Widget _buildGameCard(_HubGame game) {
+    final isFavorite = _favoriteTitles.contains(game.title);
     return _InteractiveCard(
       borderRadius: BorderRadius.circular(22),
       shadowColor: game.colors.last.withValues(alpha: 0.12),
@@ -1563,7 +1672,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(9),
           child: Row(
             children: [
               _GameArt(
@@ -1577,8 +1686,10 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Expanded(
                           child: Text(
@@ -1591,36 +1702,58 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                             ),
                           ),
                         ),
+                        IconButton(
+                          onPressed: () => _toggleFavorite(game),
+                          constraints: const BoxConstraints(
+                            minWidth: 26,
+                            minHeight: 26,
+                          ),
+                          padding: EdgeInsets.zero,
+                          visualDensity: const VisualDensity(
+                            horizontal: -4,
+                            vertical: -4,
+                          ),
+                          splashRadius: 16,
+                          icon: Icon(
+                            isFavorite
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            color: isFavorite
+                                ? const Color(0xfffb7185)
+                                : Colors.white60,
+                            size: 18,
+                          ),
+                        ),
                         const Icon(
                           Icons.arrow_outward_rounded,
                           color: Colors.white60,
-                          size: 14,
+                          size: 13,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       game.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.cardTitle.copyWith(fontSize: 16),
+                      style: AppTextStyles.cardTitle.copyWith(fontSize: 15),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 1),
                     Text(
                       game.subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.textMuted,
-                        fontSize: 11,
+                        fontSize: 10.5,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 3),
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
-                        vertical: 5,
+                        vertical: 3,
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
@@ -1632,7 +1765,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.caption.copyWith(
                           color: AppColors.textSecondary,
-                          fontSize: 11,
+                          fontSize: 10.5,
                         ),
                       ),
                     ),
@@ -1725,6 +1858,7 @@ enum _GameArtStyle {
   sudoku,
   cricket,
   snakesLadders,
+  ludo,
   balloonPop,
   colorMatch,
   brickBreaker,
@@ -2095,6 +2229,79 @@ class _FallbackGameArt extends StatelessWidget {
               right: compact ? 14 : 18,
               bottom: compact ? 16 : 18,
               child: Text('🐍', style: TextStyle(fontSize: compact ? 24 : 32)),
+            ),
+          ],
+        );
+      case _GameArtStyle.ludo:
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned(
+              left: compact ? 14 : 18,
+              top: compact ? 12 : 16,
+              child: Container(
+                height: compact ? 20 : 24,
+                width: compact ? 20 : 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xffef4444),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+              ),
+            ),
+            Positioned(
+              right: compact ? 14 : 18,
+              bottom: compact ? 12 : 16,
+              child: Container(
+                height: compact ? 20 : 24,
+                width: compact ? 20 : 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xff2563eb),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+              ),
+            ),
+            Center(
+              child: Container(
+                height: compact ? 28 : 34,
+                width: compact ? 28 : 34,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white.withValues(alpha: 0.18),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.25),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    '6',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: compact ? 14 : 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: compact ? 22 : 26,
+              right: compact ? 22 : 26,
+              top: compact ? 30 : 36,
+              child: Container(
+                height: 3,
+                color: Colors.white.withValues(alpha: 0.45),
+              ),
+            ),
+            Positioned(
+              top: compact ? 20 : 24,
+              bottom: compact ? 20 : 24,
+              left: compact ? 40 : 46,
+              child: Container(
+                width: 3,
+                color: Colors.white.withValues(alpha: 0.35),
+              ),
             ),
           ],
         );

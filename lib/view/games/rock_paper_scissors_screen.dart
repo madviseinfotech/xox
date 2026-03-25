@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_mode_selector.dart';
 import 'game_scaffold.dart';
@@ -60,6 +61,8 @@ class _RockPaperScissorsScreenState extends State<RockPaperScissorsScreen> {
           _winnerLabel = null;
         }
       });
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
       return;
     }
 
@@ -95,6 +98,8 @@ class _RockPaperScissorsScreenState extends State<RockPaperScissorsScreen> {
         _winnerLabel = null;
       }
     });
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   int _decideOutcome(_Move player, _Move cpu) {

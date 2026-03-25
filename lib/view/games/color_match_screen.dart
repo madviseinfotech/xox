@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
@@ -87,6 +88,8 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
         _score = 0;
         _message = 'Level clear. Level $_level unlocked.';
       });
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
     }
 
     _nextTarget();

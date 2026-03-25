@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 
@@ -41,7 +42,7 @@ class _ChessScreenState extends State<ChessScreen> {
 
   bool _isCurrentSide(String piece) => _isWhite(piece) == _whiteTurn;
 
-  void _onTapSquare(int row, int col) {
+  Future<void> _onTapSquare(int row, int col) async {
     final piece = _board[row][col];
 
     if (_selected == null) {
@@ -73,6 +74,7 @@ class _ChessScreenState extends State<ChessScreen> {
     }
 
     final captured = _board[row][col];
+    final capturedKing = captured != null && captured.endsWith('k');
     setState(() {
       _board[row][col] = selectedPiece;
       _board[fromRow][fromCol] = null;
@@ -82,7 +84,7 @@ class _ChessScreenState extends State<ChessScreen> {
         _board[row][col] = '${selectedPiece[0]}q';
       }
 
-      if (captured != null && captured.endsWith('k')) {
+      if (capturedKing) {
         _message =
             '${_whiteTurn ? 'White' : 'Black'} wins by capturing the king.';
       } else {
@@ -90,6 +92,10 @@ class _ChessScreenState extends State<ChessScreen> {
         _message = '${_whiteTurn ? 'White' : 'Black'} to move.';
       }
     });
+    if (capturedKing) {
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
+    }
   }
 
   bool _isLegalMove(

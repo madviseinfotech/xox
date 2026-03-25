@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_scaffold.dart';
 import 'game_stats_store.dart';
+import 'reward_action_button.dart';
 
 class SudokuScreen extends StatefulWidget {
   const SudokuScreen({super.key});
@@ -52,6 +54,7 @@ class _SudokuScreenState extends State<SudokuScreen> {
   late List<int?> _board;
   bool _completed = false;
   int _solvedBoards = 0;
+  bool _hintUsed = false;
   String _message = 'Tap an empty tile to cycle through 1 to 4.';
 
   @override
@@ -93,6 +96,8 @@ class _SudokuScreenState extends State<SudokuScreen> {
         _message = 'Puzzle solved. Great work.';
       });
       await GameStatsStore.instance.incrementSudokuSolvedBoards();
+      GameInterstitialService.instance.registerRoundCompletion();
+      await GameInterstitialService.instance.maybeShow();
     }
   }
 
@@ -100,8 +105,53 @@ class _SudokuScreenState extends State<SudokuScreen> {
     setState(() {
       _board = [..._puzzle];
       _completed = false;
+      _hintUsed = false;
       _message = 'Tap an empty tile to cycle through 1 to 4.';
     });
+  }
+
+  Future<void> _revealTileWithReward() async {
+    if (_completed || _hintUsed) return;
+    final hiddenIndexes = <int>[];
+    for (var index = 0; index < _board.length; index++) {
+      if (_puzzle[index] == null && _board[index] != _solution[index]) {
+        hiddenIndexes.add(index);
+      }
+    }
+    if (hiddenIndexes.isEmpty) return;
+
+    final earned = await RewardedAdService.instance.show(
+      context: context,
+      onRewardEarned: () async {
+        if (!mounted) return;
+        final revealIndex = hiddenIndexes.first;
+        final nextBoard = [..._board];
+        nextBoard[revealIndex] = _solution[revealIndex];
+        final solved = nextBoard.indexed.every(
+          (entry) => entry.$2 == _solution[entry.$1],
+        );
+        setState(() {
+          _board = nextBoard;
+          _hintUsed = true;
+          _message = solved
+              ? 'Hint revealed the final tile. Puzzle solved.'
+              : 'Hint used. One tile has been revealed.';
+        });
+        if (solved && !_completed) {
+          setState(() {
+            _completed = true;
+            _solvedBoards += 1;
+          });
+          await GameStatsStore.instance.incrementSudokuSolvedBoards();
+          GameInterstitialService.instance.registerRoundCompletion();
+          await GameInterstitialService.instance.maybeShow();
+        }
+      },
+      unavailableMessage: 'Add a rewarded ad unit to unlock sudoku hints.',
+    );
+    if (!earned && mounted) {
+      showGameAdSnackBar(context, 'Sudoku hint was not unlocked this time.');
+    }
   }
 
   @override
@@ -130,6 +180,11 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 : const Color(0xff3b82f6),
           ),
           const SizedBox(height: 18),
+          RewardActionButton(
+            label: 'Watch ad to reveal 1 tile',
+            onPressed: _completed || _hintUsed ? null : _revealTileWithReward,
+          ),
+          const SizedBox(height: 10),
           TextButton(onPressed: _resetBoard, child: const Text('New puzzle')),
           const SizedBox(height: 18),
           GamePanel(

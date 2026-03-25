@@ -3,10 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 import 'package:xox_madvise/theme/app_theme.dart';
 import 'package:xox_madvise/utils/utility.dart';
 import 'package:xox_madvise/view/ad_helper.dart';
-import 'package:xox_madvise/view/back_interstitial_controller.dart';
 import 'package:xox_madvise/view/retention_prompts.dart';
 
 class GameScaffold extends StatefulWidget {
@@ -40,9 +40,6 @@ class GameScaffold extends StatefulWidget {
 }
 
 class _GameScaffoldState extends State<GameScaffold> {
-  final BackInterstitialController _backAdController =
-      BackInterstitialController();
-
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
   AudioPlayer? _musicPlayer;
@@ -51,7 +48,8 @@ class _GameScaffoldState extends State<GameScaffold> {
   @override
   void initState() {
     super.initState();
-    _backAdController.load();
+    GameInterstitialService.instance.load();
+    RewardedAdService.instance.load();
     _loadBanner();
     _setupBackgroundMusic();
   }
@@ -60,7 +58,6 @@ class _GameScaffoldState extends State<GameScaffold> {
   void dispose() {
     _bannerAd?.dispose();
     _musicPlayer?.dispose();
-    _backAdController.dispose();
     super.dispose();
   }
 
@@ -116,6 +113,10 @@ class _GameScaffoldState extends State<GameScaffold> {
               _bannerAd = null;
               _isBannerReady = false;
             });
+            Future<void>.delayed(const Duration(seconds: 8), () {
+              if (!mounted || _isBannerReady || _bannerAd != null) return;
+              _loadBanner();
+            });
           },
         ),
       );
@@ -126,10 +127,9 @@ class _GameScaffoldState extends State<GameScaffold> {
   }
 
   Future<void> _handleBack() async {
-    await _backAdController.showThen(() async {
-      if (!mounted) return;
-      await showLeaveGamePrompt(context);
-    });
+    await GameInterstitialService.instance.maybeShow();
+    if (!mounted) return;
+    await showLeaveGamePrompt(context);
   }
 
   String? _resolveBannerAdUnitId() {

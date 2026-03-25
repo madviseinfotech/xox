@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:xox_madvise/services/game_ad_service.dart';
 
 import 'game_mode_selector.dart';
 import 'game_scaffold.dart';
@@ -178,6 +179,8 @@ class _CricketChaseScreenState extends State<CricketChaseScreen> {
         _wins += 1;
       });
     }
+    GameInterstitialService.instance.registerRoundCompletion();
+    await GameInterstitialService.instance.maybeShow();
   }
 
   void _resetMatch() {
