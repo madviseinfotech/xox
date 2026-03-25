@@ -233,17 +233,6 @@ class _CricketChaseScreenState extends State<CricketChaseScreen> {
                       ? 'You are bowling. Balls left: $_ballsLeft'
                       : 'Player 1 bowling. Balls left: $_ballsLeft'),
           ),
-          const SizedBox(height: 22),
-          HeadToHeadPanel(
-            leftLabel: _mode == _CricketMode.computer ? 'You' : 'Player 1',
-            highlightLeft:
-                _winnerLabel == 'You win' || _winnerLabel == 'Player 1 wins',
-            leftChild: _choiceValue(_playerChoice),
-            rightLabel: _mode == _CricketMode.computer ? 'CPU' : 'Player 2',
-            highlightRight:
-                _winnerLabel == 'CPU wins' || _winnerLabel == 'Player 2 wins',
-            rightChild: _choiceValue(_opponentChoice),
-          ),
           const SizedBox(height: 18),
           StatusCard(
             message: _message,
@@ -279,6 +268,17 @@ class _CricketChaseScreenState extends State<CricketChaseScreen> {
           ),
           const SizedBox(height: 10),
           ResetActionButton(label: 'New match', onPressed: _resetMatch),
+          const SizedBox(height: 22),
+          HeadToHeadPanel(
+            leftLabel: _mode == _CricketMode.computer ? 'You' : 'Player 1',
+            highlightLeft:
+                _winnerLabel == 'You win' || _winnerLabel == 'Player 1 wins',
+            leftChild: _choiceValue(_playerChoice),
+            rightLabel: _mode == _CricketMode.computer ? 'CPU' : 'Player 2',
+            highlightRight:
+                _winnerLabel == 'CPU wins' || _winnerLabel == 'Player 2 wins',
+            rightChild: _choiceValue(_opponentChoice),
+          ),
         ],
       ),
     );

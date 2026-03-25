@@ -200,25 +200,7 @@ class _DiceDuelScreenState extends State<DiceDuelScreen> {
             rightValue: _opponentScore.toString(),
             footer: 'Higher dice wins the round.',
           ),
-          const SizedBox(height: 22),
-          HeadToHeadPanel(
-            leftLabel: _mode == _DiceMode.computer ? 'You' : 'Player 1',
-            highlightLeft:
-                _winnerLabel == 'You win' || _winnerLabel == 'Player 1 wins',
-            leftChild: _diceValue(_playerRoll),
-            rightLabel: _mode == _DiceMode.computer ? 'CPU' : 'Player 2',
-            highlightRight:
-                _winnerLabel == 'CPU wins' || _winnerLabel == 'Player 2 wins',
-            rightChild: _diceValue(_opponentRoll),
-          ),
           const SizedBox(height: 18),
-          StatusCard(
-            message: _message,
-            accent: const Color(0xffec4899),
-            highlight: _winnerLabel != null,
-            headline: _winnerLabel,
-          ),
-          const SizedBox(height: 22),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -234,6 +216,24 @@ class _DiceDuelScreenState extends State<DiceDuelScreen> {
           ),
           const SizedBox(height: 10),
           ResetActionButton(label: 'Reset match', onPressed: _reset),
+          const SizedBox(height: 18),
+          StatusCard(
+            message: _message,
+            accent: const Color(0xffec4899),
+            highlight: _winnerLabel != null,
+            headline: _winnerLabel,
+          ),
+          const SizedBox(height: 22),
+          HeadToHeadPanel(
+            leftLabel: _mode == _DiceMode.computer ? 'You' : 'Player 1',
+            highlightLeft:
+                _winnerLabel == 'You win' || _winnerLabel == 'Player 1 wins',
+            leftChild: _diceValue(_playerRoll),
+            rightLabel: _mode == _DiceMode.computer ? 'CPU' : 'Player 2',
+            highlightRight:
+                _winnerLabel == 'CPU wins' || _winnerLabel == 'Player 2 wins',
+            rightChild: _diceValue(_opponentRoll),
+          ),
         ],
       ),
     );

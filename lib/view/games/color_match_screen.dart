@@ -117,47 +117,6 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
             rightValue: _bestScore.toString(),
             footer: 'Streak $_score/$_targetScore • Rounds played: $_rounds',
           ),
-          const SizedBox(height: 20),
-          GamePanel(
-            padding: const EdgeInsets.all(22),
-            child: Column(
-              children: [
-                Text(
-                  'Tap this color',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: const Color(0xff94a3b8),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  height: 120,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(26),
-                    color: _target.color,
-                    boxShadow: [
-                      BoxShadow(
-                        color: _target.color.withValues(alpha: 0.28),
-                        blurRadius: 24,
-                        offset: const Offset(0, 16),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      _target.label,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           const SizedBox(height: 18),
           StatusCard(message: _message, accent: const Color(0xff38bdf8)),
           const SizedBox(height: 18),
@@ -184,6 +143,50 @@ class _ColorMatchScreenState extends State<ColorMatchScreen> {
           ),
           const SizedBox(height: 10),
           ResetActionButton(label: 'Reset game', onPressed: _resetGame),
+          const SizedBox(height: 18),
+          GamePanel(
+            padding: const EdgeInsets.all(22),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Tap this color',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: const Color(0xff94a3b8),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    height: 120,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(26),
+                      color: _target.color,
+                      boxShadow: [
+                        BoxShadow(
+                          color: _target.color.withValues(alpha: 0.28),
+                          blurRadius: 24,
+                          offset: const Offset(0, 16),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        _target.label,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

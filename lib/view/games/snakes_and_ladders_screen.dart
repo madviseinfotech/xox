@@ -296,219 +296,192 @@ class _SnakesAndLaddersScreenState extends State<SnakesAndLaddersScreen> {
       title: 'Snakes & Ladders',
       subtitle: 'Full 100-square race.',
       accent: const [Color(0xff7c3aed), Color(0xffec4899)],
-      scrollable: false,
       compactHeader: true,
       minimalHeader: true,
-      showBannerAd: false,
       backgroundMusicAsset: 'music/begin.mp3',
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
+      child: Column(
+        children: [
+          GameModeSelector<_RaceMode>(
+            selectedValue: _mode,
+            options: _RaceMode.values
+                .map((mode) => GameModeOption(value: mode, label: mode.label))
+                .toList(growable: false),
+            onChanged: _changeMode,
+            accentColor: const Color(0xffec4899),
+            dense: true,
+          ),
+          const SizedBox(height: 8),
+          Row(
             children: [
-              GameModeSelector<_RaceMode>(
-                selectedValue: _mode,
-                options: _RaceMode.values
-                    .map(
-                      (mode) => GameModeOption(value: mode, label: mode.label),
-                    )
-                    .toList(growable: false),
-                onChanged: _changeMode,
-                accentColor: const Color(0xffec4899),
-                dense: true,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: CompactMetricCard(
-                      label: _mode == _RaceMode.computer ? 'You' : 'Player 1',
-                      value: _playerPos.toString(),
-                      compact: true,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: CompactMetricCard(
-                      label: _mode == _RaceMode.computer ? 'CPU' : 'Player 2',
-                      value: _opponentPos.toString(),
-                      compact: true,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: CompactMetricCard(
-                      label: 'Last roll',
-                      value: _lastRoll == 0 ? '-' : _lastRoll.toString(),
-                      compact: true,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
               Expanded(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: constraints.maxWidth,
-                      maxHeight: constraints.maxHeight * 0.74,
-                    ),
-                    child: GamePanel(
-                      padding: const EdgeInsets.all(6),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.zero,
-                          itemCount: _boardEnd,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _crossAxisCount,
-                                mainAxisSpacing: 4,
-                                crossAxisSpacing: 4,
-                              ),
-                          itemBuilder: (context, index) {
-                            final square = _squareForIndex(index);
-                            final playerHere = square == _playerPos;
-                            final opponentHere = square == _opponentPos;
-                            final jump = _jumps[square];
-                            final isLadder = jump != null && jump > square;
-                            final isSnake = jump != null && jump < square;
-                            final isHighlighted =
-                                square == _jumpSource || square == _jumpTarget;
-                            final highlightColor = _jumpIsLadder
-                                ? const Color(0xff22c55e)
-                                : const Color(0xffef4444);
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 220),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: playerHere
-                                    ? const Color(0xffc084fc)
-                                    : opponentHere
-                                    ? const Color(0xfffb7185)
-                                    : isHighlighted
-                                    ? highlightColor.withValues(alpha: 0.18)
-                                    : Colors.white.withValues(alpha: 0.05),
-                                border: Border.all(
-                                  color: isHighlighted
-                                      ? highlightColor.withValues(alpha: 0.9)
-                                      : Colors.white.withValues(alpha: 0.08),
-                                  width: isHighlighted ? 1.4 : 1,
-                                ),
-                                boxShadow: isHighlighted
-                                    ? [
-                                        BoxShadow(
-                                          color: highlightColor.withValues(
-                                            alpha: 0.24,
-                                          ),
-                                          blurRadius: 12,
-                                          spreadRadius: 1,
-                                        ),
-                                      ]
-                                    : null,
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    left: 4,
-                                    top: 3,
-                                    child: Text(
-                                      square.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      isLadder
-                                          ? '🪜'
-                                          : isSnake
-                                          ? '🐍'
-                                          : '',
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                  ),
-                                  if (playerHere || opponentHere)
-                                    Positioned(
-                                      right: 4,
-                                      bottom: 3,
-                                      child: Text(
-                                        playerHere && opponentHere
-                                            ? 'B'
-                                            : playerHere
-                                            ? (_mode == _RaceMode.computer
-                                                  ? 'Y'
-                                                  : '1')
-                                            : (_mode == _RaceMode.computer
-                                                  ? 'C'
-                                                  : '2'),
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 8,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                child: CompactMetricCard(
+                  label: _mode == _RaceMode.computer ? 'You' : 'Player 1',
+                  value: _playerPos.toString(),
+                  compact: true,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: CompactMetricCard(
+                  label: _mode == _RaceMode.computer ? 'CPU' : 'Player 2',
+                  value: _opponentPos.toString(),
+                  compact: true,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: CompactMetricCard(
+                  label: 'Last roll',
+                  value: _lastRoll == 0 ? '-' : _lastRoll.toString(),
+                  compact: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          InlineStatusStrip(
+            message: _message,
+            accent: _matchOver
+                ? const Color(0xffec4899)
+                : const Color(0xffa855f7),
+            compact: true,
+            highlight: _matchOver,
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(
+                child: CompactMetricCard(
+                  label: 'Wins',
+                  value: _wins.toString(),
+                  compact: true,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton(
+                  onPressed: _matchOver || _isAnimatingMove ? null : _rollTurn,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text(
+                    _isAnimatingMove
+                        ? 'Moving...'
+                        : _mode == _RaceMode.computer
+                        ? 'Roll dice'
+                        : (_isPlayerOneTurn
+                              ? 'Player 1 roll'
+                              : 'Player 2 roll'),
                   ),
                 ),
               ),
-              const SizedBox(height: 6),
-              InlineStatusStrip(
-                message: _message,
-                accent: _matchOver
-                    ? const Color(0xffec4899)
-                    : const Color(0xffa855f7),
-                compact: true,
-                highlight: _matchOver,
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: CompactMetricCard(
-                      label: 'Wins',
-                      value: _wins.toString(),
-                      compact: true,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: _matchOver || _isAnimatingMove
-                          ? null
-                          : _rollTurn,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text(
-                        _isAnimatingMove
-                            ? 'Moving...'
-                            : _mode == _RaceMode.computer
-                            ? 'Roll dice'
-                            : (_isPlayerOneTurn
-                                  ? 'Player 1 roll'
-                                  : 'Player 2 roll'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 2),
-              TextButton(onPressed: _resetMatch, child: const Text('New race')),
             ],
-          );
-        },
+          ),
+          const SizedBox(height: 2),
+          TextButton(onPressed: _resetMatch, child: const Text('New race')),
+          const SizedBox(height: 8),
+          GamePanel(
+            padding: const EdgeInsets.all(6),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: _boardEnd,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _crossAxisCount,
+                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 4,
+                ),
+                itemBuilder: (context, index) {
+                  final square = _squareForIndex(index);
+                  final playerHere = square == _playerPos;
+                  final opponentHere = square == _opponentPos;
+                  final jump = _jumps[square];
+                  final isLadder = jump != null && jump > square;
+                  final isSnake = jump != null && jump < square;
+                  final isHighlighted =
+                      square == _jumpSource || square == _jumpTarget;
+                  final highlightColor = _jumpIsLadder
+                      ? const Color(0xff22c55e)
+                      : const Color(0xffef4444);
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: playerHere
+                          ? const Color(0xffc084fc)
+                          : opponentHere
+                          ? const Color(0xfffb7185)
+                          : isHighlighted
+                          ? highlightColor.withValues(alpha: 0.18)
+                          : Colors.white.withValues(alpha: 0.05),
+                      border: Border.all(
+                        color: isHighlighted
+                            ? highlightColor.withValues(alpha: 0.9)
+                            : Colors.white.withValues(alpha: 0.08),
+                        width: isHighlighted ? 1.4 : 1,
+                      ),
+                      boxShadow: isHighlighted
+                          ? [
+                              BoxShadow(
+                                color: highlightColor.withValues(alpha: 0.24),
+                                blurRadius: 12,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 4,
+                          top: 3,
+                          child: Text(
+                            square.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            isLadder
+                                ? '🪜'
+                                : isSnake
+                                ? '🐍'
+                                : '',
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        ),
+                        if (playerHere || opponentHere)
+                          Positioned(
+                            right: 4,
+                            bottom: 3,
+                            child: Text(
+                              playerHere && opponentHere
+                                  ? 'B'
+                                  : playerHere
+                                  ? (_mode == _RaceMode.computer ? 'Y' : '1')
+                                  : (_mode == _RaceMode.computer ? 'C' : '2'),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

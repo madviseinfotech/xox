@@ -16,7 +16,7 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
   final Random _random = Random();
   final List<int> _remainingIndexes = [];
 
-  late _WordBlankRound _round;
+  _WordBlankRound? _round;
   int _level = 1;
   int _completed = 0;
   int _bestLevel = 1;
@@ -81,8 +81,10 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
 
   Future<void> _selectOption(int index) async {
     if (_answered) return;
-    final picked = _round.options[index];
-    final correct = picked == _round.answer;
+    final round = _round;
+    if (round == null) return;
+    final picked = round.options[index];
+    final correct = picked == round.answer;
     var nextMessage = _message;
     var nextCompleted = _completed;
     var nextLevel = _level;
@@ -90,18 +92,18 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
     if (correct) {
       nextCompleted += 1;
       nextMessage =
-          '${_round.entry.word} means ${_round.entry.description} ${_round.entry.intro}';
+          '${round.entry.word} means ${round.entry.description} ${round.entry.intro}';
       if (nextCompleted >= _goalPerLevel) {
         nextLevel += 1;
         nextCompleted = 0;
         await GameStatsStore.instance.recordWordBlankLevel(nextLevel);
         _bestLevel = max(_bestLevel, nextLevel);
         nextMessage =
-            'Level clear. ${_round.entry.word}: ${_round.entry.description} ${_round.entry.intro}';
+            'Level clear. ${round.entry.word}: ${round.entry.description} ${round.entry.intro}';
       }
     } else {
       nextMessage =
-          'Not quite. ${_round.entry.word} is the correct word. ${_round.entry.description}';
+          'Not quite. ${round.entry.word} is the correct word. ${round.entry.description}';
     }
 
     if (!mounted) return;
@@ -137,16 +139,22 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
   }
 
   String get _promptWord {
-    final chars = _round.entry.word.split('');
-    chars[_round.blankIndex] = '_';
+    final round = _round;
+    if (round == null) return '';
+    final chars = round.entry.word.split('');
+    chars[round.blankIndex] = '_';
     return chars.join(' ');
   }
 
   @override
   Widget build(BuildContext context) {
+    final round = _round;
+    if (round == null) {
+      return const SizedBox.shrink();
+    }
     final headline = _answered
         ? (_correctAnswer ? 'Word Complete!' : 'Try The Next One')
-        : _round.entry.emoji;
+        : round.entry.emoji;
 
     return GameScaffold(
       title: 'Word Blank',
@@ -162,11 +170,32 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
             footer: 'Saved level: $_bestLevel on this device',
           ),
           const SizedBox(height: 18),
+          if (_answered)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _goNext,
+                child: const Text('Next word'),
+              ),
+            ),
+          if (_answered) const SizedBox(height: 10),
+          ResetActionButton(
+            label: 'Reset to level 1',
+            onPressed: _resetProgress,
+          ),
+          const SizedBox(height: 18),
+          StatusCard(
+            message: _message,
+            accent: const Color(0xff06b6d4),
+            highlight: _answered,
+            headline: headline,
+          ),
+          const SizedBox(height: 18),
           GamePanel(
             child: Column(
               children: [
                 Text(
-                  _round.entry.clue,
+                  round.entry.clue,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: const Color(0xffbae6fd),
@@ -194,10 +223,9 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: 2.1,
-            children: List.generate(_round.options.length, (index) {
+            children: List.generate(round.options.length, (index) {
               final selected = _selectedIndex == index;
-              final correct =
-                  _answered && _round.options[index] == _round.answer;
+              final correct = _answered && round.options[index] == round.answer;
               final wrong = _answered && selected && !correct;
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -211,32 +239,11 @@ class _WordBlankScreenState extends State<WordBlankScreen> {
                 ),
                 onPressed: _answered ? null : () => _selectOption(index),
                 child: Text(
-                  _round.options[index],
+                  round.options[index],
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
               );
             }),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(
-            message: _message,
-            accent: const Color(0xff06b6d4),
-            highlight: _answered,
-            headline: headline,
-          ),
-          const SizedBox(height: 18),
-          if (_answered)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _goNext,
-                child: const Text('Next word'),
-              ),
-            ),
-          const SizedBox(height: 10),
-          ResetActionButton(
-            label: 'Reset to level 1',
-            onPressed: _resetProgress,
           ),
         ],
       ),

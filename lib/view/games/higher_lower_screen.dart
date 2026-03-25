@@ -97,52 +97,6 @@ class _HigherLowerScreenState extends State<HigherLowerScreen> {
             rightValue: _bestStreak.toString(),
             footer: 'Equal values count as correct either way.',
           ),
-          const SizedBox(height: 22),
-          GamePanel(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(
-                  'Current card',
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                const SizedBox(height: 14),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  transitionBuilder: (child, animation) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0.15, 0),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: FadeTransition(opacity: animation, child: child),
-                    );
-                  },
-                  child: _CardFace(
-                    key: ValueKey('current_$_current'),
-                    label: _labelFor(_current),
-                    accent: const Color(0xfff97316),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                if (_nextPreview != null) ...[
-                  Text(
-                    'Last reveal',
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  const SizedBox(height: 10),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 220),
-                    child: _CardFace(
-                      key: ValueKey('preview_$_nextPreview'),
-                      label: _labelFor(_nextPreview!),
-                      accent: const Color(0xfffacc15),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
           const SizedBox(height: 18),
           StatusCard(message: _message, accent: const Color(0xfff59e0b)),
           const SizedBox(height: 18),
@@ -167,6 +121,55 @@ class _HigherLowerScreenState extends State<HigherLowerScreen> {
           TextButton(
             onPressed: _startFresh,
             child: const Text('Shuffle new round'),
+          ),
+          const SizedBox(height: 18),
+          GamePanel(
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Current card',
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  const SizedBox(height: 14),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    transitionBuilder: (child, animation) {
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.15, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: FadeTransition(opacity: animation, child: child),
+                      );
+                    },
+                    child: _CardFace(
+                      key: ValueKey('current_$_current'),
+                      label: _labelFor(_current),
+                      accent: const Color(0xfff97316),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  if (_nextPreview != null) ...[
+                    Text(
+                      'Last reveal',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    const SizedBox(height: 10),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      child: _CardFace(
+                        key: ValueKey('preview_$_nextPreview'),
+                        label: _labelFor(_nextPreview!),
+                        accent: const Color(0xfffacc15),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ],
       ),

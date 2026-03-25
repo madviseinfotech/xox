@@ -10,7 +10,6 @@ class DailyNotificationService {
   static final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
-  static const String _launchCountKey = 'daily_notification_launch_count';
   static const String _enabledKey = 'daily_notification_enabled';
   static const int _firstNotificationId = 7000;
   static const int _scheduleDays = 14;
@@ -43,11 +42,8 @@ class DailyNotificationService {
     if (kIsWeb) return;
 
     final prefs = await SharedPreferences.getInstance();
-    final launchCount = (prefs.getInt(_launchCountKey) ?? 0) + 1;
-    await prefs.setInt(_launchCountKey, launchCount);
-
     final enabled = prefs.getBool(_enabledKey) ?? true;
-    if (!enabled || launchCount < 2) {
+    if (!enabled) {
       return;
     }
 

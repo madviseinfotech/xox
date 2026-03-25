@@ -139,6 +139,26 @@ class _BlackjackScreenState extends State<BlackjackScreen> {
             footer: _roundOver ? 'Round finished' : 'Hit or stand',
           ),
           const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xff16a34a)),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _roundOver ? _dealRound : _hit,
+                  child: Text(_roundOver ? 'Deal again' : 'Hit'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _roundOver ? null : _stand,
+                  child: const Text('Stand'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
           GamePanel(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,26 +199,6 @@ class _BlackjackScreenState extends State<BlackjackScreen> {
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xff16a34a)),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _roundOver ? _dealRound : _hit,
-                  child: Text(_roundOver ? 'Deal again' : 'Hit'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _roundOver ? null : _stand,
-                  child: const Text('Stand'),
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -300,6 +300,16 @@ class _WarCardsScreenState extends State<WarCardsScreen> {
             footer: 'Higher card wins each round',
           ),
           const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xffef4444)),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _flipCards,
+              child: const Text('Flip cards'),
+            ),
+          ),
+          const SizedBox(height: 18),
           GamePanel(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -331,16 +341,6 @@ class _WarCardsScreenState extends State<WarCardsScreen> {
                   ],
                 ),
               ],
-            ),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xffef4444)),
-          const SizedBox(height: 18),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _flipCards,
-              child: const Text('Flip cards'),
             ),
           ),
         ],

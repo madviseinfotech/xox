@@ -135,67 +135,117 @@ class _RockPaperScissorsScreenState extends State<RockPaperScissorsScreen> {
       title: 'Rock Paper Scissors',
       subtitle: 'Switch between computer duels and local two-player rounds.',
       accent: const [Color(0xff22c55e), Color(0xff14b8a6)],
-      child: Column(
-        children: [
-          GameModeSelector<_OpponentMode>(
-            selectedValue: _mode,
-            options: _OpponentMode.values
-                .map((mode) => GameModeOption(value: mode, label: mode.label))
-                .toList(growable: false),
-            onChanged: _changeMode,
-            accentColor: const Color(0xff22c55e),
-          ),
-          const SizedBox(height: 18),
-          ScorePanel(
-            leftLabel: _mode == _OpponentMode.computer ? 'You' : 'Player 1',
-            leftValue: _playerScore.toString(),
-            rightLabel: _mode == _OpponentMode.computer ? 'CPU' : 'Player 2',
-            rightValue: _opponentScore.toString(),
-            footer: 'Rounds played: $_rounds',
-          ),
-          const SizedBox(height: 20),
-          HeadToHeadPanel(
-            leftLabel: _mode == _OpponentMode.computer ? 'You' : 'Player 1',
-            highlightLeft:
-                _winnerLabel == 'You win' || _winnerLabel == 'Player 1 wins',
-            leftChild: _choiceValue(
-              _playerMove,
-              hidden:
-                  _mode == _OpponentMode.twoPlayers && _awaitingSecondPlayer,
-            ),
-            rightLabel: _mode == _OpponentMode.computer ? 'CPU' : 'Player 2',
-            highlightRight:
-                _winnerLabel == 'CPU wins' || _winnerLabel == 'Player 2 wins',
-            rightChild: _choiceValue(
-              _opponentMove,
-              hidden:
-                  _mode == _OpponentMode.twoPlayers && !_awaitingSecondPlayer,
-            ),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(
-            message: _result,
-            accent: const Color(0xff22c55e),
-            highlight: _winnerLabel != null,
-            headline: _winnerLabel,
-          ),
-          const SizedBox(height: 24),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: _moves
-                .map((move) => _moveButton(move))
-                .toList(growable: false),
-          ),
-          const SizedBox(height: 24),
-          ResetActionButton(label: 'Reset score', onPressed: _resetGame),
-        ],
+      compactHeader: true,
+      minimalHeader: true,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxHeight < 620;
+          return Column(
+            children: [
+              GameModeSelector<_OpponentMode>(
+                dense: compact,
+                selectedValue: _mode,
+                options: _OpponentMode.values
+                    .map(
+                      (mode) => GameModeOption(value: mode, label: mode.label),
+                    )
+                    .toList(growable: false),
+                onChanged: _changeMode,
+                accentColor: const Color(0xff22c55e),
+              ),
+              SizedBox(height: compact ? 10 : 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CompactMetricCard(
+                      label: _mode == _OpponentMode.computer
+                          ? 'You'
+                          : 'Player 1',
+                      value: _playerScore.toString(),
+                      compact: compact,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CompactMetricCard(
+                      label: _mode == _OpponentMode.computer
+                          ? 'CPU'
+                          : 'Player 2',
+                      value: _opponentScore.toString(),
+                      compact: compact,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CompactMetricCard(
+                      label: 'Rounds',
+                      value: _rounds.toString(),
+                      compact: compact,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: compact ? 10 : 16),
+              Wrap(
+                spacing: compact ? 8 : 12,
+                runSpacing: compact ? 8 : 12,
+                alignment: WrapAlignment.center,
+                children: _moves
+                    .map((move) => _moveButton(move, compact: compact))
+                    .toList(growable: false),
+              ),
+              SizedBox(height: compact ? 10 : 14),
+              InlineStatusStrip(
+                message: _winnerLabel == null
+                    ? _result
+                    : '${_winnerLabel!}. $_result',
+                accent: const Color(0xff22c55e),
+                compact: compact,
+                highlight: _winnerLabel != null,
+              ),
+              SizedBox(height: compact ? 12 : 18),
+              ResetActionButton(label: 'Reset score', onPressed: _resetGame),
+              SizedBox(height: compact ? 12 : 18),
+              HeadToHeadPanel(
+                leftLabel: _mode == _OpponentMode.computer ? 'You' : 'Player 1',
+                highlightLeft:
+                    _winnerLabel == 'You win' ||
+                    _winnerLabel == 'Player 1 wins',
+                leftChild: _choiceValue(
+                  _playerMove,
+                  compact: compact,
+                  hidden:
+                      _mode == _OpponentMode.twoPlayers &&
+                      _awaitingSecondPlayer,
+                ),
+                rightLabel: _mode == _OpponentMode.computer
+                    ? 'CPU'
+                    : 'Player 2',
+                highlightRight:
+                    _winnerLabel == 'CPU wins' ||
+                    _winnerLabel == 'Player 2 wins',
+                rightChild: _choiceValue(
+                  _opponentMove,
+                  compact: compact,
+                  hidden:
+                      _mode == _OpponentMode.twoPlayers &&
+                      !_awaitingSecondPlayer,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _choiceValue(_Move? move, {required bool hidden}) {
+  Widget _choiceValue(
+    _Move? move, {
+    required bool hidden,
+    required bool compact,
+  }) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 220),
@@ -205,10 +255,10 @@ class _RockPaperScissorsScreenState extends State<RockPaperScissorsScreen> {
           child: Text(
             hidden ? '• • •' : move?.emoji ?? '❔',
             key: ValueKey('${move?.label}_${hidden ? 'hidden' : 'shown'}'),
-            style: const TextStyle(fontSize: 44),
+            style: TextStyle(fontSize: compact ? 34 : 44),
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: compact ? 6 : 10),
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 220),
           child: Text(
@@ -216,7 +266,7 @@ class _RockPaperScissorsScreenState extends State<RockPaperScissorsScreen> {
             key: ValueKey('${move?.label ?? 'Waiting'}_$hidden'),
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -225,14 +275,14 @@ class _RockPaperScissorsScreenState extends State<RockPaperScissorsScreen> {
     );
   }
 
-  Widget _moveButton(_Move move) {
+  Widget _moveButton(_Move move, {required bool compact}) {
     return SizedBox(
-      width: 104,
+      width: compact ? 94 : 104,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white.withValues(alpha: 0.08),
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: EdgeInsets.symmetric(vertical: compact ? 12 : 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(22),
           ),
@@ -241,9 +291,9 @@ class _RockPaperScissorsScreenState extends State<RockPaperScissorsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(move.emoji, style: const TextStyle(fontSize: 30)),
-            const SizedBox(height: 8),
-            Text(move.label),
+            Text(move.emoji, style: TextStyle(fontSize: compact ? 24 : 30)),
+            SizedBox(height: compact ? 4 : 8),
+            Text(move.label, style: TextStyle(fontSize: compact ? 13 : 14)),
           ],
         ),
       ),

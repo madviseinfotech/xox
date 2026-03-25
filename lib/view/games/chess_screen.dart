@@ -208,6 +208,16 @@ class _ChessScreenState extends State<ChessScreen> {
             footer: 'Tap a piece, then tap a legal square',
           ),
           const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xffd4a373)),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => setState(_resetBoard),
+              child: const Text('Reset board'),
+            ),
+          ),
+          const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(12),
             child: AspectRatio(
@@ -255,16 +265,6 @@ class _ChessScreenState extends State<ChessScreen> {
                   );
                 },
               ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xffd4a373)),
-          const SizedBox(height: 18),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => setState(_resetBoard),
-              child: const Text('Reset board'),
             ),
           ),
         ],

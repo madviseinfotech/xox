@@ -15,7 +15,7 @@ class MathEquationScreen extends StatefulWidget {
 class _MathEquationScreenState extends State<MathEquationScreen> {
   final Random _random = Random();
 
-  late _EquationRound _round;
+  _EquationRound? _round;
   int _level = 1;
   int _correct = 0;
   int _bestLevel = 1;
@@ -86,9 +86,11 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
   }
 
   Future<void> _selectAnswer(int index) async {
+    final round = _round;
+    if (round == null) return;
     if (_answered) return;
-    final picked = _round.options[index];
-    final correct = picked == _round.answer;
+    final picked = round.options[index];
+    final correct = picked == round.answer;
     var nextLevel = _level;
     var nextCorrect = _correct;
     var nextMessage = _message;
@@ -104,7 +106,7 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
         _bestLevel = max(_bestLevel, nextLevel);
       }
     } else {
-      nextMessage = 'Not this one. The answer was ${_round.answer}.';
+      nextMessage = 'Not this one. The answer was ${round.answer}.';
     }
 
     if (!mounted) return;
@@ -146,7 +148,8 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_bestLevel == 0) {
+    final round = _round;
+    if (_bestLevel == 0 || round == null) {
       return const SizedBox.shrink();
     }
 
@@ -165,6 +168,22 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
             footer: 'Saved level stays on this device',
           ),
           const SizedBox(height: 18),
+          if (_answered)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _nextQuestion,
+                child: const Text('Next equation'),
+              ),
+            ),
+          if (_answered) const SizedBox(height: 10),
+          ResetActionButton(
+            label: 'Reset to level 1',
+            onPressed: _resetProgress,
+          ),
+          const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xfff97316)),
+          const SizedBox(height: 18),
           GamePanel(
             child: Column(
               children: [
@@ -174,7 +193,7 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  _round.prompt,
+                  round.prompt,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 30,
@@ -192,10 +211,9 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             childAspectRatio: 2.1,
-            children: List.generate(_round.options.length, (index) {
+            children: List.generate(round.options.length, (index) {
               final selected = _selectedIndex == index;
-              final correct =
-                  _answered && _round.options[index] == _round.answer;
+              final correct = _answered && round.options[index] == round.answer;
               final wrong = _answered && selected && !correct;
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -209,27 +227,11 @@ class _MathEquationScreenState extends State<MathEquationScreen> {
                 ),
                 onPressed: _answered ? null : () => _selectAnswer(index),
                 child: Text(
-                  _round.options[index].toString(),
+                  round.options[index].toString(),
                   style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
               );
             }),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xfff97316)),
-          const SizedBox(height: 18),
-          if (_answered)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _nextQuestion,
-                child: const Text('Next equation'),
-              ),
-            ),
-          const SizedBox(height: 10),
-          ResetActionButton(
-            label: 'Reset to level 1',
-            onPressed: _resetProgress,
           ),
         ],
       ),

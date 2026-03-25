@@ -124,7 +124,28 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
                 ? 'Board cleared. Next level loading.'
                 : 'Moves $_moves • Find all matching pairs.',
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 22),
+          StatusCard(
+            message: completed
+                ? 'Board cleared in $_moves moves. Level $_level is coming up.'
+                : _busy
+                ? 'Cards are flipping back. Keep track of the symbols.'
+                : _firstIndex == null
+                ? 'Tap a card to reveal your next match.'
+                : 'Pick one more card to complete the turn.',
+            accent: const Color(0xff8b5cf6),
+          ),
+          const SizedBox(height: 18),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _level = 1;
+              });
+              _setupBoard();
+            },
+            child: const Text('Restart levels'),
+          ),
+          const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(14),
             child: GridView.builder(
@@ -194,27 +215,6 @@ class _MemoryMatchScreenState extends State<MemoryMatchScreen> {
                 );
               },
             ),
-          ),
-          const SizedBox(height: 22),
-          StatusCard(
-            message: completed
-                ? 'Board cleared in $_moves moves. Level $_level is coming up.'
-                : _busy
-                ? 'Cards are flipping back. Keep track of the symbols.'
-                : _firstIndex == null
-                ? 'Tap a card to reveal your next match.'
-                : 'Pick one more card to complete the turn.',
-            accent: const Color(0xff8b5cf6),
-          ),
-          const SizedBox(height: 18),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _level = 1;
-              });
-              _setupBoard();
-            },
-            child: const Text('Restart levels'),
           ),
         ],
       ),

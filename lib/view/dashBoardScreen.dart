@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:xox_madvise/services/daily_notification_service.dart';
 import 'package:xox_madvise/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:xox_madvise/utils/utility.dart';
@@ -80,6 +81,10 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     _loadStats();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkAppUpdate(context, showFeedback: false);
+      Future<void>.delayed(const Duration(milliseconds: 900), () async {
+        if (!mounted) return;
+        await DailyNotificationService.registerAppLaunch();
+      });
     });
   }
 

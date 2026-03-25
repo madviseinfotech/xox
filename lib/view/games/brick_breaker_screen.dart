@@ -297,6 +297,18 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
                 'Score $_score • Best $_bestScore • Bricks left ${_bricks.length}',
           ),
           const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xff8b5cf6)),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _startRound,
+              child: Text(_running ? 'Running...' : 'Start'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          ResetActionButton(label: 'Restart game', onPressed: _restartGame),
+          const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(14),
             child: AspectRatio(
@@ -304,18 +316,14 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return GestureDetector(
-                    onTapDown: (details) {
-                      _movePaddleTo(
-                        details.localPosition.dx,
-                        constraints.maxWidth,
-                      );
-                    },
-                    onHorizontalDragUpdate: (details) {
-                      _movePaddleTo(
-                        details.localPosition.dx,
-                        constraints.maxWidth,
-                      );
-                    },
+                    onTapDown: (details) => _movePaddleTo(
+                      details.localPosition.dx,
+                      constraints.maxWidth,
+                    ),
+                    onHorizontalDragUpdate: (details) => _movePaddleTo(
+                      details.localPosition.dx,
+                      constraints.maxWidth,
+                    ),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
@@ -327,8 +335,8 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
                       ),
                       child: Stack(
                         children: [
-                          ..._bricks.map((brick) {
-                            return Positioned(
+                          for (final brick in _bricks)
+                            Positioned(
                               left: brick.rect.left * constraints.maxWidth,
                               top: brick.rect.top * constraints.maxHeight,
                               child: Container(
@@ -366,8 +374,7 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
                                         ),
                                       ),
                               ),
-                            );
-                          }),
+                            ),
                           Positioned(
                             left:
                                 (_paddleX - (_paddleWidth / 2)) *
@@ -435,21 +442,6 @@ class _BrickBreakerScreenState extends State<BrickBreakerScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xff8b5cf6)),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _startRound,
-                  child: Text(_running ? 'Running...' : 'Start'),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          ResetActionButton(label: 'Restart game', onPressed: _restartGame),
         ],
       ),
     );

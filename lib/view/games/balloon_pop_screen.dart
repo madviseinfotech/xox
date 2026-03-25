@@ -152,6 +152,17 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
             rightValue: _bestScore.toString(),
             footer: 'Score $_score/$_targetScore • Time left: ${_timeLeft}s',
           ),
+          StatusCard(message: _message, accent: const Color(0xfffb7185)),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _running ? null : _startRound,
+              child: Text(_running ? 'Round running...' : 'Start level'),
+            ),
+          ),
+          const SizedBox(height: 10),
+          ResetActionButton(label: 'Reset levels', onPressed: _resetGame),
           const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(14),
@@ -201,18 +212,6 @@ class _BalloonPopScreenState extends State<BalloonPopScreen> {
               },
             ),
           ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xfffb7185)),
-          const SizedBox(height: 18),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _running ? null : _startRound,
-              child: Text(_running ? 'Round running...' : 'Start level'),
-            ),
-          ),
-          const SizedBox(height: 10),
-          ResetActionButton(label: 'Reset levels', onPressed: _resetGame),
         ],
       ),
     );

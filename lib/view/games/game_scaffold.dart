@@ -200,25 +200,41 @@ class _GameScaffoldState extends State<GameScaffold> {
             ),
             SafeArea(
               bottom: false,
-              child: widget.scrollable
-                  ? SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        20,
-                        topInset > 0 ? 12 : 20,
-                        20,
-                        bottomPadding,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, topInset > 0 ? 12 : 20, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildBackButton(),
+                    const SizedBox(height: 12),
+                    if (widget.scrollable)
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.only(bottom: bottomPadding),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildHeader(textTheme),
+                              SizedBox(
+                                height: widget.minimalHeader
+                                    ? 12
+                                    : (widget.compactHeader ? 16 : 22),
+                              ),
+                              _buildGameContent(),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: bottomPadding),
+                          child: _buildGameContent(fillContent: true),
+                        ),
                       ),
-                      child: _buildScaffoldBody(textTheme, false),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        20,
-                        topInset > 0 ? 12 : 20,
-                        20,
-                        bottomPadding,
-                      ),
-                      child: _buildScaffoldBody(textTheme, true),
-                    ),
+                  ],
+                ),
+              ),
             ),
             if (showBanner)
               Positioned(
@@ -255,8 +271,25 @@ class _GameScaffoldState extends State<GameScaffold> {
     );
   }
 
-  Widget _buildScaffoldBody(TextTheme textTheme, bool fillContent) {
-    final isCompact = widget.compactHeader || widget.minimalHeader;
+  Widget _buildBackButton() {
+    return _GameEntrance(
+      delay: const Duration(milliseconds: 30),
+      child: GestureDetector(
+        onTap: _handleBack,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+          ),
+          child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(TextTheme textTheme) {
     final headerPadding = widget.compactHeader ? 18.0 : 22.0;
     final headerRadius = widget.compactHeader ? 22.0 : 28.0;
     final titleStyle = widget.compactHeader
@@ -290,22 +323,6 @@ class _GameScaffoldState extends State<GameScaffold> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _GameEntrance(
-          delay: const Duration(milliseconds: 30),
-          child: GestureDetector(
-            onTap: _handleBack,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-              ),
-              child: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-            ),
-          ),
-        ),
-        SizedBox(height: widget.minimalHeader ? 10 : 18),
         _GameEntrance(
           delay: const Duration(milliseconds: 110),
           child: widget.minimalHeader
@@ -393,20 +410,14 @@ class _GameScaffoldState extends State<GameScaffold> {
                   ),
                 ),
         ),
-        SizedBox(height: widget.minimalHeader ? 12 : (isCompact ? 16 : 22)),
-        if (fillContent)
-          Expanded(
-            child: _GameEntrance(
-              delay: const Duration(milliseconds: 190),
-              child: widget.child,
-            ),
-          )
-        else
-          _GameEntrance(
-            delay: const Duration(milliseconds: 190),
-            child: widget.child,
-          ),
       ],
+    );
+  }
+
+  Widget _buildGameContent({bool fillContent = false}) {
+    return _GameEntrance(
+      delay: const Duration(milliseconds: 190),
+      child: fillContent ? SizedBox.expand(child: widget.child) : widget.child,
     );
   }
 }

@@ -123,6 +123,15 @@ class _SudokuScreenState extends State<SudokuScreen> {
                 : 'Each row and box uses 1 to 4.',
           ),
           const SizedBox(height: 22),
+          StatusCard(
+            message: _message,
+            accent: _completed
+                ? const Color(0xff22c55e)
+                : const Color(0xff3b82f6),
+          ),
+          const SizedBox(height: 18),
+          TextButton(onPressed: _resetBoard, child: const Text('New puzzle')),
+          const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(14),
             child: GridView.builder(
@@ -176,15 +185,6 @@ class _SudokuScreenState extends State<SudokuScreen> {
               },
             ),
           ),
-          const SizedBox(height: 18),
-          StatusCard(
-            message: _message,
-            accent: _completed
-                ? const Color(0xff22c55e)
-                : const Color(0xff3b82f6),
-          ),
-          const SizedBox(height: 18),
-          TextButton(onPressed: _resetBoard, child: const Text('New puzzle')),
         ],
       ),
     );

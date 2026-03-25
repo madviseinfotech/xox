@@ -98,50 +98,6 @@ class _QuickTapScreenState extends State<QuickTapScreen> {
             rightValue: _bestScore.toString(),
             footer: 'Tap the pulse as fast as possible while time is running.',
           ),
-          const SizedBox(height: 22),
-          GamePanel(
-            child: GestureDetector(
-              onTap: _tapPulse,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                height: _running ? 220 : 200,
-                width: _running ? 220 : 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xff67e8f9), Color(0xff0ea5e9)],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xff22d3ee).withValues(alpha: 0.34),
-                      blurRadius: 28,
-                      spreadRadius: _running ? 6 : 2,
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 180),
-                    transitionBuilder: (child, animation) {
-                      return ScaleTransition(scale: animation, child: child);
-                    },
-                    child: Text(
-                      _running ? _score.toString() : 'START',
-                      key: ValueKey(_running ? 'score_$_score' : 'start'),
-                      style: const TextStyle(
-                        color: Color(0xff082f49),
-                        fontSize: 34,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
           StatusCard(message: _message, accent: const Color(0xff14b8a6)),
           const SizedBox(height: 18),
           SizedBox(
@@ -149,6 +105,51 @@ class _QuickTapScreenState extends State<QuickTapScreen> {
             child: ElevatedButton(
               onPressed: _running ? null : _startRound,
               child: Text(_running ? 'Round running...' : 'Start round'),
+            ),
+          ),
+          const SizedBox(height: 18),
+          GamePanel(
+            child: Center(
+              child: GestureDetector(
+                onTap: _tapPulse,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  height: _running ? 220 : 200,
+                  width: _running ? 220 : 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xff67e8f9), Color(0xff0ea5e9)],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xff22d3ee).withValues(alpha: 0.34),
+                        blurRadius: 28,
+                        spreadRadius: _running ? 6 : 2,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 180),
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
+                      child: Text(
+                        _running ? _score.toString() : 'START',
+                        key: ValueKey(_running ? 'score_$_score' : 'start'),
+                        style: const TextStyle(
+                          color: Color(0xff082f49),
+                          fontSize: 34,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

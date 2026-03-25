@@ -429,12 +429,21 @@ class _CandyMatchScreenState extends State<CandyMatchScreen> {
             ),
           ),
           const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xffa855f7)),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _movesLeft == 0 && !_isBusy ? _resetGame : null,
+              child: const Text('Reset level'),
+            ),
+          ),
+          const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(14),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final boardSize = constraints.maxWidth;
-                final tileSize = boardSize / _size;
+                final tileSize = constraints.maxWidth / _size;
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onPanStart: (details) =>
@@ -502,16 +511,6 @@ class _CandyMatchScreenState extends State<CandyMatchScreen> {
                   ),
                 );
               },
-            ),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xffa855f7)),
-          const SizedBox(height: 18),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _movesLeft == 0 && !_isBusy ? _resetGame : null,
-              child: const Text('Reset level'),
             ),
           ),
         ],

@@ -128,6 +128,16 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
             footer: 'Grid ${_gridSize}x$_gridSize • Match the avatar reference',
           ),
           const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xff22c55e)),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _celebrating ? null : _restartLevel,
+              child: const Text('Shuffle this level again'),
+            ),
+          ),
+          const SizedBox(height: 18),
           GamePanel(
             padding: const EdgeInsets.all(14),
             child: Column(
@@ -315,16 +325,6 @@ class _PicturePuzzleScreenState extends State<PicturePuzzleScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xff22c55e)),
-          const SizedBox(height: 18),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _celebrating ? null : _restartLevel,
-              child: const Text('Shuffle this level again'),
             ),
           ),
         ],

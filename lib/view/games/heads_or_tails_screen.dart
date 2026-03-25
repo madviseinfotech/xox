@@ -110,61 +110,6 @@ class _HeadsOrTailsScreenState extends State<HeadsOrTailsScreen> {
             rightValue: _bestStreak.toString(),
             footer: 'Current streak: $_currentStreak',
           ),
-          const SizedBox(height: 22),
-          GamePanel(
-            padding: const EdgeInsets.all(22),
-            child: Column(
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 260),
-                  transitionBuilder: (child, animation) {
-                    return RotationTransition(
-                      turns: Tween<double>(
-                        begin: 0.9,
-                        end: 1,
-                      ).animate(animation),
-                      child: FadeTransition(opacity: animation, child: child),
-                    );
-                  },
-                  child: Text(
-                    _isFlipping
-                        ? (_flipFrame.isEven ? '🪙' : '🥇')
-                        : (_coinResult == 'Heads' ? '🪙' : '🥇'),
-                    key: ValueKey(
-                      _isFlipping ? 'flip_$_flipFrame' : _coinResult,
-                    ),
-                    style: const TextStyle(fontSize: 60),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  child: Text(
-                    'You picked $_playerPick',
-                    key: ValueKey(_playerPick),
-                    style: const TextStyle(color: Color(0xff94a3b8)),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  child: Text(
-                    'Coin result: $_coinResult',
-                    key: ValueKey(
-                      _isFlipping
-                          ? 'result_flipping_$_flipFrame'
-                          : 'result_$_coinResult',
-                    ),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           const SizedBox(height: 18),
           StatusCard(
             message: _message,
@@ -194,6 +139,64 @@ class _HeadsOrTailsScreenState extends State<HeadsOrTailsScreen> {
           TextButton(
             onPressed: _resetSession,
             child: const Text('Reset session'),
+          ),
+          const SizedBox(height: 18),
+          GamePanel(
+            padding: const EdgeInsets.all(22),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 260),
+                    transitionBuilder: (child, animation) {
+                      return RotationTransition(
+                        turns: Tween<double>(
+                          begin: 0.9,
+                          end: 1,
+                        ).animate(animation),
+                        child: FadeTransition(opacity: animation, child: child),
+                      );
+                    },
+                    child: Text(
+                      _isFlipping
+                          ? (_flipFrame.isEven ? '🪙' : '🥇')
+                          : (_coinResult == 'Heads' ? '🪙' : '🥇'),
+                      key: ValueKey(
+                        _isFlipping ? 'flip_$_flipFrame' : _coinResult,
+                      ),
+                      style: const TextStyle(fontSize: 60),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    child: Text(
+                      'You picked $_playerPick',
+                      key: ValueKey(_playerPick),
+                      style: const TextStyle(color: Color(0xff94a3b8)),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 220),
+                    child: Text(
+                      'Coin result: $_coinResult',
+                      key: ValueKey(
+                        _isFlipping
+                            ? 'result_flipping_$_flipFrame'
+                            : 'result_$_coinResult',
+                      ),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

@@ -83,7 +83,9 @@ class _NumberGuessScreenState extends State<NumberGuessScreen> {
             rightValue: _bestScore == 0 ? '--' : _bestScore.toString(),
             footer: 'Secret number range: 1 to 50',
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 18),
+          StatusCard(message: _message, accent: const Color(0xff3b82f6)),
+          const SizedBox(height: 18),
           GamePanel(
             child: Column(
               children: [
@@ -114,8 +116,6 @@ class _NumberGuessScreenState extends State<NumberGuessScreen> {
             ),
           ),
           const SizedBox(height: 18),
-          StatusCard(message: _message, accent: const Color(0xff3b82f6)),
-          const SizedBox(height: 22),
           TextButton(
             onPressed: _startNewRound,
             child: const Text('New number'),
