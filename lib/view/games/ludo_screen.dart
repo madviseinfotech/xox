@@ -561,7 +561,7 @@ class _LudoScreenState extends State<LudoScreen> {
       accent: [currentColor.color, currentColor.lightColor],
       compactHeader: true,
       minimalHeader: true,
-      backgroundMusicAsset: 'music/begin.mp3',
+      backgroundMusicAsset: null,
       child: Column(
         children: [
           GameModeSelector<_LudoMode>(

@@ -1330,12 +1330,6 @@ class _GameScreenState extends State<GameScreen> {
           ),
           InkWell(
             onTap: () async {
-              if (!Utility.volume) {
-                // final uri = Uri.parse("asset:///assets/music/Click.mp3");
-                // await player.setUrl(uri.toString());
-                // player.play();
-                await player.play(AssetSource('music/Click.mp3'));
-              }
               setState(() => Utility.volume = !Utility.volume);
             },
             child: Image.asset(
@@ -1680,13 +1674,6 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Future<void> _checkWinner() async {
-    if (Utility.volume) {
-      // final uri = Uri.parse("asset:///assets/music/Click.mp3");
-      // await player.setUrl(uri.toString());
-      // player.play();
-      await player.play(AssetSource('music/Click.mp3'));
-    }
-
     // Winning lines
     final wins = <List<int>>[
       [0, 1, 2],
@@ -1713,10 +1700,11 @@ class _GameScreenState extends State<GameScreen> {
           xScore++;
         }
         if (Utility.volume) {
-          // final uri = Uri.parse("asset:///assets/music/winner.mp3");
-          // await player.setUrl(uri.toString());
-          // player.play();
-          await player.play(AssetSource('music/winner.mp3'));
+          final resultAsset =
+              widget.playWithComputer && v == 'X'
+              ? 'music/loose.mp3'
+              : 'music/winner.mp3';
+          await player.play(AssetSource(resultAsset));
         }
         Future.delayed(Duration(seconds: 1), () async {
           setState(() => ignoreBoard = false);
@@ -1805,12 +1793,6 @@ class _GameScreenState extends State<GameScreen> {
   void _clearBoard() async {
     setState(() => ignoreBoard = false);
     winnerElement.clear();
-    if (Utility.volume) {
-      // final uri = Uri.parse("asset:///assets/music/undo.mp3");
-      // await player.setUrl(uri.toString());
-      // player.play();
-      await player.play(AssetSource('music/undo.mp3'));
-    }
     for (int i = 0; i < 9; i++) {
       displayElement[i] = '';
     }
@@ -1835,12 +1817,6 @@ class _GameScreenState extends State<GameScreen> {
         ),
       ),
     );
-    if (Utility.volume) {
-      // final uri = Uri.parse("asset:///assets/music/refresh.mp3");
-      // await player.setUrl(uri.toString());
-      // player.play();
-      await player.play(AssetSource('music/refresh.mp3'));
-    }
     xScore = 0;
     oScore = 0;
     for (int i = 0; i < 9; i++) {
@@ -1946,11 +1922,6 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Future<void> _playClickIfEnabled() async {
-    if (Utility.volume) {
-      // final uri = Uri.parse("asset:///assets/music/Click.mp3");
-      // await player.setUrl(uri.toString());
-      // player.play();
-      await player.play(AssetSource('music/Click.mp3'));
-    }
+    return;
   }
 }

@@ -5,7 +5,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:xox_madvise/services/game_ad_service.dart';
 import 'package:xox_madvise/theme/app_theme.dart';
-import 'package:xox_madvise/utils/utility.dart';
 import 'package:xox_madvise/view/ad_helper.dart';
 import 'package:xox_madvise/view/retention_prompts.dart';
 
@@ -43,7 +42,7 @@ class _GameScaffoldState extends State<GameScaffold> {
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
   AudioPlayer? _musicPlayer;
-  bool _musicEnabled = Utility.volume;
+  bool _musicEnabled = false;
 
   @override
   void initState() {
@@ -68,9 +67,6 @@ class _GameScaffoldState extends State<GameScaffold> {
     _musicPlayer = player;
     await player.setReleaseMode(ReleaseMode.loop);
     await player.setVolume(0.35);
-    if (_musicEnabled) {
-      await player.play(AssetSource(asset));
-    }
   }
 
   Future<void> _toggleMusic() async {
@@ -78,7 +74,6 @@ class _GameScaffoldState extends State<GameScaffold> {
     if (player == null) return;
     setState(() {
       _musicEnabled = !_musicEnabled;
-      Utility.volume = _musicEnabled;
     });
     if (_musicEnabled) {
       await player.play(AssetSource(widget.backgroundMusicAsset!));
