@@ -17,16 +17,28 @@ class GameStatsSnapshot {
     required this.ludoWins,
     required this.balloonPopBestScore,
     required this.colorMatchBestScore,
+    required this.oddOneOutBestStreak,
+    required this.lightGridBestLevel,
+    required this.tapSequenceBestLevel,
     required this.turboTrafficBestScore,
     required this.bikeSprintBestDistance,
     required this.cycleDashBestDistance,
     required this.avatarRushBestScore,
+    required this.nitroSprintBestTimeMs,
+    required this.driftRunBestDistance,
+    required this.parkingDashBestLevel,
+    required this.overtakeRushBestScore,
     required this.brickBreakerBestScore,
     required this.candyMatchBestScore,
     required this.mathEquationLevel,
     required this.wordBlankLevel,
     required this.picturePuzzleLevel,
     required this.totalMiniGamesPlayed,
+    required this.twenty48BestScore,
+    required this.fuelRushBestLaps,
+    required this.grandPrixRushBestLaps,
+    required this.pokerBluffBestStreak,
+    required this.turboOvertakeBestDistance,
   });
 
   final int memoryBestMoves;
@@ -44,16 +56,28 @@ class GameStatsSnapshot {
   final int ludoWins;
   final int balloonPopBestScore;
   final int colorMatchBestScore;
+  final int oddOneOutBestStreak;
+  final int lightGridBestLevel;
+  final int tapSequenceBestLevel;
   final int turboTrafficBestScore;
   final int bikeSprintBestDistance;
   final int cycleDashBestDistance;
   final int avatarRushBestScore;
+  final int nitroSprintBestTimeMs;
+  final int driftRunBestDistance;
+  final int parkingDashBestLevel;
+  final int overtakeRushBestScore;
   final int brickBreakerBestScore;
   final int candyMatchBestScore;
   final int mathEquationLevel;
   final int wordBlankLevel;
   final int picturePuzzleLevel;
   final int totalMiniGamesPlayed;
+  final int twenty48BestScore;
+  final int fuelRushBestLaps;
+  final int grandPrixRushBestLaps;
+  final int pokerBluffBestStreak;
+  final int turboOvertakeBestDistance;
 }
 
 class GameStatsStore {
@@ -76,16 +100,28 @@ class GameStatsStore {
   static const _ludoWinsKey = 'stats_ludo_wins';
   static const _balloonPopBestScoreKey = 'stats_balloon_pop_best_score';
   static const _colorMatchBestScoreKey = 'stats_color_match_best_score';
+  static const _oddOneOutBestStreakKey = 'stats_odd_one_out_best_streak';
+  static const _lightGridBestLevelKey = 'stats_light_grid_best_level';
+  static const _tapSequenceBestLevelKey = 'stats_tap_sequence_best_level';
   static const _turboTrafficBestScoreKey = 'stats_turbo_traffic_best_score';
   static const _bikeSprintBestDistanceKey = 'stats_bike_sprint_best_distance';
   static const _cycleDashBestDistanceKey = 'stats_cycle_dash_best_distance';
   static const _avatarRushBestScoreKey = 'stats_avatar_rush_best_score';
+  static const _nitroSprintBestTimeMsKey = 'stats_nitro_sprint_best_time_ms';
+  static const _driftRunBestDistanceKey = 'stats_drift_run_best_distance';
+  static const _parkingDashBestLevelKey = 'stats_parking_dash_best_level';
+  static const _overtakeRushBestScoreKey = 'stats_overtake_rush_best_score';
   static const _brickBreakerBestScoreKey = 'stats_brick_breaker_best_score';
   static const _candyMatchBestScoreKey = 'stats_candy_match_best_score';
   static const _mathEquationLevelKey = 'stats_math_equation_level';
   static const _wordBlankLevelKey = 'stats_word_blank_level';
   static const _picturePuzzleLevelKey = 'stats_picture_puzzle_level';
   static const _totalMiniGamesPlayedKey = 'stats_total_mini_games_played';
+  static const _twenty48BestScoreKey = 'stats_2048_best_score';
+  static const _fuelRushBestLapsKey = 'stats_fuel_rush_best_laps';
+  static const _grandPrixRushBestLapsKey = 'stats_grand_prix_rush_best_laps';
+  static const _pokerBluffBestStreakKey = 'stats_poker_bluff_best_streak';
+  static const _turboOvertakeBestDistanceKey = 'stats_turbo_overtake_best_distance';
   static const _favoriteGamesKey = 'stats_favorite_games';
 
   Future<SharedPreferences> get _prefs async => SharedPreferences.getInstance();
@@ -108,16 +144,28 @@ class GameStatsStore {
       ludoWins: prefs.getInt(_ludoWinsKey) ?? 0,
       balloonPopBestScore: prefs.getInt(_balloonPopBestScoreKey) ?? 0,
       colorMatchBestScore: prefs.getInt(_colorMatchBestScoreKey) ?? 0,
+      oddOneOutBestStreak: prefs.getInt(_oddOneOutBestStreakKey) ?? 0,
+      lightGridBestLevel: prefs.getInt(_lightGridBestLevelKey) ?? 0,
+      tapSequenceBestLevel: prefs.getInt(_tapSequenceBestLevelKey) ?? 0,
       turboTrafficBestScore: prefs.getInt(_turboTrafficBestScoreKey) ?? 0,
       bikeSprintBestDistance: prefs.getInt(_bikeSprintBestDistanceKey) ?? 0,
       cycleDashBestDistance: prefs.getInt(_cycleDashBestDistanceKey) ?? 0,
       avatarRushBestScore: prefs.getInt(_avatarRushBestScoreKey) ?? 0,
+      nitroSprintBestTimeMs: prefs.getInt(_nitroSprintBestTimeMsKey) ?? 0,
+      driftRunBestDistance: prefs.getInt(_driftRunBestDistanceKey) ?? 0,
+      parkingDashBestLevel: prefs.getInt(_parkingDashBestLevelKey) ?? 0,
+      overtakeRushBestScore: prefs.getInt(_overtakeRushBestScoreKey) ?? 0,
       brickBreakerBestScore: prefs.getInt(_brickBreakerBestScoreKey) ?? 0,
       candyMatchBestScore: prefs.getInt(_candyMatchBestScoreKey) ?? 0,
       mathEquationLevel: prefs.getInt(_mathEquationLevelKey) ?? 1,
       wordBlankLevel: prefs.getInt(_wordBlankLevelKey) ?? 1,
       picturePuzzleLevel: prefs.getInt(_picturePuzzleLevelKey) ?? 1,
       totalMiniGamesPlayed: prefs.getInt(_totalMiniGamesPlayedKey) ?? 0,
+      twenty48BestScore: prefs.getInt(_twenty48BestScoreKey) ?? 0,
+      fuelRushBestLaps: prefs.getInt(_fuelRushBestLapsKey) ?? 0,
+      grandPrixRushBestLaps: prefs.getInt(_grandPrixRushBestLapsKey) ?? 0,
+      pokerBluffBestStreak: prefs.getInt(_pokerBluffBestStreakKey) ?? 0,
+      turboOvertakeBestDistance: prefs.getInt(_turboOvertakeBestDistanceKey) ?? 0,
     );
   }
 
@@ -235,6 +283,30 @@ class GameStatsStore {
     }
   }
 
+  Future<void> recordOddOneOutBestStreak(int streak) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_oddOneOutBestStreakKey) ?? 0;
+    if (streak > current) {
+      await prefs.setInt(_oddOneOutBestStreakKey, streak);
+    }
+  }
+
+  Future<void> recordLightGridBestLevel(int level) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_lightGridBestLevelKey) ?? 0;
+    if (level > current) {
+      await prefs.setInt(_lightGridBestLevelKey, level);
+    }
+  }
+
+  Future<void> recordTapSequenceBestLevel(int level) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_tapSequenceBestLevelKey) ?? 0;
+    if (level > current) {
+      await prefs.setInt(_tapSequenceBestLevelKey, level);
+    }
+  }
+
   Future<void> recordTurboTrafficBestScore(int score) async {
     final prefs = await _prefs;
     final current = prefs.getInt(_turboTrafficBestScoreKey) ?? 0;
@@ -264,6 +336,38 @@ class GameStatsStore {
     final current = prefs.getInt(_avatarRushBestScoreKey) ?? 0;
     if (score > current) {
       await prefs.setInt(_avatarRushBestScoreKey, score);
+    }
+  }
+
+  Future<void> recordNitroSprintBestTime(int timeMs) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_nitroSprintBestTimeMsKey) ?? 0;
+    if (current == 0 || timeMs < current) {
+      await prefs.setInt(_nitroSprintBestTimeMsKey, timeMs);
+    }
+  }
+
+  Future<void> recordDriftRunBestDistance(int distance) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_driftRunBestDistanceKey) ?? 0;
+    if (distance > current) {
+      await prefs.setInt(_driftRunBestDistanceKey, distance);
+    }
+  }
+
+  Future<void> recordParkingDashBestLevel(int level) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_parkingDashBestLevelKey) ?? 0;
+    if (level > current) {
+      await prefs.setInt(_parkingDashBestLevelKey, level);
+    }
+  }
+
+  Future<void> recordOvertakeRushBestScore(int score) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_overtakeRushBestScoreKey) ?? 0;
+    if (score > current) {
+      await prefs.setInt(_overtakeRushBestScoreKey, score);
     }
   }
 
@@ -310,6 +414,46 @@ class GameStatsStore {
   Future<Set<String>> loadFavoriteGames() async {
     final prefs = await _prefs;
     return (prefs.getStringList(_favoriteGamesKey) ?? const <String>[]).toSet();
+  }
+
+  Future<void> recordTurboOvertakeBestDistance(int distance) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_turboOvertakeBestDistanceKey) ?? 0;
+    if (distance > current) {
+      await prefs.setInt(_turboOvertakeBestDistanceKey, distance);
+    }
+  }
+
+  Future<void> recordPokerBluffBestStreak(int streak) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_pokerBluffBestStreakKey) ?? 0;
+    if (streak > current) {
+      await prefs.setInt(_pokerBluffBestStreakKey, streak);
+    }
+  }
+
+  Future<void> recordGrandPrixRushBestLaps(int laps) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_grandPrixRushBestLapsKey) ?? 0;
+    if (laps > current) {
+      await prefs.setInt(_grandPrixRushBestLapsKey, laps);
+    }
+  }
+
+  Future<void> recordFuelRushBestLaps(int laps) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_fuelRushBestLapsKey) ?? 0;
+    if (laps > current) {
+      await prefs.setInt(_fuelRushBestLapsKey, laps);
+    }
+  }
+
+  Future<void> recordTwenty48BestScore(int score) async {
+    final prefs = await _prefs;
+    final current = prefs.getInt(_twenty48BestScoreKey) ?? 0;
+    if (score > current) {
+      await prefs.setInt(_twenty48BestScoreKey, score);
+    }
   }
 
   Future<void> toggleFavoriteGame(String title) async {

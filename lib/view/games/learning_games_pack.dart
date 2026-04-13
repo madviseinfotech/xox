@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'game_scaffold.dart';
@@ -37,6 +39,8 @@ class _LearningQuizGameScreen extends StatefulWidget {
 }
 
 class _LearningQuizGameScreenState extends State<_LearningQuizGameScreen> {
+  final Random _random = Random();
+  late List<LearningQuizQuestion> _roundQuestions;
   int _index = 0;
   int _correctAnswers = 0;
   int _bestStreak = 0;
@@ -48,7 +52,19 @@ class _LearningQuizGameScreenState extends State<_LearningQuizGameScreen> {
   String? _headline;
   String _message = 'Tap the best answer to begin.';
 
-  LearningQuizQuestion get _question => widget.questions[_index];
+  LearningQuizQuestion get _question => _roundQuestions[_index];
+
+  @override
+  void initState() {
+    super.initState();
+    _roundQuestions = _buildRoundQuestions();
+  }
+
+  List<LearningQuizQuestion> _buildRoundQuestions() {
+    final nextQuestions = List<LearningQuizQuestion>.from(widget.questions);
+    nextQuestions.shuffle(_random);
+    return nextQuestions;
+  }
 
   void _answer(int index) {
     if (_answered || _finished) return;
@@ -99,6 +115,7 @@ class _LearningQuizGameScreenState extends State<_LearningQuizGameScreen> {
 
   void _reset() {
     setState(() {
+      _roundQuestions = _buildRoundQuestions();
       _index = 0;
       _correctAnswers = 0;
       _bestStreak = 0;

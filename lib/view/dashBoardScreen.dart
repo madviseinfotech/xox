@@ -17,29 +17,85 @@ import 'package:xox_madvise/utils/utility.dart';
 import 'package:xox_madvise/view/choose_player_screen.dart';
 import 'package:xox_madvise/view/games/dice_duel_screen.dart';
 import 'package:xox_madvise/view/games/cricket_chase_screen.dart';
+import 'package:xox_madvise/view/games/cup_shuffle_screen.dart';
+import 'package:xox_madvise/view/games/drift_run_screen.dart';
 import 'package:xox_madvise/view/games/game_stats_store.dart';
 import 'package:xox_madvise/view/games/balloon_pop_screen.dart';
+import 'package:xox_madvise/view/games/airport_control_screen.dart';
+import 'package:xox_madvise/view/games/asteroid_shield_screen.dart';
+import 'package:xox_madvise/view/games/apex_picker_screen.dart';
+import 'package:xox_madvise/view/games/beat_burst_screen.dart';
+import 'package:xox_madvise/view/games/bomb_diffuser_screen.dart';
 import 'package:xox_madvise/view/games/brick_breaker_screen.dart';
+import 'package:xox_madvise/view/games/balance_beam_screen.dart';
 import 'package:xox_madvise/view/games/candy_match_screen.dart';
+import 'package:xox_madvise/view/games/card_count_screen.dart';
 import 'package:xox_madvise/view/games/card_games_pack.dart';
+import 'package:xox_madvise/view/games/car_wash_sort_screen.dart';
+import 'package:xox_madvise/view/games/car_racing_bonus_screens.dart';
 import 'package:xox_madvise/view/games/chess_screen.dart';
+import 'package:xox_madvise/view/games/circuit_racer_screen.dart';
 import 'package:xox_madvise/view/games/color_match_screen.dart';
 import 'package:xox_madvise/view/games/heads_or_tails_screen.dart';
 import 'package:xox_madvise/view/games/higher_lower_screen.dart';
+import 'package:xox_madvise/view/games/flash_count_screen.dart';
+import 'package:xox_madvise/view/games/fuel_grade_pick_screen.dart';
+import 'package:xox_madvise/view/games/garage_sort_screen.dart';
 import 'package:xox_madvise/view/games/memory_match_screen.dart';
+import 'package:xox_madvise/view/games/mini_maze_screen.dart';
 import 'package:xox_madvise/view/games/math_equation_screen.dart';
+import 'package:xox_madvise/view/games/mole_smash_screen.dart';
+import 'package:xox_madvise/view/games/mountain_drive_screen.dart';
 import 'package:xox_madvise/view/games/number_guess_screen.dart';
+import 'package:xox_madvise/view/games/number_chain_screen.dart';
+import 'package:xox_madvise/view/games/odd_one_out_screen.dart';
+import 'package:xox_madvise/view/games/overtake_rush_screen.dart';
+import 'package:xox_madvise/view/games/pair_finder_screen.dart';
+import 'package:xox_madvise/view/games/parking_dash_screen.dart';
+import 'package:xox_madvise/view/games/penalty_kick_screen.dart';
 import 'package:xox_madvise/view/games/picture_puzzle_screen.dart';
 import 'package:xox_madvise/view/games/ludo_screen.dart';
+import 'package:xox_madvise/view/games/light_grid_screen.dart';
+import 'package:xox_madvise/view/games/laser_loop_screen.dart';
 import 'package:xox_madvise/view/games/quick_tap_screen.dart';
 import 'package:xox_madvise/view/games/range_picker_screen.dart';
 import 'package:xox_madvise/view/games/rock_paper_scissors_screen.dart';
 import 'package:xox_madvise/view/games/racing_games_pack.dart';
+import 'package:xox_madvise/view/games/safe_cracker_screen.dart';
 import 'package:xox_madvise/view/games/snake_screen.dart';
 import 'package:xox_madvise/view/games/snakes_and_ladders_screen.dart';
+import 'package:xox_madvise/view/games/sonar_sweep_screen.dart';
+import 'package:xox_madvise/view/games/clock_match_screen.dart';
+import 'package:xox_madvise/view/games/pit_lane_planner_screen.dart';
+import 'package:xox_madvise/view/games/speed_trap_screen.dart';
+import 'package:xox_madvise/view/games/suit_streak_screen.dart';
+import 'package:xox_madvise/view/games/shop_cashier_screen.dart';
 import 'package:xox_madvise/view/games/sudoku_screen.dart';
+import 'package:xox_madvise/view/games/symbol_memory_screen.dart';
+import 'package:xox_madvise/view/games/shape_path_screen.dart';
+import 'package:xox_madvise/view/games/tap_sequence_screen.dart';
+import 'package:xox_madvise/view/games/target_hunt_screen.dart';
+import 'package:xox_madvise/view/games/direction_dash_screen.dart';
+import 'package:xox_madvise/view/games/desert_rally_screen.dart';
+import 'package:xox_madvise/view/games/dashboard_doctor_screen.dart';
+import 'package:xox_madvise/view/games/color_sweep_screen.dart';
+import 'package:xox_madvise/view/games/treasure_tap_screen.dart';
+import 'package:xox_madvise/view/games/lane_switch_screen.dart';
+import 'package:xox_madvise/view/games/quick_sort_screen.dart';
+import 'package:xox_madvise/view/games/qualifying_lap_screen.dart';
+import 'package:xox_madvise/view/games/road_sign_match_screen.dart';
+import 'package:xox_madvise/view/games/twenty48_screen.dart';
+import 'package:xox_madvise/view/games/traffic_light_tap_screen.dart';
+import 'package:xox_madvise/view/games/fuel_rush_screen.dart';
+import 'package:xox_madvise/view/games/grand_prix_rush_screen.dart';
+import 'package:xox_madvise/view/games/drag_duel_screen.dart';
+import 'package:xox_madvise/view/games/poker_bluff_screen.dart';
+import 'package:xox_madvise/view/games/turbo_overtake_screen.dart';
+import 'package:xox_madvise/view/games/rhyme_time_screen.dart';
 import 'package:xox_madvise/view/games/word_blank_screen.dart';
 import 'package:xox_madvise/view/games/learning_games_pack.dart';
+import 'package:xox_madvise/view/games/match_tactics_screen.dart';
+import 'package:xox_madvise/view/games/nitro_sprint_screen.dart';
 import 'package:xox_madvise/view/retention_prompts.dart';
 
 import 'ad_helper.dart';
@@ -61,6 +117,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     'Favorites',
     'Kids',
     'Learning',
+    'Car',
     '2 Player',
     'Puzzle',
     'Cards',
@@ -121,6 +178,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             game.title == 'Color Match';
       case 'Learning':
         return game.badge == 'Learning';
+      case 'Car':
+        return game.badge == 'Car';
       case '2 Player':
         return {
           'XOX Arena',
@@ -129,6 +188,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           'Cricket Chase',
           'Snakes & Ladders',
           'Ludo',
+          'Drag Duel',
         }.contains(game.title);
       case 'Puzzle':
         return {
@@ -139,16 +199,32 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           'Candy Match',
           'Chess',
           'Picture Puzzle',
+          'Odd One Out',
+          'Light Grid',
+          'Tap Sequence',
+          'Cup Shuffle',
+          'Pair Finder',
+          'Balance Beam',
+          'Bomb Diffuser',
+          'Shop Cashier',
+          'Airport Control',
+          '2048',
+          'Sonar Sweep',
+          'Laser Loop',
         }.contains(game.title);
       case 'Cards':
         return {
           'Higher or Lower',
           'Blackjack',
           'War Cards',
+          'Card Count',
+          'Suit Streak',
+          'Poker Bluff',
         }.contains(game.title);
       case 'Arcade':
         return {
           'Quick Tap',
+          'Beat Burst',
           'Snake',
           'Heads or Tails',
           'Range Picker',
@@ -156,9 +232,35 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           'Brick Breaker',
           'Candy Match',
           'Turbo Traffic',
+          'Nitro Sprint',
+          'Drift Run',
+          'Parking Dash',
+          'Overtake Rush',
+          'Highway Heat',
+          'Police Escape',
+          'Pit Stop Pro',
+          'Checkpoint Dash',
+          'Cone Slalom',
+          'Slipstream Surge',
+          'Race Strategist',
+          'Qualifying Lap',
+          'Mountain Drive',
           'Bike Sprint',
           'Cycle Dash',
           'Avatar Rush',
+          'Penalty Kick',
+          'Direction Dash',
+          'Flash Count',
+          'Target Hunt',
+          'Treasure Tap',
+          'Color Sweep',
+          'Lane Switch',
+          'Mini Maze',
+          'Mole Smash',
+          'Fuel Rush',
+          'Desert Rally',
+          'Asteroid Shield',
+          'Traffic Light Tap',
         }.contains(game.title);
       case 'Racing':
         return game.badge == 'Racing';
@@ -177,443 +279,1127 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         game.spotlightLabel.toLowerCase().contains(value);
   }
 
-  List<_HubGame> _games(GameStatsSnapshot stats) => [
-    _HubGame(
-      title: 'XOX Arena',
-      subtitle: 'Classic tic tac toe with local multiplayer or AI.',
-      badge: 'Featured',
-      spotlightLabel: 'Featured',
-      icon: Icons.grid_3x3_rounded,
-      colors: const [Color(0xfff97316), Color(0xfffb7185)],
-      imageAsset: 'assets/images/game_card_xox.png',
-      statLine: 'Main game ready to play',
-      buildPage: () => const ChoosePlayerScreen(),
-    ),
-    _HubGame(
-      title: 'Rock Paper Scissors',
-      subtitle: 'Fast duel against the computer with score tracking.',
-      badge: 'Quick Play',
-      spotlightLabel: 'Classic',
-      icon: Icons.front_hand_rounded,
-      colors: const [Color(0xff22c55e), Color(0xff14b8a6)],
-      imageAsset: 'assets/images/game_card_rps.png',
-      statLine: 'Total wins saved: ${stats.rockPaperScissorsWins}',
-      buildPage: () => const RockPaperScissorsScreen(),
-    ),
-    _HubGame(
-      title: 'Memory Match',
-      subtitle: 'Flip cards, find pairs, and clear the board in fewer moves.',
-      badge: 'Puzzle',
-      spotlightLabel: 'Puzzle',
-      icon: Icons.psychology_alt_rounded,
-      colors: const [Color(0xff6366f1), Color(0xff8b5cf6)],
-      imageAsset: 'assets/images/game_card_memory.png',
-      statLine: stats.memoryBestMoves == 0
-          ? 'No best score yet'
-          : 'Best clear: ${stats.memoryBestMoves} moves',
-      buildPage: () => const MemoryMatchScreen(),
-    ),
-    _HubGame(
-      title: 'Math Equation',
-      subtitle: 'Solve endless equations and keep climbing saved levels.',
-      badge: 'Learning',
-      spotlightLabel: 'Math',
-      icon: Icons.calculate_rounded,
-      colors: const [Color(0xffef4444), Color(0xfff97316)],
-      artStyle: _GameArtStyle.mathEquation,
-      statLine: 'Saved level: ${stats.mathEquationLevel}',
-      buildPage: () => const MathEquationScreen(),
-    ),
-    _HubGame(
-      title: 'Number Guess',
-      subtitle: 'Read the hints and crack the secret number.',
-      badge: 'Brain',
-      spotlightLabel: 'Brain',
-      icon: Icons.pin_rounded,
-      colors: const [Color(0xff06b6d4), Color(0xff3b82f6)],
-      imageAsset: 'assets/images/game_card_number_guess.png',
-      statLine: stats.numberGuessBestAttempts == 0
-          ? 'No best run yet'
-          : 'Best solve: ${stats.numberGuessBestAttempts} tries',
-      buildPage: () => const NumberGuessScreen(),
-    ),
-    _HubGame(
-      title: 'Dice Duel',
-      subtitle: 'Roll the dice and race the CPU to the higher score.',
-      badge: 'Luck',
-      spotlightLabel: 'Luck',
-      icon: Icons.casino_rounded,
-      colors: const [Color(0xffa855f7), Color(0xffec4899)],
-      imageAsset: 'assets/images/game_card_dice_duel.png',
-      statLine: 'Total round wins saved: ${stats.diceDuelWins}',
-      buildPage: () => const DiceDuelScreen(),
-    ),
-    _HubGame(
-      title: 'Heads or Tails',
-      subtitle: 'Call the coin flip and build a streak.',
-      badge: 'Streak',
-      spotlightLabel: 'Streak',
-      icon: Icons.monetization_on_rounded,
-      colors: const [Color(0xfff59e0b), Color(0xffef4444)],
-      imageAsset: 'assets/images/game_card_heads_tails.png',
-      statLine: 'Best streak: ${stats.headsOrTailsBestStreak}',
-      buildPage: () => const HeadsOrTailsScreen(),
-    ),
-    _HubGame(
-      title: 'Range Picker',
-      subtitle: 'Pass 10, 100, or any max value and get a random pick.',
-      badge: 'Utility Game',
-      spotlightLabel: 'Utility',
-      icon: Icons.auto_awesome_rounded,
-      colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
-      imageAsset: 'assets/images/game_card_range_picker.png',
-      statLine: stats.rangePickerLargestRange == 0
-          ? 'No range used yet'
-          : 'Largest range used: ${stats.rangePickerLargestRange}',
-      buildPage: () => const RangePickerScreen(),
-    ),
-    _HubGame(
-      title: 'Higher or Lower',
-      subtitle: 'Predict the next card and build a hot streak.',
-      badge: 'Cards',
-      spotlightLabel: 'New',
-      icon: Icons.style_rounded,
-      colors: const [Color(0xfff97316), Color(0xfffacc15)],
-      artStyle: _GameArtStyle.higherLower,
-      statLine: stats.higherLowerBestStreak == 0
-          ? 'Best streak waiting'
-          : 'Best streak: ${stats.higherLowerBestStreak}',
-      buildPage: () => const HigherLowerScreen(),
-    ),
-    _HubGame(
-      title: 'Blackjack',
-      subtitle: 'Hit or stand and try to beat the dealer at 21.',
-      badge: 'Cards',
-      spotlightLabel: 'Casino',
-      icon: Icons.style_rounded,
-      colors: const [Color(0xff166534), Color(0xff14532d)],
-      artStyle: _GameArtStyle.blackjack,
-      statLine: 'Classic 21 card game',
-      buildPage: () => const BlackjackScreen(),
-    ),
-    _HubGame(
-      title: 'War Cards',
-      subtitle: 'Flip one card each and win with the higher card.',
-      badge: 'Cards',
-      spotlightLabel: 'Battle',
-      icon: Icons.auto_awesome_rounded,
-      colors: const [Color(0xfff97316), Color(0xffef4444)],
-      artStyle: _GameArtStyle.warCards,
-      statLine: 'Fast head-to-head card game',
-      buildPage: () => const WarCardsScreen(),
-    ),
-    _HubGame(
-      title: 'Quick Tap',
-      subtitle: 'A short reflex sprint to see how many taps you can land.',
-      badge: 'Reflex',
-      spotlightLabel: 'Trending',
-      icon: Icons.touch_app_rounded,
-      colors: const [Color(0xff06b6d4), Color(0xff34d399)],
-      artStyle: _GameArtStyle.quickTap,
-      statLine: stats.quickTapBestScore == 0
-          ? 'No record set yet'
-          : 'Best round: ${stats.quickTapBestScore} taps',
-      buildPage: () => const QuickTapScreen(),
-    ),
-    _HubGame(
-      title: 'Snake',
-      subtitle: 'Guide the snake, eat food, and beat your best length.',
-      badge: 'Arcade',
-      spotlightLabel: 'New',
-      icon: Icons.route_rounded,
-      colors: const [Color(0xff22c55e), Color(0xff84cc16)],
-      artStyle: _GameArtStyle.snake,
-      statLine:
-          'Best length: ${stats.snakeBestLength == 0 ? 3 : stats.snakeBestLength}',
-      buildPage: () => const SnakeScreen(),
-    ),
-    _HubGame(
-      title: 'Sudoku Mini',
-      subtitle: 'A fast 4x4 number puzzle built for tap controls.',
-      badge: 'Logic',
-      spotlightLabel: 'Brain',
-      icon: Icons.grid_view_rounded,
-      colors: const [Color(0xff6366f1), Color(0xff2563eb)],
-      artStyle: _GameArtStyle.sudoku,
-      statLine: 'Solved boards: ${stats.sudokuSolvedBoards}',
-      buildPage: () => const SudokuScreen(),
-    ),
-    _HubGame(
-      title: 'Cricket Chase',
-      subtitle: 'Bat first, defend the total, and win the hand-cricket duel.',
-      badge: 'Sports',
-      spotlightLabel: 'Sports',
-      icon: Icons.sports_cricket_rounded,
-      colors: const [Color(0xff0f766e), Color(0xff22c55e)],
-      artStyle: _GameArtStyle.cricket,
-      statLine: 'Matches won: ${stats.cricketWins}',
-      buildPage: () => const CricketChaseScreen(),
-    ),
-    _HubGame(
-      title: 'Snakes & Ladders',
-      subtitle: 'Full 100-square race with ladders, snakes, and local turns.',
-      badge: 'Board Race',
-      spotlightLabel: 'Board',
-      icon: Icons.stairs_rounded,
-      colors: const [Color(0xff7c3aed), Color(0xffec4899)],
-      artStyle: _GameArtStyle.snakesLadders,
-      statLine: 'Races won: ${stats.snakesAndLaddersWins}',
-      buildPage: () => const SnakesAndLaddersScreen(),
-    ),
-    _HubGame(
-      title: 'Ludo',
-      subtitle: 'Roll a 6 to enter, race your token home, and beat the rival.',
-      badge: 'Board Race',
-      spotlightLabel: 'Ludo',
-      icon: Icons.blur_circular_rounded,
-      colors: const [Color(0xffef4444), Color(0xff2563eb)],
-      artStyle: _GameArtStyle.ludo,
-      statLine: 'Ludo wins: ${stats.ludoWins}',
-      buildPage: () => const LudoScreen(),
-    ),
-    _HubGame(
-      title: 'Turbo Traffic',
-      subtitle: 'Dodge lane traffic and hold your nerve as the road speeds up.',
-      badge: 'Racing',
-      spotlightLabel: 'Drive',
-      icon: Icons.directions_car_filled_rounded,
-      colors: const [Color(0xfffb7185), Color(0xfff97316)],
-      artStyle: _GameArtStyle.turboTraffic,
-      statLine: stats.turboTrafficBestScore == 0
-          ? 'No clean runs yet'
-          : 'Best dodges: ${stats.turboTrafficBestScore}',
-      buildPage: () => const TurboTrafficScreen(),
-    ),
-    _HubGame(
-      title: 'Bike Sprint',
-      subtitle: 'Hit the boost zone and chain perfect pedal bursts.',
-      badge: 'Racing',
-      spotlightLabel: 'Bike',
-      icon: Icons.two_wheeler_rounded,
-      colors: const [Color(0xff38bdf8), Color(0xff2563eb)],
-      artStyle: _GameArtStyle.bikeSprint,
-      statLine: stats.bikeSprintBestDistance == 0
-          ? 'Sprint record waiting'
-          : 'Best distance: ${stats.bikeSprintBestDistance} m',
-      buildPage: () => const BikeSprintScreen(),
-    ),
-    _HubGame(
-      title: 'Cycle Dash',
-      subtitle:
-          'Manage energy across checkpoints and save boosts for the finish.',
-      badge: 'Racing',
-      spotlightLabel: 'Cycle',
-      icon: Icons.pedal_bike_rounded,
-      colors: const [Color(0xff22c55e), Color(0xff84cc16)],
-      artStyle: _GameArtStyle.cycleDash,
-      statLine: stats.cycleDashBestDistance == 0
-          ? 'No stage cleared yet'
-          : 'Best stage: ${stats.cycleDashBestDistance} m',
-      buildPage: () => const CycleDashScreen(),
-    ),
-    _HubGame(
-      title: 'Avatar Rush',
-      subtitle: 'Make the right move to keep your runner alive.',
-      badge: 'Racing',
-      spotlightLabel: 'Runner',
-      icon: Icons.directions_run_rounded,
-      colors: const [Color(0xff8b5cf6), Color(0xffec4899)],
-      artStyle: _GameArtStyle.avatarRush,
-      statLine: stats.avatarRushBestScore == 0
-          ? 'No runner streak yet'
-          : 'Best dodges: ${stats.avatarRushBestScore}',
-      buildPage: () => const AvatarRushScreen(),
-    ),
-    _HubGame(
-      title: 'Brick Breaker',
-      subtitle: 'Bounce the ball, move the paddle, and clear every brick.',
-      badge: 'Arcade',
-      spotlightLabel: 'Classic',
-      icon: Icons.sports_esports_rounded,
-      colors: const [Color(0xff38bdf8), Color(0xff8b5cf6)],
-      artStyle: _GameArtStyle.brickBreaker,
-      statLine: stats.brickBreakerBestScore == 0
-          ? 'No wall cleared yet'
-          : 'Best score: ${stats.brickBreakerBestScore}',
-      buildPage: () => const BrickBreakerScreen(),
-    ),
-    _HubGame(
-      title: 'Candy Match',
-      subtitle: 'Drag candies into place, crush combos, and chase score goals.',
-      badge: 'Puzzle',
-      spotlightLabel: 'Sweet',
-      icon: Icons.cake_rounded,
-      colors: const [Color(0xfffb7185), Color(0xffa855f7)],
-      artStyle: _GameArtStyle.candyMatch,
-      statLine: stats.candyMatchBestScore == 0
-          ? 'No sweet streak yet'
-          : 'Best score: ${stats.candyMatchBestScore}',
-      buildPage: () => const CandyMatchScreen(),
-    ),
-    _HubGame(
-      title: 'Picture Puzzle',
-      subtitle: 'Swap shuffled tiles to rebuild a fresh random picture.',
-      badge: 'Puzzle',
-      spotlightLabel: 'Touch',
-      icon: Icons.grid_on_rounded,
-      colors: const [Color(0xff22c55e), Color(0xff38bdf8)],
-      artStyle: _GameArtStyle.picturePuzzle,
-      statLine: 'Saved level: ${stats.picturePuzzleLevel}',
-      buildPage: () => const PicturePuzzleScreen(),
-    ),
-    _HubGame(
-      title: 'Chess',
-      subtitle: 'Play a full two-player chess board with real piece movement.',
-      badge: 'Strategy',
-      spotlightLabel: 'Board',
-      icon: Icons.grid_4x4_rounded,
-      colors: const [Color(0xffd4a373), Color(0xff7f5539)],
-      artStyle: _GameArtStyle.chess,
-      statLine: 'Local two-player classic',
-      buildPage: () => const ChessScreen(),
-    ),
-    _HubGame(
-      title: 'Balloon Pop',
-      subtitle: 'Pop bright balloons in a fast round made for little players.',
-      badge: 'Kids',
-      spotlightLabel: 'Fun',
-      icon: Icons.celebration_rounded,
-      colors: const [Color(0xfffb7185), Color(0xfff59e0b)],
-      artStyle: _GameArtStyle.balloonPop,
-      statLine: stats.balloonPopBestScore == 0
-          ? 'No best score yet'
-          : 'Best pops: ${stats.balloonPopBestScore}',
-      buildPage: () => const BalloonPopScreen(),
-    ),
-    _HubGame(
-      title: 'Color Match',
-      subtitle: 'Pick the matching color card in a simple kid-friendly round.',
-      badge: 'Kids',
-      spotlightLabel: 'Learn',
-      icon: Icons.palette_rounded,
-      colors: const [Color(0xff22c55e), Color(0xff38bdf8)],
-      artStyle: _GameArtStyle.colorMatch,
-      statLine: stats.colorMatchBestScore == 0
-          ? 'No streak yet'
-          : 'Best streak: ${stats.colorMatchBestScore}',
-      buildPage: () => const ColorMatchScreen(),
-    ),
-    _HubGame(
-      title: 'Alphabet Adventure',
-      subtitle: 'Letters, sounds, and easy alphabet practice.',
-      badge: 'Learning',
-      spotlightLabel: 'ABC',
-      icon: Icons.abc_rounded,
-      colors: const [Color(0xff38bdf8), Color(0xff0ea5e9)],
-      statLine: 'Letter practice game',
-      buildPage: () => const AlphabetAdventureScreen(),
-    ),
-    _HubGame(
-      title: 'Counting Fun',
-      subtitle: 'Count groups and choose the right number.',
-      badge: 'Learning',
-      spotlightLabel: 'Count',
-      icon: Icons.looks_5_rounded,
-      colors: const [Color(0xfff59e0b), Color(0xfff97316)],
-      statLine: 'Number sense for kids',
-      buildPage: () => const CountingFunScreen(),
-    ),
-    _HubGame(
-      title: 'Shape Match',
-      subtitle: 'Learn circles, squares, triangles, and more.',
-      badge: 'Learning',
-      spotlightLabel: 'Shapes',
-      icon: Icons.category_rounded,
-      colors: const [Color(0xff8b5cf6), Color(0xff6366f1)],
-      statLine: 'Shape recognition game',
-      buildPage: () => const ShapeMatchScreen(),
-    ),
-    _HubGame(
-      title: 'Animal Match',
-      subtitle: 'Match easy animal clues and names.',
-      badge: 'Learning',
-      spotlightLabel: 'Animals',
-      icon: Icons.pets_rounded,
-      colors: const [Color(0xff22c55e), Color(0xff16a34a)],
-      statLine: 'Animal learning fun',
-      buildPage: () => const AnimalMatchScreen(),
-    ),
-    _HubGame(
-      title: 'Math Sprint',
-      subtitle: 'Quick sums and simple number puzzles.',
-      badge: 'Learning',
-      spotlightLabel: 'Math',
-      icon: Icons.calculate_rounded,
-      colors: const [Color(0xffef4444), Color(0xfff97316)],
-      statLine: 'Brain game for numbers',
-      buildPage: () => const MathSprintScreen(),
-    ),
-    _HubGame(
-      title: 'Word Builder',
-      subtitle: 'Choose missing letters to finish words.',
-      badge: 'Learning',
-      spotlightLabel: 'Words',
-      icon: Icons.spellcheck_rounded,
-      colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
-      statLine: 'Build simple words',
-      buildPage: () => const WordBuilderScreen(),
-    ),
-    _HubGame(
-      title: 'Word Blank',
-      subtitle: 'Fill the blank, celebrate the word, and learn what it means.',
-      badge: 'Learning',
-      spotlightLabel: 'Words',
-      icon: Icons.spellcheck_rounded,
-      colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
-      statLine: 'Saved level: ${stats.wordBlankLevel}',
-      buildPage: () => const WordBlankScreen(),
-    ),
-    _HubGame(
-      title: 'Pattern Play',
-      subtitle: 'Find the next item in repeating patterns.',
-      badge: 'Learning',
-      spotlightLabel: 'Pattern',
-      icon: Icons.repeat_rounded,
-      colors: const [Color(0xfff97316), Color(0xfffb7185)],
-      statLine: 'Brain pattern practice',
-      buildPage: () => const PatternPlayScreen(),
-    ),
-    _HubGame(
-      title: 'Opposite Day',
-      subtitle: 'Pick the opposite word and learn meanings.',
-      badge: 'Learning',
-      spotlightLabel: 'Words',
-      icon: Icons.compare_arrows_rounded,
-      colors: const [Color(0xff6366f1), Color(0xff38bdf8)],
-      statLine: 'Vocabulary builder',
-      buildPage: () => const OppositeDayScreen(),
-    ),
-    _HubGame(
-      title: 'Emoji Count',
-      subtitle: 'Count emoji groups in playful rounds.',
-      badge: 'Learning',
-      spotlightLabel: 'Count',
-      icon: Icons.tag_faces_rounded,
-      colors: const [Color(0xffec4899), Color(0xfff59e0b)],
-      statLine: 'Counting with emoji',
-      buildPage: () => const EmojiCountScreen(),
-    ),
-    _HubGame(
-      title: 'Sight Word Sprint',
-      subtitle: 'Practice reading common sight words.',
-      badge: 'Learning',
-      spotlightLabel: 'Read',
-      icon: Icons.menu_book_rounded,
-      colors: const [Color(0xff22c55e), Color(0xff10b981)],
-      statLine: 'Reading practice game',
-      buildPage: () => const SightWordSprintScreen(),
-    ),
-  ];
+  List<_HubGame> _games(GameStatsSnapshot stats) {
+    final games = <_HubGame>[
+      _HubGame(
+        title: 'XOX Arena',
+        subtitle: 'Classic tic tac toe with local multiplayer or AI.',
+        badge: 'Featured',
+        spotlightLabel: 'Featured',
+        icon: Icons.grid_3x3_rounded,
+        colors: const [Color(0xfff97316), Color(0xfffb7185)],
+        imageAsset: 'assets/images/game_card_xox.png',
+        statLine: 'Main game ready to play',
+        buildPage: () => const ChoosePlayerScreen(),
+      ),
+      _HubGame(
+        title: 'Rock Paper Scissors',
+        subtitle: 'Fast duel against the computer with score tracking.',
+        badge: 'Quick Play',
+        spotlightLabel: 'Classic',
+        icon: Icons.front_hand_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff14b8a6)],
+        imageAsset: 'assets/images/game_card_rps.png',
+        statLine: 'Total wins saved: ${stats.rockPaperScissorsWins}',
+        buildPage: () => const RockPaperScissorsScreen(),
+      ),
+      _HubGame(
+        title: 'Memory Match',
+        subtitle: 'Flip cards, find pairs, and clear the board in fewer moves.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Puzzle',
+        icon: Icons.psychology_alt_rounded,
+        colors: const [Color(0xff6366f1), Color(0xff8b5cf6)],
+        imageAsset: 'assets/images/game_card_memory.png',
+        statLine: stats.memoryBestMoves == 0
+            ? 'No best score yet'
+            : 'Best clear: ${stats.memoryBestMoves} moves',
+        buildPage: () => const MemoryMatchScreen(),
+      ),
+      _HubGame(
+        title: 'Math Equation',
+        subtitle: 'Solve endless equations and keep climbing saved levels.',
+        badge: 'Learning',
+        spotlightLabel: 'Math',
+        icon: Icons.calculate_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff97316)],
+        artStyle: _GameArtStyle.mathEquation,
+        statLine: 'Saved level: ${stats.mathEquationLevel}',
+        buildPage: () => const MathEquationScreen(),
+      ),
+      _HubGame(
+        title: 'Number Guess',
+        subtitle: 'Read the hints and crack the secret number.',
+        badge: 'Brain',
+        spotlightLabel: 'Brain',
+        icon: Icons.pin_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff3b82f6)],
+        imageAsset: 'assets/images/game_card_number_guess.png',
+        statLine: stats.numberGuessBestAttempts == 0
+            ? 'No best run yet'
+            : 'Best solve: ${stats.numberGuessBestAttempts} tries',
+        buildPage: () => const NumberGuessScreen(),
+      ),
+      _HubGame(
+        title: 'Bomb Diffuser',
+        subtitle: 'Read the bomb clue, cut the right wire, and stay calm.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Logic',
+        icon: Icons.electrical_services_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff59e0b)],
+        statLine: 'Fresh clue and wire set every round',
+        buildPage: () => const BombDiffuserScreen(),
+      ),
+      _HubGame(
+        title: 'Shop Cashier',
+        subtitle: 'Bill the basket correctly and return the exact change.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Shop',
+        icon: Icons.point_of_sale_rounded,
+        colors: const [Color(0xff0ea5e9), Color(0xff14b8a6)],
+        statLine: 'Each customer brings a fresh basket and payment amount',
+        buildPage: () => const ShopCashierScreen(),
+      ),
+      _HubGame(
+        title: 'Dice Duel',
+        subtitle: 'Roll the dice and race the CPU to the higher score.',
+        badge: 'Luck',
+        spotlightLabel: 'Luck',
+        icon: Icons.casino_rounded,
+        colors: const [Color(0xffa855f7), Color(0xffec4899)],
+        imageAsset: 'assets/images/game_card_dice_duel.png',
+        statLine: 'Total round wins saved: ${stats.diceDuelWins}',
+        buildPage: () => const DiceDuelScreen(),
+      ),
+      _HubGame(
+        title: 'Heads or Tails',
+        subtitle: 'Call the coin flip and build a streak.',
+        badge: 'Streak',
+        spotlightLabel: 'Streak',
+        icon: Icons.monetization_on_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xffef4444)],
+        imageAsset: 'assets/images/game_card_heads_tails.png',
+        statLine: 'Best streak: ${stats.headsOrTailsBestStreak}',
+        buildPage: () => const HeadsOrTailsScreen(),
+      ),
+      _HubGame(
+        title: 'Range Picker',
+        subtitle: 'Pass 10, 100, or any max value and get a random pick.',
+        badge: 'Utility Game',
+        spotlightLabel: 'Utility',
+        icon: Icons.auto_awesome_rounded,
+        colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
+        imageAsset: 'assets/images/game_card_range_picker.png',
+        statLine: stats.rangePickerLargestRange == 0
+            ? 'No range used yet'
+            : 'Largest range used: ${stats.rangePickerLargestRange}',
+        buildPage: () => const RangePickerScreen(),
+      ),
+      _HubGame(
+        title: 'Higher or Lower',
+        subtitle: 'Predict the next card and build a hot streak.',
+        badge: 'Cards',
+        spotlightLabel: 'New',
+        icon: Icons.style_rounded,
+        colors: const [Color(0xfff97316), Color(0xfffacc15)],
+        artStyle: _GameArtStyle.higherLower,
+        statLine: stats.higherLowerBestStreak == 0
+            ? 'Best streak waiting'
+            : 'Best streak: ${stats.higherLowerBestStreak}',
+        buildPage: () => const HigherLowerScreen(),
+      ),
+      _HubGame(
+        title: 'Blackjack',
+        subtitle: 'Hit or stand and try to beat the dealer at 21.',
+        badge: 'Cards',
+        spotlightLabel: 'Casino',
+        icon: Icons.style_rounded,
+        colors: const [Color(0xff166534), Color(0xff14532d)],
+        artStyle: _GameArtStyle.blackjack,
+        statLine: 'Classic 21 card game',
+        buildPage: () => const BlackjackScreen(),
+      ),
+      _HubGame(
+        title: 'War Cards',
+        subtitle: 'Flip one card each and win with the higher card.',
+        badge: 'Cards',
+        spotlightLabel: 'Battle',
+        icon: Icons.auto_awesome_rounded,
+        colors: const [Color(0xfff97316), Color(0xffef4444)],
+        artStyle: _GameArtStyle.warCards,
+        statLine: 'Fast head-to-head card game',
+        buildPage: () => const WarCardsScreen(),
+      ),
+      _HubGame(
+        title: 'Card Count',
+        subtitle: 'Read the cards, add the values, and choose the right total.',
+        badge: 'Cards',
+        spotlightLabel: 'Count',
+        icon: Icons.style_rounded,
+        colors: const [Color(0xff166534), Color(0xff14532d)],
+        statLine: 'More cards appear as rounds increase',
+        buildPage: () => const CardCountScreen(),
+      ),
+      _HubGame(
+        title: 'Garage Sort',
+        subtitle:
+            'Read each vehicle profile and park it in the right service bay.',
+        badge: 'Car',
+        spotlightLabel: 'Garage',
+        icon: Icons.garage_rounded,
+        colors: const [Color(0xff0ea5e9), Color(0xff22c55e)],
+        statLine: 'Offline car sorting with quick rule-based rounds',
+        buildPage: () => const GarageSortScreen(),
+      ),
+      _HubGame(
+        title: 'Dashboard Doctor',
+        subtitle:
+            'Read the warning, pick the right repair, and keep the cars moving.',
+        badge: 'Car',
+        spotlightLabel: 'Repair',
+        icon: Icons.car_repair_rounded,
+        colors: const [Color(0xff0ea5e9), Color(0xff22c55e)],
+        statLine: 'Car care decision game with fast garage rounds',
+        buildPage: () => const DashboardDoctorScreen(),
+      ),
+      _HubGame(
+        title: 'Car Wash Sort',
+        subtitle: 'Pick the right wash lane based on each car condition.',
+        badge: 'Car',
+        spotlightLabel: 'Wash',
+        icon: Icons.local_car_wash_rounded,
+        colors: const [Color(0xff38bdf8), Color(0xff14b8a6)],
+        statLine: 'Car wash sorting game with quick read-and-pick rounds',
+        buildPage: () => const CarWashSortScreen(),
+      ),
+      _HubGame(
+        title: 'Fuel Grade Pick',
+        subtitle: 'Choose the correct fuel type for each car profile.',
+        badge: 'Car',
+        spotlightLabel: 'Fuel',
+        icon: Icons.local_gas_station_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xffef4444)],
+        statLine: 'Fuel selection game with simple garage-style rounds',
+        buildPage: () => const FuelGradePickScreen(),
+      ),
+      _HubGame(
+        title: 'Traffic Light Tap',
+        subtitle: 'Wait for green, then react fast without jumping the start.',
+        badge: 'Arcade',
+        spotlightLabel: 'Reflex',
+        icon: Icons.traffic_rounded,
+        colors: const [Color(0xfff97316), Color(0xff22c55e)],
+        statLine: 'Reaction-timing game built around clean race starts',
+        buildPage: () => const TrafficLightTapScreen(),
+      ),
+      _HubGame(
+        title: 'Suit Streak',
+        subtitle:
+            'Count the spread fast and pick the suit with the highest total.',
+        badge: 'Cards',
+        spotlightLabel: 'Suits',
+        icon: Icons.style_rounded,
+        colors: const [Color(0xff166534), Color(0xff14532d)],
+        statLine: 'Offline card counting with quick read-and-pick rounds',
+        buildPage: () => const SuitStreakScreen(),
+      ),
+      _HubGame(
+        title: 'Quick Tap',
+        subtitle: 'A short reflex sprint to see how many taps you can land.',
+        badge: 'Reflex',
+        spotlightLabel: 'Trending',
+        icon: Icons.touch_app_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff34d399)],
+        artStyle: _GameArtStyle.quickTap,
+        statLine: stats.quickTapBestScore == 0
+            ? 'No record set yet'
+            : 'Best round: ${stats.quickTapBestScore} taps',
+        buildPage: () => const QuickTapScreen(),
+      ),
+      _HubGame(
+        title: 'Beat Burst',
+        subtitle: 'Tap the glowing beat pad before the rhythm timer runs out.',
+        badge: 'Arcade',
+        spotlightLabel: 'Beat',
+        icon: Icons.music_note_rounded,
+        colors: const [Color(0xfff97316), Color(0xffef4444)],
+        statLine: 'Pure offline reflex play with rising tempo',
+        buildPage: () => const BeatBurstScreen(),
+      ),
+      _HubGame(
+        title: 'Mole Smash',
+        subtitle: 'Tap the popping mole before it disappears and avoid misses.',
+        badge: 'Arcade',
+        spotlightLabel: 'Reflex',
+        icon: Icons.cruelty_free_rounded,
+        colors: const [Color(0xff84cc16), Color(0xff22c55e)],
+        statLine: 'Mole speeds up as your score climbs',
+        buildPage: () => const MoleSmashScreen(),
+      ),
+      _HubGame(
+        title: 'Snake',
+        subtitle: 'Guide the snake, eat food, and beat your best length.',
+        badge: 'Arcade',
+        spotlightLabel: 'New',
+        icon: Icons.route_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff84cc16)],
+        artStyle: _GameArtStyle.snake,
+        statLine:
+            'Best length: ${stats.snakeBestLength == 0 ? 3 : stats.snakeBestLength}',
+        buildPage: () => const SnakeScreen(),
+      ),
+      _HubGame(
+        title: 'Sudoku Mini',
+        subtitle: 'A fast 4x4 number puzzle built for tap controls.',
+        badge: 'Logic',
+        spotlightLabel: 'Brain',
+        icon: Icons.grid_view_rounded,
+        colors: const [Color(0xff6366f1), Color(0xff2563eb)],
+        artStyle: _GameArtStyle.sudoku,
+        statLine: 'Solved boards: ${stats.sudokuSolvedBoards}',
+        buildPage: () => const SudokuScreen(),
+      ),
+      _HubGame(
+        title: 'Cricket Chase',
+        subtitle: 'Bat first, defend the total, and win the hand-cricket duel.',
+        badge: 'Sports',
+        spotlightLabel: 'Sports',
+        icon: Icons.sports_cricket_rounded,
+        colors: const [Color(0xff0f766e), Color(0xff22c55e)],
+        artStyle: _GameArtStyle.cricket,
+        statLine: 'Matches won: ${stats.cricketWins}',
+        buildPage: () => const CricketChaseScreen(),
+      ),
+      _HubGame(
+        title: 'Penalty Kick',
+        subtitle: 'Stop the moving aim and score away from the keeper glove.',
+        badge: 'Arcade',
+        spotlightLabel: 'Goal',
+        icon: Icons.sports_soccer_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff0ea5e9)],
+        statLine: 'Quick timing-based soccer challenge',
+        buildPage: () => const PenaltyKickScreen(),
+      ),
+      _HubGame(
+        title: 'Snakes & Ladders',
+        subtitle: 'Full 100-square race with ladders, snakes, and local turns.',
+        badge: 'Board Race',
+        spotlightLabel: 'Board',
+        icon: Icons.stairs_rounded,
+        colors: const [Color(0xff7c3aed), Color(0xffec4899)],
+        artStyle: _GameArtStyle.snakesLadders,
+        statLine: 'Races won: ${stats.snakesAndLaddersWins}',
+        buildPage: () => const SnakesAndLaddersScreen(),
+      ),
+      _HubGame(
+        title: 'Ludo',
+        subtitle:
+            'Roll a 6 to enter, race your token home, and beat the rival.',
+        badge: 'Board Race',
+        spotlightLabel: 'Ludo',
+        icon: Icons.blur_circular_rounded,
+        colors: const [Color(0xffef4444), Color(0xff2563eb)],
+        artStyle: _GameArtStyle.ludo,
+        statLine: 'Ludo wins: ${stats.ludoWins}',
+        buildPage: () => const LudoScreen(),
+      ),
+      _HubGame(
+        title: 'Turbo Traffic',
+        subtitle:
+            'Dodge lane traffic and hold your nerve as the road speeds up.',
+        badge: 'Racing',
+        spotlightLabel: 'Drive',
+        icon: Icons.directions_car_filled_rounded,
+        colors: const [Color(0xfffb7185), Color(0xfff97316)],
+        artStyle: _GameArtStyle.turboTraffic,
+        statLine: stats.turboTrafficBestScore == 0
+            ? 'No clean runs yet'
+            : 'Best dodges: ${stats.turboTrafficBestScore}',
+        buildPage: () => const TurboTrafficScreen(),
+      ),
+      _HubGame(
+        title: 'Nitro Sprint',
+        subtitle: 'Nail the launch, shift on time, and hit nitro to win.',
+        badge: 'Racing',
+        spotlightLabel: 'Drag',
+        icon: Icons.flash_on_rounded,
+        colors: const [Color(0xfff97316), Color(0xffef4444)],
+        statLine: stats.nitroSprintBestTimeMs == 0
+            ? 'Best finish waiting'
+            : 'Best finish: ${(stats.nitroSprintBestTimeMs / 1000).toStringAsFixed(2)}s',
+        buildPage: () => const NitroSprintScreen(),
+      ),
+      _HubGame(
+        title: 'Drift Run',
+        subtitle:
+            'Slide between barrier gates and survive as the road speeds up.',
+        badge: 'Racing',
+        spotlightLabel: 'Drift',
+        icon: Icons.turn_sharp_left_rounded,
+        colors: const [Color(0xfff97316), Color(0xff0ea5e9)],
+        statLine: stats.driftRunBestDistance == 0
+            ? 'No clean run yet'
+            : 'Best distance: ${stats.driftRunBestDistance} m',
+        buildPage: () => const DriftRunScreen(),
+      ),
+      _HubGame(
+        title: 'Parking Dash',
+        subtitle: 'Slip into the highlighted parking bay before time runs out.',
+        badge: 'Racing',
+        spotlightLabel: 'Park',
+        icon: Icons.local_parking_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff0ea5e9)],
+        statLine: stats.parkingDashBestLevel == 0
+            ? 'No bay cleared yet'
+            : 'Best round: ${stats.parkingDashBestLevel}',
+        buildPage: () => const ParkingDashScreen(),
+      ),
+      _HubGame(
+        title: 'Circuit Racer',
+        subtitle: 'Brake for corners, hold the line, and race a real circuit.',
+        badge: 'Racing',
+        spotlightLabel: 'Track',
+        icon: Icons.sports_motorsports_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff97316)],
+        statLine: 'Track sections demand proper braking and steering input',
+        buildPage: () => const CircuitRacerScreen(),
+      ),
+      _HubGame(
+        title: 'Qualifying Lap',
+        subtitle:
+            'Push one full hot lap with DRS timing, braking zones, and sector targets.',
+        badge: 'Racing',
+        spotlightLabel: 'Quali',
+        icon: Icons.timer_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff8b5cf6)],
+        statLine:
+            'One-lap time attack built to feel like a real qualifying run',
+        buildPage: () => const QualifyingLapScreen(),
+      ),
+      _HubGame(
+        title: 'Mountain Drive',
+        subtitle:
+            'Race through green trees, mountain roads, and scenic bends with a more real-road feel.',
+        badge: 'Racing',
+        spotlightLabel: 'Scenic',
+        icon: Icons.landscape_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff0ea5e9)],
+        statLine:
+            'Mountain scenery, roadside trees, and a proper hill-road race vibe',
+        buildPage: () => const MountainDriveScreen(),
+      ),
+      _HubGame(
+        title: 'Overtake Rush',
+        subtitle:
+            'Burst past traffic, manage engine heat, and hunt the finish.',
+        badge: 'Racing',
+        spotlightLabel: 'Overtake',
+        icon: Icons.rocket_launch_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff59e0b)],
+        statLine: stats.overtakeRushBestScore == 0
+            ? 'Street run waiting'
+            : 'Best passes: ${stats.overtakeRushBestScore}',
+        buildPage: () => const OvertakeRushScreen(),
+      ),
+      _HubGame(
+        title: 'Highway Heat',
+        subtitle: 'Dodge traffic at speed and stack risky near-miss runs.',
+        badge: 'Racing',
+        spotlightLabel: 'Highway',
+        icon: Icons.route_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff97316)],
+        statLine: 'Offline highway dodging with rising speed pressure',
+        buildPage: () => const HighwayHeatScreen(),
+      ),
+      _HubGame(
+        title: 'Police Escape',
+        subtitle:
+            'Break the chase, dodge roadblocks, and lose the wanted level.',
+        badge: 'Racing',
+        spotlightLabel: 'Chase',
+        icon: Icons.local_police_rounded,
+        colors: const [Color(0xff2563eb), Color(0xff0ea5e9)],
+        statLine: 'Pursuit-style driving challenge with roadblock pressure',
+        buildPage: () => const PoliceEscapeScreen(),
+      ),
+      _HubGame(
+        title: 'Pit Stop Pro',
+        subtitle: 'Memorize the crew order and service the car under pressure.',
+        badge: 'Racing',
+        spotlightLabel: 'Pit',
+        icon: Icons.build_circle_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff0ea5e9)],
+        statLine: 'Race-team memory challenge built around pit stop calls',
+        buildPage: () => const PitStopProScreen(),
+      ),
+      _HubGame(
+        title: 'Checkpoint Dash',
+        subtitle: 'Cross each speed gate inside the target racing window.',
+        badge: 'Racing',
+        spotlightLabel: 'Gate',
+        icon: Icons.speed_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xffef4444)],
+        statLine: 'Throttle-and-brake timing challenge across 5 checkpoints',
+        buildPage: () => const CheckpointDashScreen(),
+      ),
+      _HubGame(
+        title: 'Cone Slalom',
+        subtitle:
+            'Flick the car through cone walls and survive the fast sections.',
+        badge: 'Racing',
+        spotlightLabel: 'Slalom',
+        icon: Icons.turn_right_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xfffb7185)],
+        statLine: 'Precision lane-switch challenge inspired by training drills',
+        buildPage: () => const ConeSlalomScreen(),
+      ),
+      _HubGame(
+        title: 'Slipstream Surge',
+        subtitle:
+            'Draft behind the rival, pull out late, and time each overtake.',
+        badge: 'Racing',
+        spotlightLabel: 'Draft',
+        icon: Icons.air_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff8b5cf6)],
+        statLine: 'Tactical overtaking game built around slipstream timing',
+        buildPage: () => const SlipstreamSurgeScreen(),
+      ),
+      _HubGame(
+        title: 'Race Strategist',
+        subtitle:
+            'Manage pit wall decisions, tire wear, fuel, and weather lap by lap.',
+        badge: 'Racing',
+        spotlightLabel: 'Strategy',
+        icon: Icons.support_agent_rounded,
+        colors: const [Color(0xff14b8a6), Color(0xff0ea5e9)],
+        statLine: 'A different kind of car-race game focused on race calls',
+        buildPage: () => const RaceStrategistScreen(),
+      ),
+      _HubGame(
+        title: 'Airport Control',
+        subtitle: 'Give runway priority to the right flight under pressure.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Tower',
+        icon: Icons.local_airport_rounded,
+        colors: const [Color(0xff1d4ed8), Color(0xff0ea5e9)],
+        statLine: 'Fuel, landing status, and passengers change every round',
+        buildPage: () => const AirportControlScreen(),
+      ),
+      _HubGame(
+        title: 'Bike Sprint',
+        subtitle: 'Hit the boost zone and chain perfect pedal bursts.',
+        badge: 'Racing',
+        spotlightLabel: 'Bike',
+        icon: Icons.two_wheeler_rounded,
+        colors: const [Color(0xff38bdf8), Color(0xff2563eb)],
+        artStyle: _GameArtStyle.bikeSprint,
+        statLine: stats.bikeSprintBestDistance == 0
+            ? 'Sprint record waiting'
+            : 'Best distance: ${stats.bikeSprintBestDistance} m',
+        buildPage: () => const BikeSprintScreen(),
+      ),
+      _HubGame(
+        title: 'Cycle Dash',
+        subtitle:
+            'Manage energy across checkpoints and save boosts for the finish.',
+        badge: 'Racing',
+        spotlightLabel: 'Cycle',
+        icon: Icons.pedal_bike_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff84cc16)],
+        artStyle: _GameArtStyle.cycleDash,
+        statLine: stats.cycleDashBestDistance == 0
+            ? 'No stage cleared yet'
+            : 'Best stage: ${stats.cycleDashBestDistance} m',
+        buildPage: () => const CycleDashScreen(),
+      ),
+      _HubGame(
+        title: 'Avatar Rush',
+        subtitle: 'Make the right move to keep your runner alive.',
+        badge: 'Racing',
+        spotlightLabel: 'Runner',
+        icon: Icons.directions_run_rounded,
+        colors: const [Color(0xff8b5cf6), Color(0xffec4899)],
+        artStyle: _GameArtStyle.avatarRush,
+        statLine: stats.avatarRushBestScore == 0
+            ? 'No runner streak yet'
+            : 'Best dodges: ${stats.avatarRushBestScore}',
+        buildPage: () => const AvatarRushScreen(),
+      ),
+      _HubGame(
+        title: 'Brick Breaker',
+        subtitle: 'Bounce the ball, move the paddle, and clear every brick.',
+        badge: 'Arcade',
+        spotlightLabel: 'Classic',
+        icon: Icons.sports_esports_rounded,
+        colors: const [Color(0xff38bdf8), Color(0xff8b5cf6)],
+        artStyle: _GameArtStyle.brickBreaker,
+        statLine: stats.brickBreakerBestScore == 0
+            ? 'No wall cleared yet'
+            : 'Best score: ${stats.brickBreakerBestScore}',
+        buildPage: () => const BrickBreakerScreen(),
+      ),
+      _HubGame(
+        title: 'Candy Match',
+        subtitle:
+            'Drag candies into place, crush combos, and chase score goals.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Sweet',
+        icon: Icons.cake_rounded,
+        colors: const [Color(0xfffb7185), Color(0xffa855f7)],
+        artStyle: _GameArtStyle.candyMatch,
+        statLine: stats.candyMatchBestScore == 0
+            ? 'No sweet streak yet'
+            : 'Best score: ${stats.candyMatchBestScore}',
+        buildPage: () => const CandyMatchScreen(),
+      ),
+      _HubGame(
+        title: 'Picture Puzzle',
+        subtitle: 'Swap shuffled tiles to rebuild a fresh random picture.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Touch',
+        icon: Icons.grid_on_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff38bdf8)],
+        artStyle: _GameArtStyle.picturePuzzle,
+        statLine: 'Saved level: ${stats.picturePuzzleLevel}',
+        buildPage: () => const PicturePuzzleScreen(),
+      ),
+      _HubGame(
+        title: 'Chess',
+        subtitle:
+            'Play a full two-player chess board with real piece movement.',
+        badge: 'Strategy',
+        spotlightLabel: 'Board',
+        icon: Icons.grid_4x4_rounded,
+        colors: const [Color(0xffd4a373), Color(0xff7f5539)],
+        artStyle: _GameArtStyle.chess,
+        statLine: 'Local two-player classic',
+        buildPage: () => const ChessScreen(),
+      ),
+      _HubGame(
+        title: 'Balloon Pop',
+        subtitle:
+            'Pop bright balloons in a fast round made for little players.',
+        badge: 'Kids',
+        spotlightLabel: 'Fun',
+        icon: Icons.celebration_rounded,
+        colors: const [Color(0xfffb7185), Color(0xfff59e0b)],
+        artStyle: _GameArtStyle.balloonPop,
+        statLine: stats.balloonPopBestScore == 0
+            ? 'No best score yet'
+            : 'Best pops: ${stats.balloonPopBestScore}',
+        buildPage: () => const BalloonPopScreen(),
+      ),
+      _HubGame(
+        title: 'Color Match',
+        subtitle:
+            'Pick the matching color card in a simple kid-friendly round.',
+        badge: 'Kids',
+        spotlightLabel: 'Learn',
+        icon: Icons.palette_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff38bdf8)],
+        artStyle: _GameArtStyle.colorMatch,
+        statLine: stats.colorMatchBestScore == 0
+            ? 'No streak yet'
+            : 'Best streak: ${stats.colorMatchBestScore}',
+        buildPage: () => const ColorMatchScreen(),
+      ),
+      _HubGame(
+        title: 'Odd One Out',
+        subtitle: 'Spot the different tile before the board gets bigger.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Focus',
+        icon: Icons.visibility_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xffef4444)],
+        statLine: stats.oddOneOutBestStreak == 0
+            ? 'No streak yet'
+            : 'Best streak: ${stats.oddOneOutBestStreak}',
+        buildPage: () => const OddOneOutScreen(),
+      ),
+      _HubGame(
+        title: 'Light Grid',
+        subtitle: 'Tap tiles to switch every light off on the board.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Logic',
+        icon: Icons.lightbulb_rounded,
+        colors: const [Color(0xff38bdf8), Color(0xff6366f1)],
+        statLine: stats.lightGridBestLevel == 0
+            ? 'No board solved yet'
+            : 'Best level: ${stats.lightGridBestLevel}',
+        buildPage: () => const LightGridScreen(),
+      ),
+      _HubGame(
+        title: 'Tap Sequence',
+        subtitle: 'Tap the numbers in order while each level adds more tiles.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Speed',
+        icon: Icons.filter_9_plus_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff0ea5e9)],
+        statLine: stats.tapSequenceBestLevel == 0
+            ? 'No level cleared yet'
+            : 'Best level: ${stats.tapSequenceBestLevel}',
+        buildPage: () => const TapSequenceScreen(),
+      ),
+      _HubGame(
+        title: 'Alphabet Adventure',
+        subtitle: 'Letters, sounds, and easy alphabet practice.',
+        badge: 'Learning',
+        spotlightLabel: 'ABC',
+        icon: Icons.abc_rounded,
+        colors: const [Color(0xff38bdf8), Color(0xff0ea5e9)],
+        statLine: 'Letter practice game',
+        buildPage: () => const AlphabetAdventureScreen(),
+      ),
+      _HubGame(
+        title: 'Counting Fun',
+        subtitle: 'Count groups and choose the right number.',
+        badge: 'Learning',
+        spotlightLabel: 'Count',
+        icon: Icons.looks_5_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xfff97316)],
+        statLine: 'Number sense for kids',
+        buildPage: () => const CountingFunScreen(),
+      ),
+      _HubGame(
+        title: 'Shape Match',
+        subtitle: 'Learn circles, squares, triangles, and more.',
+        badge: 'Learning',
+        spotlightLabel: 'Shapes',
+        icon: Icons.category_rounded,
+        colors: const [Color(0xff8b5cf6), Color(0xff6366f1)],
+        statLine: 'Shape recognition game',
+        buildPage: () => const ShapeMatchScreen(),
+      ),
+      _HubGame(
+        title: 'Animal Match',
+        subtitle: 'Match easy animal clues and names.',
+        badge: 'Learning',
+        spotlightLabel: 'Animals',
+        icon: Icons.pets_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff16a34a)],
+        statLine: 'Animal learning fun',
+        buildPage: () => const AnimalMatchScreen(),
+      ),
+      _HubGame(
+        title: 'Math Sprint',
+        subtitle: 'Quick sums and simple number puzzles.',
+        badge: 'Learning',
+        spotlightLabel: 'Math',
+        icon: Icons.calculate_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff97316)],
+        statLine: 'Brain game for numbers',
+        buildPage: () => const MathSprintScreen(),
+      ),
+      _HubGame(
+        title: 'Word Builder',
+        subtitle: 'Choose missing letters to finish words.',
+        badge: 'Learning',
+        spotlightLabel: 'Words',
+        icon: Icons.spellcheck_rounded,
+        colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
+        statLine: 'Build simple words',
+        buildPage: () => const WordBuilderScreen(),
+      ),
+      _HubGame(
+        title: 'Word Blank',
+        subtitle:
+            'Fill the blank, celebrate the word, and learn what it means.',
+        badge: 'Learning',
+        spotlightLabel: 'Words',
+        icon: Icons.spellcheck_rounded,
+        colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
+        statLine: 'Saved level: ${stats.wordBlankLevel}',
+        buildPage: () => const WordBlankScreen(),
+      ),
+      _HubGame(
+        title: 'Road Sign Match',
+        subtitle:
+            'Match traffic signs with their meanings and learn road safety.',
+        badge: 'Learning',
+        spotlightLabel: 'Signs',
+        icon: Icons.add_road_rounded,
+        colors: const [Color(0xff0ea5e9), Color(0xff8b5cf6)],
+        statLine: 'Learning game focused on simple road-sign meanings',
+        buildPage: () => const RoadSignMatchScreen(),
+      ),
+      _HubGame(
+        title: 'Pattern Play',
+        subtitle: 'Find the next item in repeating patterns.',
+        badge: 'Learning',
+        spotlightLabel: 'Pattern',
+        icon: Icons.repeat_rounded,
+        colors: const [Color(0xfff97316), Color(0xfffb7185)],
+        statLine: 'Brain pattern practice',
+        buildPage: () => const PatternPlayScreen(),
+      ),
+      _HubGame(
+        title: 'Opposite Day',
+        subtitle: 'Pick the opposite word and learn meanings.',
+        badge: 'Learning',
+        spotlightLabel: 'Words',
+        icon: Icons.compare_arrows_rounded,
+        colors: const [Color(0xff6366f1), Color(0xff38bdf8)],
+        statLine: 'Vocabulary builder',
+        buildPage: () => const OppositeDayScreen(),
+      ),
+      _HubGame(
+        title: 'Emoji Count',
+        subtitle: 'Count emoji groups in playful rounds.',
+        badge: 'Learning',
+        spotlightLabel: 'Count',
+        icon: Icons.tag_faces_rounded,
+        colors: const [Color(0xffec4899), Color(0xfff59e0b)],
+        statLine: 'Counting with emoji',
+        buildPage: () => const EmojiCountScreen(),
+      ),
+      _HubGame(
+        title: 'Sight Word Sprint',
+        subtitle: 'Practice reading common sight words.',
+        badge: 'Learning',
+        spotlightLabel: 'Read',
+        icon: Icons.menu_book_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff10b981)],
+        statLine: 'Reading practice game',
+        buildPage: () => const SightWordSprintScreen(),
+      ),
+      _HubGame(
+        title: 'Clock Match',
+        subtitle: 'Read the time clue and choose the matching digital clock.',
+        badge: 'Learning',
+        spotlightLabel: 'Time',
+        icon: Icons.schedule_rounded,
+        colors: const [Color(0xff8b5cf6), Color(0xff6366f1)],
+        statLine: 'Offline time-reading practice for quick rounds',
+        buildPage: () => const ClockMatchScreen(),
+      ),
+      _HubGame(
+        title: 'Rhyme Time',
+        subtitle: 'Pick the word that rhymes with the prompt word.',
+        badge: 'Learning',
+        spotlightLabel: 'Sound',
+        icon: Icons.music_note_rounded,
+        colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
+        statLine: 'New rhyme words shuffle every round',
+        buildPage: () => const RhymeTimeScreen(),
+      ),
+      _HubGame(
+        title: 'Match Tactics',
+        subtitle: 'Choose the smartest tactic for the live scoreline.',
+        badge: 'Sports',
+        spotlightLabel: 'Coach',
+        icon: Icons.sports_soccer_rounded,
+        colors: const [Color(0xff0f766e), Color(0xff22c55e)],
+        statLine: 'Attack, balance, or defend based on the match state',
+        buildPage: () => const MatchTacticsScreen(),
+      ),
+      _HubGame(
+        title: 'Target Hunt',
+        subtitle: 'Spot every matching number before you run out of lives.',
+        badge: 'Arcade',
+        spotlightLabel: 'Focus',
+        icon: Icons.gps_fixed_rounded,
+        colors: const [Color(0xfff97316), Color(0xffef4444)],
+        statLine: 'Fresh target board every round',
+        buildPage: () => const TargetHuntScreen(),
+      ),
+      _HubGame(
+        title: 'Cup Shuffle',
+        subtitle:
+            'Track the hidden ball through quick shuffles and guess right.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Focus',
+        icon: Icons.sports_bar_rounded,
+        colors: const [Color(0xff8b5cf6), Color(0xffec4899)],
+        statLine: 'Shuffle count increases each round',
+        buildPage: () => const CupShuffleScreen(),
+      ),
+      _HubGame(
+        title: 'Treasure Tap',
+        subtitle: 'Open mystery tiles, grab treasure, and avoid hidden bombs.',
+        badge: 'Arcade',
+        spotlightLabel: 'Lucky',
+        icon: Icons.diamond_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xfff97316)],
+        statLine: 'Mystery board changes every round',
+        buildPage: () => const TreasureTapScreen(),
+      ),
+      _HubGame(
+        title: 'Sonar Sweep',
+        subtitle:
+            'Probe a hidden signal, read the clues, and lock the target before it escapes.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Sonar',
+        icon: Icons.radar_rounded,
+        colors: const [Color(0xff0ea5e9), Color(0xff14b8a6)],
+        statLine: 'Deduction-based grid hunt with limited probes each round',
+        buildPage: () => const SonarSweepScreen(),
+      ),
+      _HubGame(
+        title: 'Safe Cracker',
+        subtitle: 'Guess the hidden code with exact and misplaced digit hints.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Code',
+        icon: Icons.lock_open_rounded,
+        colors: const [Color(0xff0ea5e9), Color(0xff2563eb)],
+        statLine: 'Fresh code every round',
+        buildPage: () => const SafeCrackerScreen(),
+      ),
+      _HubGame(
+        title: 'Color Sweep',
+        subtitle: 'Tap only the target color and avoid wasting your chances.',
+        badge: 'Arcade',
+        spotlightLabel: 'Color',
+        icon: Icons.format_color_fill_rounded,
+        colors: const [Color(0xff14b8a6), Color(0xff06b6d4)],
+        statLine: 'Target color changes every round',
+        buildPage: () => const ColorSweepScreen(),
+      ),
+      _HubGame(
+        title: 'Symbol Memory',
+        subtitle: 'Study the symbol pattern and tap back the same order.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Memory',
+        icon: Icons.psychology_rounded,
+        colors: const [Color(0xff8b5cf6), Color(0xff6366f1)],
+        statLine: 'Pattern grows as rounds increase',
+        buildPage: () => const SymbolMemoryScreen(),
+      ),
+      _HubGame(
+        title: 'Lane Switch',
+        subtitle: 'Choose the safe lane in each row and keep moving forward.',
+        badge: 'Arcade',
+        spotlightLabel: 'Run',
+        icon: Icons.swap_horiz_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff16a34a)],
+        statLine: 'Safe lanes change every round',
+        buildPage: () => const LaneSwitchScreen(),
+      ),
+      _HubGame(
+        title: 'Number Chain',
+        subtitle: 'Use the right step values to land exactly on the target.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Math',
+        icon: Icons.functions_rounded,
+        colors: const [Color(0xfff97316), Color(0xfffb7185)],
+        statLine: 'Target and steps refresh every round',
+        buildPage: () => const NumberChainScreen(),
+      ),
+      _HubGame(
+        title: 'Shape Path',
+        subtitle: 'Follow the shown shape route in the correct order.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Path',
+        icon: Icons.route_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff10b981)],
+        statLine: 'Shape route gets longer each round',
+        buildPage: () => const ShapePathScreen(),
+      ),
+      _HubGame(
+        title: 'Quick Sort',
+        subtitle: 'Pick each number from lowest to highest without mistakes.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Sort',
+        icon: Icons.swap_vert_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff3b82f6)],
+        statLine: 'Bigger sets appear every round',
+        buildPage: () => const QuickSortScreen(),
+      ),
+      _HubGame(
+        title: 'Laser Loop',
+        subtitle: 'Rotate mirror tiles and route the beam to the target.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Laser',
+        icon: Icons.bolt_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff3b82f6)],
+        statLine: 'Compact offline mirror puzzle with quick resets',
+        buildPage: () => const LaserLoopScreen(),
+      ),
+      _HubGame(
+        title: 'Pair Finder',
+        subtitle: 'Pick two tiles that add up to the target sum.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Pairs',
+        icon: Icons.exposure_plus_2_rounded,
+        colors: const [Color(0xfff97316), Color(0xffef4444)],
+        statLine: 'Target sum changes every round',
+        buildPage: () => const PairFinderScreen(),
+      ),
+      _HubGame(
+        title: 'Asteroid Shield',
+        subtitle:
+            'Rotate the defense ring and block incoming asteroids from every side.',
+        badge: 'Arcade',
+        spotlightLabel: 'Shield',
+        icon: Icons.shield_moon_rounded,
+        colors: const [Color(0xff8b5cf6), Color(0xffec4899)],
+        statLine: 'Real-time orbital defense with increasing wave speed',
+        buildPage: () => const AsteroidShieldScreen(),
+      ),
+      _HubGame(
+        title: 'Pit Lane Planner',
+        subtitle:
+            'Make the correct pit strategy call from fuel, tire, and weather data.',
+        badge: 'Racing',
+        spotlightLabel: 'Strategy',
+        icon: Icons.build_circle_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff97316)],
+        statLine: 'Offline racing strategy instead of steering-based action',
+        buildPage: () => const PitLanePlannerScreen(),
+      ),
+      _HubGame(
+        title: 'Direction Dash',
+        subtitle: 'Follow the direction rule and tap the correct arrow.',
+        badge: 'Arcade',
+        spotlightLabel: 'Arrows',
+        icon: Icons.explore_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff3b82f6)],
+        statLine: 'Same and opposite rules keep switching',
+        buildPage: () => const DirectionDashScreen(),
+      ),
+      _HubGame(
+        title: 'Flash Count',
+        subtitle: 'Count the quick flash and remember the exact number shown.',
+        badge: 'Arcade',
+        spotlightLabel: 'Count',
+        icon: Icons.flash_on_rounded,
+        colors: const [Color(0xff8b5cf6), Color(0xffec4899)],
+        statLine: 'Flash count grows as rounds increase',
+        buildPage: () => const FlashCountScreen(),
+      ),
+      _HubGame(
+        title: 'Balance Beam',
+        subtitle: 'Stack weights carefully and hit the exact target total.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Balance',
+        icon: Icons.balance_rounded,
+        colors: const [Color(0xff22c55e), Color(0xff16a34a)],
+        statLine: 'Exact target only, overshoots reset the beam',
+        buildPage: () => const BalanceBeamScreen(),
+      ),
+      _HubGame(
+        title: 'Mini Maze',
+        subtitle:
+            'Move through the maze, dodge walls, and reach the goal tile.',
+        badge: 'Arcade',
+        spotlightLabel: 'Maze',
+        icon: Icons.grid_goldenratio_rounded,
+        colors: const [Color(0xfff59e0b), Color(0xfff97316)],
+        statLine: 'A new maze layout appears every round',
+        buildPage: () => const MiniMazeScreen(),
+      ),
+      _HubGame(
+        title: 'Speed Trap',
+        subtitle:
+            'Brake at the right moment and stop inside the safe speed zone.',
+        badge: 'Racing',
+        spotlightLabel: 'Car',
+        icon: Icons.speed_rounded,
+        colors: const [Color(0xfffb7185), Color(0xfff97316)],
+        statLine: 'Safe speed zone gets tighter each round',
+        buildPage: () => const SpeedTrapScreen(),
+      ),
+      _HubGame(
+        title: '2048',
+        subtitle: 'Swipe to merge tiles and reach the 2048 tile.',
+        badge: 'Puzzle',
+        spotlightLabel: 'Merge',
+        icon: Icons.grid_4x4_rounded,
+        colors: const [Color(0xff06b6d4), Color(0xff8b5cf6)],
+        statLine: stats.twenty48BestScore == 0
+            ? 'No best score yet'
+            : 'Best score: ${stats.twenty48BestScore}',
+        buildPage: () => const Twenty48Screen(),
+      ),
+      _HubGame(
+        title: 'Fuel Rush',
+        subtitle:
+            'Race 5 laps, manage your fuel, and pit stop at the right moment.',
+        badge: 'Racing',
+        spotlightLabel: 'Fuel',
+        icon: Icons.local_gas_station_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff59e0b)],
+        statLine: stats.fuelRushBestLaps == 0
+            ? 'No race finished yet'
+            : 'Best finish: ${stats.fuelRushBestLaps} laps',
+        buildPage: () => const FuelRushScreen(),
+      ),
+      _HubGame(
+        title: 'Desert Rally',
+        subtitle:
+            'Hold the road through dusty bends, dodge rocks, and survive the rally heat.',
+        badge: 'Racing',
+        spotlightLabel: 'Rally',
+        icon: Icons.offline_bolt_rounded,
+        colors: const [Color(0xfff97316), Color(0xfffacc15)],
+        statLine: 'Desert track challenge with drifting road and boost pickups',
+        buildPage: () => const DesertRallyScreen(),
+      ),
+      _HubGame(
+        title: 'Grand Prix Rush',
+        subtitle:
+            'Race 5 laps on a real circuit, dodge rivals, and manage tire wear.',
+        badge: 'Racing',
+        spotlightLabel: 'GP',
+        icon: Icons.emoji_events_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff97316)],
+        statLine: stats.grandPrixRushBestLaps == 0
+            ? 'No race finished yet'
+            : 'Best finish: ${stats.grandPrixRushBestLaps} laps',
+        buildPage: () => const GrandPrixRushScreen(),
+      ),
+      _HubGame(
+        title: 'Apex Picker',
+        subtitle: 'Read the corner and choose the best racing move.',
+        badge: 'Racing',
+        spotlightLabel: 'Apex',
+        icon: Icons.turn_sharp_right_rounded,
+        colors: const [Color(0xffef4444), Color(0xfff59e0b)],
+        statLine: 'Racing line decision game built around corner judgement',
+        buildPage: () => const ApexPickerScreen(),
+      ),
+      _HubGame(
+        title: 'Drag Duel',
+        subtitle: '2 players on the same screen. Hold your side to race first.',
+        badge: 'Racing',
+        spotlightLabel: '2P',
+        icon: Icons.directions_car_filled_rounded,
+        colors: const [Color(0xffef4444), Color(0xff3b82f6)],
+        statLine: 'Local 2-player drag race. No internet needed.',
+        buildPage: () => const DragDuelScreen(),
+      ),
+      _HubGame(
+        title: 'Poker Bluff',
+        subtitle: 'Get a 5-card hand and beat the CPU with a stronger rank.',
+        badge: 'Cards',
+        spotlightLabel: 'Poker',
+        icon: Icons.style_rounded,
+        colors: const [Color(0xff166534), Color(0xff14532d)],
+        statLine: stats.pokerBluffBestStreak == 0
+            ? 'No streak yet'
+            : 'Best streak: ${stats.pokerBluffBestStreak}',
+        buildPage: () => const PokerBluffScreen(),
+      ),
+      _HubGame(
+        title: 'Turbo Overtake',
+        subtitle:
+            'Dodge traffic, rack up overtakes, and blast nitro to survive.',
+        badge: 'Racing',
+        spotlightLabel: 'Nitro',
+        icon: Icons.rocket_launch_rounded,
+        colors: const [Color(0xfff97316), Color(0xffef4444)],
+        statLine: stats.turboOvertakeBestDistance == 0
+            ? 'No run yet'
+            : 'Best: ${stats.turboOvertakeBestDistance}m',
+        buildPage: () => const TurboOvertakeScreen(),
+      ),
+    ];
+    final seenTitles = <String>{};
+    for (final game in games) {
+      if (!seenTitles.add(game.title)) {
+        throw StateError('Duplicate game title found: ${game.title}');
+      }
+    }
+    return games;
+  }
 
   Future<void> _loadStats() async {
     final snapshot = await GameStatsStore.instance.loadSnapshot();
@@ -652,6 +1438,19 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       'Candy Match': 96,
       'Brick Breaker': 95,
       'Turbo Traffic': 94,
+      'Nitro Sprint': 93,
+      'Drift Run': 92,
+      'Parking Dash': 91,
+      'Overtake Rush': 90,
+      'Highway Heat': 89,
+      'Police Escape': 88,
+      'Pit Stop Pro': 87,
+      'Checkpoint Dash': 86,
+      'Cone Slalom': 85,
+      'Slipstream Surge': 84,
+      'Race Strategist': 83,
+      'Qualifying Lap': 82,
+      'Mountain Drive': 81,
       'Snake': 93,
       'Chess': 92,
       'Memory Match': 91,
@@ -659,6 +1458,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       'Rock Paper Scissors': 89,
       'Blackjack': 88,
       'War Cards': 87,
+      'Suit Streak': 86,
       'Cricket Chase': 86,
       'Bike Sprint': 85,
       'Picture Puzzle': 84,
@@ -666,6 +1466,47 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       'Word Blank': 82,
       'Balloon Pop': 81,
       'Color Match': 80,
+      'Odd One Out': 79,
+      'Light Grid': 78,
+      'Garage Sort': 78,
+      'Tap Sequence': 77,
+      'Target Hunt': 76,
+      'Treasure Tap': 75,
+      'Beat Burst': 74,
+      'Safe Cracker': 74,
+      'Color Sweep': 73,
+      'Symbol Memory': 72,
+      'Clock Match': 72,
+      'Lane Switch': 71,
+      'Number Chain': 70,
+      'Shape Path': 69,
+      'Laser Loop': 69,
+      'Quick Sort': 68,
+      'Penalty Kick': 67,
+      'Cup Shuffle': 66,
+      'Pair Finder': 65,
+      'Pit Lane Planner': 65,
+      'Direction Dash': 64,
+      'Flash Count': 63,
+      'Balance Beam': 62,
+      'Mini Maze': 61,
+      'Card Count': 60,
+      'Rhyme Time': 59,
+      'Match Tactics': 58,
+      'Speed Trap': 57,
+      'Mole Smash': 56,
+      'Bomb Diffuser': 55,
+      'Shop Cashier': 54,
+      'Airport Control': 53,
+      'Sonar Sweep': 67,
+      'Asteroid Shield': 74,
+      'Circuit Racer': 98,
+      'Fuel Rush': 80,
+      'Desert Rally': 79,
+      'Grand Prix Rush': 96,
+      'Drag Duel': 88,
+      'Poker Bluff': 85,
+      'Turbo Overtake': 94,
     };
     return ranks[game.title] ?? 10;
   }
@@ -815,16 +1656,28 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             ludoWins: 0,
             balloonPopBestScore: 0,
             colorMatchBestScore: 0,
+            oddOneOutBestStreak: 0,
+            lightGridBestLevel: 0,
+            tapSequenceBestLevel: 0,
             turboTrafficBestScore: 0,
             bikeSprintBestDistance: 0,
             cycleDashBestDistance: 0,
             avatarRushBestScore: 0,
+            nitroSprintBestTimeMs: 0,
+            driftRunBestDistance: 0,
+            parkingDashBestLevel: 0,
+            overtakeRushBestScore: 0,
             brickBreakerBestScore: 0,
             candyMatchBestScore: 0,
             mathEquationLevel: 1,
             wordBlankLevel: 1,
             picturePuzzleLevel: 1,
             totalMiniGamesPlayed: 0,
+            twenty48BestScore: 0,
+            fuelRushBestLaps: 0,
+            grandPrixRushBestLaps: 0,
+                            pokerBluffBestStreak: 0,
+                            turboOvertakeBestDistance: 0,
           ),
     );
     final games =
@@ -973,16 +1826,28 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                                       ludoWins: 0,
                                       balloonPopBestScore: 0,
                                       colorMatchBestScore: 0,
+                                      oddOneOutBestStreak: 0,
+                                      lightGridBestLevel: 0,
+                                      tapSequenceBestLevel: 0,
                                       turboTrafficBestScore: 0,
                                       bikeSprintBestDistance: 0,
                                       cycleDashBestDistance: 0,
                                       avatarRushBestScore: 0,
+                                      nitroSprintBestTimeMs: 0,
+                                      driftRunBestDistance: 0,
+                                      parkingDashBestLevel: 0,
+                                      overtakeRushBestScore: 0,
                                       brickBreakerBestScore: 0,
                                       candyMatchBestScore: 0,
                                       mathEquationLevel: 1,
                                       wordBlankLevel: 1,
                                       picturePuzzleLevel: 1,
                                       totalMiniGamesPlayed: 0,
+                                      twenty48BestScore: 0,
+                                      fuelRushBestLaps: 0,
+                                      grandPrixRushBestLaps: 0,
+                            pokerBluffBestStreak: 0,
+                            turboOvertakeBestDistance: 0,
                                     ),
                               ),
                             ),
@@ -1009,16 +1874,28 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                                       ludoWins: 0,
                                       balloonPopBestScore: 0,
                                       colorMatchBestScore: 0,
+                                      oddOneOutBestStreak: 0,
+                                      lightGridBestLevel: 0,
+                                      tapSequenceBestLevel: 0,
                                       turboTrafficBestScore: 0,
                                       bikeSprintBestDistance: 0,
                                       cycleDashBestDistance: 0,
                                       avatarRushBestScore: 0,
+                                      nitroSprintBestTimeMs: 0,
+                                      driftRunBestDistance: 0,
+                                      parkingDashBestLevel: 0,
+                                      overtakeRushBestScore: 0,
                                       brickBreakerBestScore: 0,
                                       candyMatchBestScore: 0,
                                       mathEquationLevel: 1,
                                       wordBlankLevel: 1,
                                       picturePuzzleLevel: 1,
                                       totalMiniGamesPlayed: 0,
+                                      twenty48BestScore: 0,
+                                      fuelRushBestLaps: 0,
+                                      grandPrixRushBestLaps: 0,
+                            pokerBluffBestStreak: 0,
+                            turboOvertakeBestDistance: 0,
                                     ),
                               ),
                             ),
