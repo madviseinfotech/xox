@@ -1676,8 +1676,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             twenty48BestScore: 0,
             fuelRushBestLaps: 0,
             grandPrixRushBestLaps: 0,
-                            pokerBluffBestStreak: 0,
-                            turboOvertakeBestDistance: 0,
+            pokerBluffBestStreak: 0,
+            turboOvertakeBestDistance: 0,
           ),
     );
     final games =
@@ -1759,19 +1759,19 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                             ),
                           ),
                           const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                          SliverToBoxAdapter(
-                            child: _EntranceReveal(
-                              delay: const Duration(milliseconds: 120),
-                              child: _buildFeaturedCard(stats, games.length),
-                            ),
-                          ),
-                          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                          SliverToBoxAdapter(
-                            child: _EntranceReveal(
-                              delay: const Duration(milliseconds: 180),
-                              child: _buildStatRail(stats, games.length),
-                            ),
-                          ),
+                          // SliverToBoxAdapter(
+                          //   child: _EntranceReveal(
+                          //     delay: const Duration(milliseconds: 120),
+                          //     child: _buildFeaturedCard(stats, games.length),
+                          //   ),
+                          // ),
+                          // const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                          // SliverToBoxAdapter(
+                          //   child: _EntranceReveal(
+                          //     delay: const Duration(milliseconds: 180),
+                          //     child: _buildStatRail(stats, games.length),
+                          //   ),
+                          // ),
                           const SliverToBoxAdapter(child: SizedBox(height: 10)),
                           SliverToBoxAdapter(
                             child: _EntranceReveal(
@@ -1846,8 +1846,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                                       twenty48BestScore: 0,
                                       fuelRushBestLaps: 0,
                                       grandPrixRushBestLaps: 0,
-                            pokerBluffBestStreak: 0,
-                            turboOvertakeBestDistance: 0,
+                                      pokerBluffBestStreak: 0,
+                                      turboOvertakeBestDistance: 0,
                                     ),
                               ),
                             ),
@@ -1894,8 +1894,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                                       twenty48BestScore: 0,
                                       fuelRushBestLaps: 0,
                                       grandPrixRushBestLaps: 0,
-                            pokerBluffBestStreak: 0,
-                            turboOvertakeBestDistance: 0,
+                                      pokerBluffBestStreak: 0,
+                                      turboOvertakeBestDistance: 0,
                                     ),
                               ),
                             ),
@@ -2002,6 +2002,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     );
   }
 
+  // ignore: unused_element
   Widget _buildFeaturedCard(GameStatsSnapshot? stats, int gameCount) {
     final totalPlayed = stats?.totalMiniGamesPlayed ?? 0;
 
@@ -2086,6 +2087,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     );
   }
 
+  // ignore: unused_element
   Widget _buildStatRail(GameStatsSnapshot? stats, int gameCount) {
     final snapshot = stats;
     final bestSkillRun = [
@@ -2240,11 +2242,11 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   Widget _buildCategoryTabs() {
     return SizedBox(
-      height: 42,
+      height: 50,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _categories.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final category = _categories[index];
           final selected = category == _selectedCategory;
@@ -2259,26 +2261,44 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOut,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(18),
                 gradient: selected
                     ? const LinearGradient(
-                        colors: [Color(0xff0ea5a4), Color(0xff22c55e)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xff22d3ee), Color(0xff22c55e)],
                       )
-                    : null,
-                color: selected ? null : Colors.white.withValues(alpha: 0.05),
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xff0d1826),
+                          const Color(0xff111c2c).withValues(alpha: 0.96),
+                        ],
+                      ),
                 border: Border.all(
                   color: selected
-                      ? Colors.transparent
+                      ? Colors.white.withValues(alpha: 0.14)
                       : Colors.white.withValues(alpha: 0.08),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: selected
+                        ? const Color(0xff22c55e).withValues(alpha: 0.18)
+                        : Colors.black.withValues(alpha: 0.12),
+                    blurRadius: selected ? 18 : 10,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
               child: Text(
                 category,
                 style: AppTextStyles.caption.copyWith(
                   color: selected ? AppColors.ink : AppColors.textSecondary,
                   fontSize: 12,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -2291,9 +2311,23 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   Widget _buildSearchField() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(18),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.08),
+            Colors.white.withValues(alpha: 0.04),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.14),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: TextField(
         controller: _searchController,
@@ -2306,14 +2340,18 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         cursorColor: const Color(0xff67e8f9),
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: 'Search games',
+          hintText: 'Search games, moods, or categories',
           hintStyle: TextStyle(
             color: Colors.white.withValues(alpha: 0.45),
             fontSize: 14,
           ),
-          prefixIcon: Icon(
-            Icons.search_rounded,
-            color: Colors.white.withValues(alpha: 0.7),
+          prefixIcon: Container(
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xff22d3ee).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.search_rounded, color: Color(0xff67e8f9)),
           ),
           suffixIcon: _searchQuery.isEmpty
               ? null
@@ -2326,7 +2364,10 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                   },
                   icon: const Icon(Icons.close_rounded, color: Colors.white70),
                 ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 4,
+            vertical: 17,
+          ),
         ),
       ),
     );
@@ -2336,11 +2377,16 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        final crossAxisCount = width > 900
-            ? 3
-            : width > 560
-            ? 2
-            : 1;
+        final crossAxisCount = width > 1280
+            ? 7
+            : width > 1080
+            ? 6
+            : width > 860
+            ? 5
+            : width > 620
+            ? 4
+            : 4;
+        final mainAxisExtent = width > 860 ? 148.0 : 138.0;
 
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 240),
@@ -2365,12 +2411,12 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             itemCount: games.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
-              mainAxisSpacing: 12,
+              mainAxisSpacing: 18,
               crossAxisSpacing: 12,
-              mainAxisExtent: 118,
+              mainAxisExtent: mainAxisExtent,
             ),
             itemBuilder: (context, index) => _EntranceReveal(
-              delay: Duration(milliseconds: 340 + (index * 20)),
+              delay: Duration(milliseconds: 340 + (index * 14)),
               child: _buildGameCard(games[index]),
             ),
           ),
@@ -2539,114 +2585,123 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   Widget _buildGameCard(_HubGame game) {
     final isFavorite = _favoriteTitles.contains(game.title);
     return _InteractiveCard(
-      borderRadius: BorderRadius.circular(22),
-      shadowColor: game.colors.last.withValues(alpha: 0.12),
+      borderRadius: BorderRadius.circular(26),
+      shadowColor: game.colors.last.withValues(alpha: 0.18),
       onTap: () => _openGame(game),
       child: Ink(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
-          color: const Color(0xff0d1826).withValues(alpha: 0.94),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+          borderRadius: BorderRadius.circular(26),
+          color: Colors.transparent,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(9),
-          child: Row(
+          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _GameArt(
-                colors: game.colors,
-                icon: game.icon,
-                imageAsset: game.imageAsset,
-                artStyle: game.artStyle,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${game.badge} • ${game.spotlightLabel}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.caption.copyWith(
-                              color: game.colors.last.withValues(alpha: 0.95),
-                              fontSize: 11,
-                            ),
-                          ),
+              Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withValues(alpha: 0.12),
+                          Colors.white.withValues(alpha: 0.04),
+                        ],
+                      ),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.14),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: game.colors.last.withValues(alpha: 0.18),
+                          blurRadius: 20,
+                          offset: const Offset(0, 12),
                         ),
-                        IconButton(
-                          onPressed: () => _toggleFavorite(game),
-                          constraints: const BoxConstraints(
-                            minWidth: 26,
-                            minHeight: 26,
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6),
+                      child: _GameArt(
+                        colors: game.colors,
+                        icon: game.icon,
+                        imageAsset: game.imageAsset,
+                        artStyle: game.artStyle,
+                        height: 74,
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.12),
+                        ),
+                      ),
+                      child: Text(
+                        game.badge,
+                        style: AppTextStyles.caption.copyWith(
+                          color: Colors.white,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => _toggleFavorite(game),
+                        borderRadius: BorderRadius.circular(999),
+                        child: Ink(
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.28),
+                            shape: BoxShape.circle,
                           ),
-                          padding: EdgeInsets.zero,
-                          visualDensity: const VisualDensity(
-                            horizontal: -4,
-                            vertical: -4,
-                          ),
-                          splashRadius: 16,
-                          icon: Icon(
+                          child: Icon(
                             isFavorite
                                 ? Icons.favorite_rounded
                                 : Icons.favorite_border_rounded,
                             color: isFavorite
                                 ? const Color(0xfffb7185)
-                                : Colors.white60,
-                            size: 18,
+                                : Colors.white70,
+                            size: 16,
                           ),
                         ),
-                        const Icon(
-                          Icons.arrow_outward_rounded,
-                          color: Colors.white60,
-                          size: 13,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      game.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.cardTitle.copyWith(fontSize: 15),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      game.subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textMuted,
-                        fontSize: 10.5,
                       ),
                     ),
-                    const SizedBox(height: 3),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white.withValues(alpha: 0.04),
-                      ),
-                      child: Text(
-                        game.statLine,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 10.5,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(
+                  game.title,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.caption.copyWith(
+                    color: Colors.white.withValues(alpha: 0.96),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    height: 1.2,
+                  ),
                 ),
               ),
             ],
@@ -2757,18 +2812,22 @@ class _GameArt extends StatelessWidget {
     required this.icon,
     required this.imageAsset,
     required this.artStyle,
+    this.height = 68,
+    this.width = 84,
   });
 
   final List<Color> colors;
   final IconData icon;
   final String? imageAsset;
   final _GameArtStyle artStyle;
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 68,
-      width: 84,
+      height: height,
+      width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
