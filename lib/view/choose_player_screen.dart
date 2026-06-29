@@ -269,10 +269,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:just_audio/just_audio.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../utils/utility.dart';
+import 'back_interstitial_controller.dart';
 import 'enter_player_screen.dart';
 import 'ad_helper.dart'; // must return LIVE banner unit id
 
@@ -293,16 +295,20 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
   // Banner ad (LIVE)
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
+  final BackInterstitialController _backAdController =
+      BackInterstitialController();
 
   @override
   void initState() {
     super.initState();
+    _backAdController.load();
     _loadBanner();
   }
 
   @override
   void dispose() {
     _bannerAd?.dispose();
+    _backAdController.dispose();
     _player.dispose();
     player1Controller.dispose();
     player2Controller.dispose();
@@ -310,6 +316,7 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
   }
 
   Future<void> _loadBanner() async {
+    if (!AdHelper.shouldShowBannerAds) return;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final width = MediaQuery.of(context).size.width.truncate();
       final adaptiveSize =
@@ -347,198 +354,226 @@ class _ChoosePlayerScreenState extends State<ChoosePlayerScreen> {
 
   Future<void> _clickSound() async {
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/Click.mp3");
-      await _player.setUrl(uri.toString());
-      _player.play();
+      // final uri = Uri.parse("asset:///assets/music/Click.mp3");
+      // await _player.setUrl(uri.toString());
+      // _player.play();
+      await _player.play(AssetSource('music/Click.mp3'));
     }
   }
 
   Future<void> _startSound() async {
     if (Utility.volume) {
-      final uri = Uri.parse("asset:///assets/music/start.mp3");
-      await _player.setUrl(uri.toString());
-      _player.play();
+      // final uri = Uri.parse("asset:///assets/music/start.mp3");
+      // await _player.setUrl(uri.toString());
+      // _player.play();
+      await _player.play(AssetSource('music/start.mp3'));
     }
+  }
+
+  Future<void> _handleBack() async {
+    await _backAdController.showThen(() async {
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        return;
+      }
+      await Navigator.of(context, rootNavigator: true).maybePop();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-    print("---_bannerAd-----${_bannerAd}");
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          // Background
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/enterPlayerBg.png'),
-                  fit: BoxFit.cover,
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.padding.top;
+    final bottomInset = mediaQuery.padding.bottom;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            // Background
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/enterPlayerBg.png'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // Content
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 40),
-
-                  // Back + Title
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Content
+            SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                child: SingleChildScrollView(
+                  child: Column(
                     children: [
-                      GestureDetector(
-                        onTap: () async {
-                          Get.back();
-                          await _clickSound();
-                        },
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: const Color(0xff32167D),
-                          child: const Icon(
-                            Icons.arrow_back_outlined,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: const [
-                            Text(
-                              'Choose one',
-                              style: TextStyle(
-                                color: Color(0xff37E9BB),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Unleash Your Competitive Spirit in Multiplayer Battles!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
+                      SizedBox(height: topInset > 0 ? 8 : 28),
+
+                      // Back + Title
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await _clickSound();
+                              await _handleBack();
+                            },
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: const Color(0xff32167D),
+                              child: const Icon(
+                                Icons.arrow_back_outlined,
+                                size: 30,
                                 color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
                               ),
                             ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: const [
+                                Text(
+                                  'Choose one',
+                                  style: TextStyle(
+                                    color: Color(0xff37E9BB),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  'Unleash Your Competitive Spirit in Multiplayer Battles!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                        ],
+                      ),
+
+                      SizedBox(height: Get.width / 4),
+
+                      // With Computer
+                      InkWell(
+                        onTap: () => setState(() => select = "computer"),
+                        child: _gradientButton(
+                          text: "With Computer",
+                          active: select == "computer",
+                          activeColors: const [
+                            Color(0xffE06340),
+                            Color(0xffFFAD6B),
                           ],
                         ),
                       ),
-                      SizedBox(width: 20),
-                    ],
-                  ),
 
-                  SizedBox(height: Get.width / 4),
+                      SizedBox(height: Get.height * 0.03),
 
-                  // With Computer
-                  InkWell(
-                    onTap: () => setState(() => select = "computer"),
-                    child: _gradientButton(
-                      text: "With Computer",
-                      active: select == "computer",
-                      activeColors: const [
-                        Color(0xffE06340),
-                        Color(0xffFFAD6B),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: Get.height * 0.03),
-
-                  // With Player
-                  InkWell(
-                    onTap: () => setState(() => select = "player"),
-                    child: _gradientButton(
-                      text: "With Player",
-                      active: select == "player",
-                      activeColors: const [
-                        Color(0xffFE439E),
-                        Color(0xffFF55BF),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: Get.width / 2),
-
-                  // Next
-                  InkWell(
-                    onTap: () async {
-                      await _startSound();
-                      if (select == "computer") {
-                        Get.to(
-                          () => const EnterPlayerScreen(playWithComputer: true),
-                        );
-                      } else {
-                        Get.to(
-                          () =>
-                              const EnterPlayerScreen(playWithComputer: false),
-                        );
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment(0.8, 1),
-                          colors: [Color(0xff159F9C), Color(0xff2AD2B4)],
+                      // With Player
+                      InkWell(
+                        onTap: () => setState(() => select = "player"),
+                        child: _gradientButton(
+                          text: "With Player",
+                          active: select == "player",
+                          activeColors: const [
+                            Color(0xffFE439E),
+                            Color(0xffFF55BF),
+                          ],
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: Get.height * 0.060,
-                          width: Get.width,
-                          child: const Center(
-                            child: Text(
-                              "Next",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+
+                      SizedBox(height: Get.width / 2),
+
+                      // Next
+                      InkWell(
+                        onTap: () async {
+                          await _startSound();
+                          if (select == "computer") {
+                            Get.to(
+                              () => const EnterPlayerScreen(
+                                playWithComputer: true,
+                              ),
+                            );
+                          } else {
+                            Get.to(
+                              () => const EnterPlayerScreen(
+                                playWithComputer: false,
+                              ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment(0.8, 1),
+                              colors: [Color(0xff159F9C), Color(0xff2AD2B4)],
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              height: Get.height * 0.060,
+                              width: Get.width,
+                              child: const Center(
+                                child: Text(
+                                  "Next",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+
+                      // Spacer so "Next" doesn't get covered by overlay banner
+                      SizedBox(height: 70 + bottomInset),
+                    ],
                   ),
-
-                  // Spacer so "Next" doesn't get covered by overlay banner
-                  const SizedBox(height: 70),
-                ],
+                ),
               ),
             ),
-          ),
 
-          // Bottom banner overlay (LIVE)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: bottomInset,
-            child: SizedBox(
-              height: (_bannerAd?.size.height.toDouble() ?? 50),
-              child: Center(
-                child: (_isBannerReady && _bannerAd != null)
-                    ? SizedBox(
-                        width: _bannerAd!.size.width.toDouble(),
-                        height: _bannerAd!.size.height.toDouble(),
-                        child: AdWidget(ad: _bannerAd!),
-                      )
-                    : const SizedBox.shrink(),
+            // Bottom banner overlay (LIVE)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: bottomInset,
+              child: SizedBox(
+                height: (_bannerAd?.size.height.toDouble() ?? 50),
+                child: Center(
+                  child: (_isBannerReady && _bannerAd != null)
+                      ? SizedBox(
+                          width: _bannerAd!.size.width.toDouble(),
+                          height: _bannerAd!.size.height.toDouble(),
+                          child: AdWidget(ad: _bannerAd!),
+                        )
+                      : const SizedBox.shrink(),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

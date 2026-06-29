@@ -1,30 +1,33 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:xox_madvise/main.dart';
+import 'package:xox_madvise/view/games/game_scaffold.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('game scaffold renders title and child content', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const TestableGameScaffold());
+    await tester.pump(const Duration(milliseconds: 700));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Test Game'), findsOneWidget);
+    expect(find.text('Test subtitle'), findsOneWidget);
+    expect(find.text('Body content'), findsOneWidget);
   });
+}
+
+class TestableGameScaffold extends StatelessWidget {
+  const TestableGameScaffold({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Directionality(
+      textDirection: TextDirection.ltr,
+      child: GameScaffold(
+        title: 'Test Game',
+        subtitle: 'Test subtitle',
+        accent: [Color(0xff000000), Color(0xff222222)],
+        child: Text('Body content'),
+      ),
+    );
+  }
 }

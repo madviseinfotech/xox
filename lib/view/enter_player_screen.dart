@@ -386,35 +386,24 @@
 // }
 // ignore_for_file: prefer_const_constructors
 import 'dart:async';
-import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:just_audio/just_audio.dart';
 import 'package:xox_madvise/view/gameScreen.dart';
 import 'package:xox_madvise/view/service.dart';
 import '../utils/utility.dart';
+import 'back_interstitial_controller.dart';
 
-// ignore_for_file: prefer_const_constructors
-
-import 'dart:async';
 import 'dart:developer' as logg;
-
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:just_audio/just_audio.dart';
-
-import '../utils/utility.dart';
 import 'ad_helper.dart'; // returns your banner unit id
 
 class EnterPlayerScreen extends StatefulWidget {
   final bool playWithComputer;
-  const EnterPlayerScreen({Key? key, this.playWithComputer = false})
-    : super(key: key);
+  const EnterPlayerScreen({super.key, this.playWithComputer = false});
 
   @override
   State<EnterPlayerScreen> createState() => _EnterPlayerScreenState();
@@ -425,7 +414,6 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   final TextEditingController player2Controller = TextEditingController();
 
   // Connectivity (map List<ConnectivityResult> -> single value)
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
@@ -436,11 +424,14 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   BannerAd? _bannerAd;
   bool _isBannerReady = false;
   static const double _kBannerFallbackHeight = 50.0; // AdSize.banner
+  final BackInterstitialController _backAdController =
+      BackInterstitialController();
 
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
+    _backAdController.load();
 
     initConnectivity();
     _connectivitySubscription = _connectivity.onConnectivityChanged
@@ -457,6 +448,7 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   void dispose() {
     _connectivitySubscription.cancel();
     _bannerAd?.dispose();
+    _backAdController.dispose();
     _player.dispose();
     player1Controller.dispose();
     player2Controller.dispose();
@@ -465,6 +457,7 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
 
   // Anchored adaptive banner (better fill than fixed 320x50)
   Future<void> _loadBanner() async {
+    if (!AdHelper.shouldShowBannerAds) return;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       final width = MediaQuery.of(context).size.width.truncate();
@@ -508,365 +501,400 @@ class _EnterPlayerScreenState extends State<EnterPlayerScreen> {
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    setState(() => _connectionStatus = result);
-    // print("Connection Status: $_connectionStatus");
+    if (!mounted) return;
+  }
+
+  Future<void> _handleBack() async {
+    await _backAdController.showThen(() async {
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+        return;
+      }
+      await Navigator.of(context, rootNavigator: true).maybePop();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.padding.top;
+    final bottomInset = mediaQuery.padding.bottom;
     final bannerHeight =
         _bannerAd?.size.height.toDouble() ?? _kBannerFallbackHeight;
 
-    return Scaffold(
-      extendBody: true, // background extends under system nav bar
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          /// Background
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/enterPlayerBg.png'),
-                  fit: BoxFit.cover,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
+        extendBody: true, // background extends under system nav bar
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            /// Background
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/enterPlayerBg.png'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          /// Content (no layout push from banner; add small spacer at end)
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 40),
-
-                  /// Back & Title
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            /// Content (no layout push from banner; add small spacer at end)
+            SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                        onTap: () async {
-                          Get.back();
-                          if (Utility.volume) {
-                            final uri = Uri.parse(
-                              "asset:///assets/music/Click.mp3",
-                            );
-                            await _player.setUrl(uri.toString());
-                            _player.play();
-                          }
-                        },
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Color(0xff32167D),
-                          child: Icon(
-                            Icons.arrow_back_outlined,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Column(
-                        children: const [
-                          Text(
-                            'Enter Player',
-                            style: TextStyle(
-                              color: Color(0xff37E9BB),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
+                      SizedBox(height: topInset > 0 ? 8 : 40),
+
+                      /// Back & Title
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              if (Utility.volume) {
+                                // final uri = Uri.parse(
+                                //   "asset:///assets/music/Click.mp3",
+                                // );
+                                // await _player.setUrl(uri.toString());
+                                // _player.play();
+                                await _player.play(
+                                  AssetSource('music/Click.mp3'),
+                                );
+                              }
+                              await _handleBack();
+                            },
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Color(0xff32167D),
+                              child: Icon(
+                                Icons.arrow_back_outlined,
+                                size: 30,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                          Text(
-                            'Name',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
+                          Column(
+                            children: const [
+                              Text(
+                                'Enter Player',
+                                style: TextStyle(
+                                  color: Color(0xff37E9BB),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                ),
+                              ),
+                              Text(
+                                'Name',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 20),
+                        ],
+                      ),
+
+                      SizedBox(height: Get.width / 4),
+
+                      /// Player 1
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Color(0xff32167D),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 5,
+                              ),
+                              child: Text(
+                                '1',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: Get.width * 0.03),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40),
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment(0.8, 1),
+                                  colors: [
+                                    Color(0xffE06340),
+                                    Color(0xffFFAD6B),
+                                  ],
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  height: Get.height * 0.065,
+                                  width: Get.width,
+                                  child: TextFormField(
+                                    controller: player1Controller,
+                                    inputFormatters: [
+                                      NoLeadingSpaceFormatter(),
+                                      LengthLimitingTextInputFormatter(10),
+                                    ],
+                                    readOnly: widget.playWithComputer,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                    decoration: InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      prefix: SizedBox(width: 10),
+                                      hintText: widget.playWithComputer
+                                          ? 'Computer'
+                                          : 'Player 1',
+                                      hintStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                      labelStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(width: 20),
-                    ],
-                  ),
 
-                  SizedBox(height: Get.width / 4),
+                      SizedBox(height: Get.height * 0.03),
 
-                  /// Player 1
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xff32167D),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 5,
-                          ),
-                          child: Text(
-                            '1',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                      /// Player 2
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Color(0xff32167D),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: Get.width * 0.03),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment(0.8, 1),
-                              colors: [Color(0xffE06340), Color(0xffFFAD6B)],
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              height: Get.height * 0.065,
-                              width: Get.width,
-                              child: TextFormField(
-                                controller: player1Controller,
-                                inputFormatters: [
-                                  NoLeadingSpaceFormatter(),
-                                  LengthLimitingTextInputFormatter(10),
-                                ],
-                                readOnly: widget.playWithComputer,
-                                maxLines: 1,
-                                style: const TextStyle(
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 5,
+                              ),
+                              child: Text(
+                                '2',
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontSize: 20,
                                 ),
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: Get.width * 0.03),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40),
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment(0.8, 1),
+                                  colors: [
+                                    Color(0xffFE439E),
+                                    Color(0xffFF55BF),
+                                  ],
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  height: Get.height * 0.065,
+                                  width: Get.width,
+                                  child: TextFormField(
+                                    controller: player2Controller,
+                                    inputFormatters: [
+                                      NoLeadingSpaceFormatter(),
+                                      LengthLimitingTextInputFormatter(10),
+                                    ],
+                                    maxLines: 1,
+                                    style: const TextStyle(
                                       color: Colors.white,
-                                      width: 1,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
                                     ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
+                                    decoration: InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      prefix: SizedBox(width: 10),
+                                      hintText: widget.playWithComputer
+                                          ? 'You'
+                                          : 'Player 2',
+                                      hintStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                      labelStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
                                     ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  prefix: SizedBox(width: 10),
-                                  hintText: widget.playWithComputer
-                                      ? 'Computer'
-                                      : 'Player 1',
-                                  hintStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                  labelStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
                                   ),
                                 ),
                               ),
                             ),
                           ),
+                        ],
+                      ),
+
+                      SizedBox(height: Get.width / 4),
+
+                      InkWell(
+                        onTap: () async {
+                          if (Utility.volume) {
+                            // final uri = Uri.parse(
+                            //   "asset:///assets/music/start.mp3",
+                            // );
+                            // await _player.setUrl(uri.toString());
+                            // _player.play();
+                            await _player.play(AssetSource('music/start.mp3'));
+                          }
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          Get.to(
+                            () => GameScreen(
+                              playWithComputer: widget.playWithComputer,
+                              player1: player1Controller.text.isEmpty
+                                  ? (widget.playWithComputer
+                                        ? "Computer"
+                                        : "Player 1")
+                                  : player1Controller.text,
+                              player2: player2Controller.text.isEmpty
+                                  ? (widget.playWithComputer
+                                        ? 'You'
+                                        : 'Player 2')
+                                  : player2Controller.text,
+                            ),
+                          );
+                        },
+                        child: Image.asset(
+                          'assets/images/playButton.png',
+                          height: Get.height * 0.15,
                         ),
                       ),
+
+                      const Text(
+                        'Are you up for the challenge?',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      const Text(
+                        "Let's Play!",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                      ),
+
+                      // Small spacer so the last text / button isn't under the banner overlay
+                      SizedBox(height: bannerHeight + bottomInset + 12),
                     ],
                   ),
-
-                  SizedBox(height: Get.height * 0.03),
-
-                  /// Player 2
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xff32167D),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 5,
-                          ),
-                          child: Text(
-                            '2',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: Get.width * 0.03),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment(0.8, 1),
-                              colors: [Color(0xffFE439E), Color(0xffFF55BF)],
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              height: Get.height * 0.065,
-                              width: Get.width,
-                              child: TextFormField(
-                                controller: player2Controller,
-                                inputFormatters: [
-                                  NoLeadingSpaceFormatter(),
-                                  LengthLimitingTextInputFormatter(10),
-                                ],
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                                decoration: InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: Colors.white,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  prefix: SizedBox(width: 10),
-                                  hintText: widget.playWithComputer
-                                      ? 'You'
-                                      : 'Player 2',
-                                  hintStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                  labelStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: Get.width / 4),
-
-                  InkWell(
-                    onTap: () async {
-                      if (Utility.volume) {
-                        final uri = Uri.parse(
-                          "asset:///assets/music/start.mp3",
-                        );
-                        await _player.setUrl(uri.toString());
-                        _player.play();
-                      }
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Get.to(
-                        () => GameScreen(
-                          playWithComputer: widget.playWithComputer,
-                          player1: player1Controller.text.isEmpty
-                              ? (widget.playWithComputer
-                                    ? "Computer"
-                                    : "Player 1")
-                              : player1Controller.text,
-                          player2: player2Controller.text.isEmpty
-                              ? (widget.playWithComputer ? 'You' : 'Player 2')
-                              : player2Controller.text,
-                        ),
-                      );
-                    },
-                    child: Image.asset(
-                      'assets/images/playButton.png',
-                      height: Get.height * 0.15,
-                    ),
-                  ),
-
-                  const Text(
-                    'Are you up for the challenge?',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  const Text(
-                    "Let's Play!",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                    ),
-                  ),
-
-                  // Small spacer so the last text / button isn't under the banner overlay
-                  SizedBox(height: bannerHeight + bottomInset + 12),
-                ],
+                ),
               ),
             ),
-          ),
 
-          /// Bottom Banner OVER the background (fixed overlay; no layout push)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: bottomInset, // sit just above system nav bar
-            child: SizedBox(
-              height: bannerHeight,
-              child: Center(
-                child: (_isBannerReady && _bannerAd != null)
-                    ? SizedBox(
-                        width: _bannerAd!.size.width.toDouble(),
-                        height: _bannerAd!.size.height.toDouble(),
-                        child: AdWidget(ad: _bannerAd!),
-                      )
-                    : const SizedBox.shrink(), // transparent until loaded
+            /// Bottom Banner OVER the background (fixed overlay; no layout push)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: bottomInset, // sit just above system nav bar
+              child: SizedBox(
+                height: bannerHeight,
+                child: Center(
+                  child: (_isBannerReady && _bannerAd != null)
+                      ? SizedBox(
+                          width: _bannerAd!.size.width.toDouble(),
+                          height: _bannerAd!.size.height.toDouble(),
+                          child: AdWidget(ad: _bannerAd!),
+                        )
+                      : const SizedBox.shrink(), // transparent until loaded
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

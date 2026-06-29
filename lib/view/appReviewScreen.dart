@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,7 +8,7 @@ import 'package:in_app_review/in_app_review.dart';
 enum Availability { loading, available, unavailable }
 
 class InAppReviewExampleApp extends StatefulWidget {
-  const InAppReviewExampleApp({Key? key}) : super(key: key);
+  const InAppReviewExampleApp({super.key});
 
   @override
   InAppReviewExampleAppState createState() => InAppReviewExampleAppState();

@@ -26,8 +26,44 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "audio_session",
-      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audio_session-0.2.2",
+      "name": "audioplayers",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audioplayers-6.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "audioplayers_android",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audioplayers_android-5.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "audioplayers_darwin",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audioplayers_darwin-6.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "audioplayers_linux",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audioplayers_linux-4.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "audioplayers_platform_interface",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audioplayers_platform_interface-7.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "audioplayers_web",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audioplayers_web-5.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "audioplayers_windows",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/audioplayers_windows-4.2.1",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
@@ -165,7 +201,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///Users/dreamworld/Desktop/flutter_3.35.3/packages/flutter",
+      "rootUri": "file:///Users/dreamworld/Desktop/flutter3.35.3/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -176,20 +212,44 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "flutter_local_notifications",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/flutter_local_notifications-19.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "flutter_local_notifications_linux",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-6.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "flutter_local_notifications_platform_interface",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-9.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "flutter_local_notifications_windows",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/flutter_local_notifications_windows-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "flutter_localizations",
-      "rootUri": "file:///Users/dreamworld/Desktop/flutter_3.35.3/packages/flutter_localizations",
+      "rootUri": "file:///Users/dreamworld/Desktop/flutter3.35.3/packages/flutter_localizations",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///Users/dreamworld/Desktop/flutter_3.35.3/packages/flutter_test",
+      "rootUri": "file:///Users/dreamworld/Desktop/flutter3.35.3/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///Users/dreamworld/Desktop/flutter_3.35.3/packages/flutter_web_plugins",
+      "rootUri": "file:///Users/dreamworld/Desktop/flutter3.35.3/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -246,24 +306,6 @@
       "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/json_annotation-4.9.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
-    },
-    {
-      "name": "just_audio",
-      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/just_audio-0.10.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.6"
-    },
-    {
-      "name": "just_audio_platform_interface",
-      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/just_audio_platform_interface-4.6.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
-      "name": "just_audio_web",
-      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/just_audio_web-0.4.16",
-      "packageUri": "lib/",
-      "languageVersion": "3.2"
     },
     {
       "name": "leak_tracker",
@@ -410,12 +452,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "rxdart",
-      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/rxdart-0.28.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "share_plus",
       "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/share_plus-11.1.0",
       "packageUri": "lib/",
@@ -471,7 +507,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///Users/dreamworld/Desktop/flutter_3.35.3/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///Users/dreamworld/Desktop/flutter3.35.3/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -522,6 +558,12 @@
       "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/test_api-0.7.6",
       "packageUri": "lib/",
       "languageVersion": "3.5"
+    },
+    {
+      "name": "timezone",
+      "rootUri": "file:///Users/dreamworld/.pub-cache/hosted/pub.dev/timezone-0.10.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
     },
     {
       "name": "typed_data",
@@ -652,7 +694,7 @@
   ],
   "generator": "pub",
   "generatorVersion": "3.9.2",
-  "flutterRoot": "file:///Users/dreamworld/Desktop/flutter_3.35.3",
-  "flutterVersion": "3.35.5",
+  "flutterRoot": "file:///Users/dreamworld/Desktop/flutter3.35.3",
+  "flutterVersion": "3.35.3",
   "pubCache": "file:///Users/dreamworld/.pub-cache"
 }

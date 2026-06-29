@@ -27,8 +27,10 @@ const String testDevice = 'YOUR_DEVICE_ID';
 const int maxFailedLoadAttempts = 3;
 
 class AdScreen extends StatefulWidget {
+  const AdScreen({super.key});
+
   @override
-  _AdScreenState createState() => _AdScreenState();
+  State<AdScreen> createState() => _AdScreenState();
 }
 
 class _AdScreenState extends State<AdScreen> {
@@ -72,13 +74,13 @@ class _AdScreenState extends State<AdScreen> {
       request: request,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
-          print('$ad loaded');
+          debugPrint('$ad loaded');
           _interstitialAd = ad;
           _numInterstitialLoadAttempts = 0;
           _interstitialAd!.setImmersiveMode(true);
         },
         onAdFailedToLoad: (LoadAdError error) {
-          print('InterstitialAd failed to load: $error.');
+          debugPrint('InterstitialAd failed to load: $error.');
           _numInterstitialLoadAttempts += 1;
           _interstitialAd = null;
           if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
@@ -91,19 +93,19 @@ class _AdScreenState extends State<AdScreen> {
 
   void _showInterstitialAd() {
     if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
+      debugPrint('Warning: attempt to show interstitial before loaded.');
       return;
     }
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
+          debugPrint('ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
+        debugPrint('$ad onAdDismissedFullScreenContent.');
         ad.dispose();
         _createInterstitialAd();
       },
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
+        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
         _createInterstitialAd();
       },
@@ -120,12 +122,12 @@ class _AdScreenState extends State<AdScreen> {
       request: request,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
-          print('$ad loaded.');
+          debugPrint('$ad loaded.');
           _rewardedAd = ad;
           _numRewardedLoadAttempts = 0;
         },
         onAdFailedToLoad: (LoadAdError error) {
-          print('RewardedAd failed to load: $error');
+          debugPrint('RewardedAd failed to load: $error');
           _rewardedAd = null;
           _numRewardedLoadAttempts += 1;
           if (_numRewardedLoadAttempts < maxFailedLoadAttempts) {
@@ -138,19 +140,19 @@ class _AdScreenState extends State<AdScreen> {
 
   void _showRewardedAd() {
     if (_rewardedAd == null) {
-      print('Warning: attempt to show rewarded before loaded.');
+      debugPrint('Warning: attempt to show rewarded before loaded.');
       return;
     }
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (RewardedAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
+          debugPrint('ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (RewardedAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
+        debugPrint('$ad onAdDismissedFullScreenContent.');
         ad.dispose();
         _createRewardedAd();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
+        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
         _createRewardedAd();
       },
@@ -159,7 +161,7 @@ class _AdScreenState extends State<AdScreen> {
     _rewardedAd!.setImmersiveMode(true);
     _rewardedAd!.show(
       onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-        print('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
+        debugPrint('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
       },
     );
     _rewardedAd = null;
@@ -173,12 +175,12 @@ class _AdScreenState extends State<AdScreen> {
       request: request,
       rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
         onAdLoaded: (RewardedInterstitialAd ad) {
-          print('$ad loaded.');
+          debugPrint('$ad loaded.');
           _rewardedInterstitialAd = ad;
           _numRewardedInterstitialLoadAttempts = 0;
         },
         onAdFailedToLoad: (LoadAdError error) {
-          print('RewardedInterstitialAd failed to load: $error');
+          debugPrint('RewardedInterstitialAd failed to load: $error');
           _rewardedInterstitialAd = null;
           _numRewardedInterstitialLoadAttempts += 1;
           if (_numRewardedInterstitialLoadAttempts < maxFailedLoadAttempts) {
@@ -191,21 +193,21 @@ class _AdScreenState extends State<AdScreen> {
 
   void _showRewardedInterstitialAd() {
     if (_rewardedInterstitialAd == null) {
-      print('Warning: attempt to show rewarded interstitial before loaded.');
+      debugPrint('Warning: attempt to show rewarded interstitial before loaded.');
       return;
     }
     _rewardedInterstitialAd!.fullScreenContentCallback =
         FullScreenContentCallback(
           onAdShowedFullScreenContent: (RewardedInterstitialAd ad) =>
-              print('$ad onAdShowedFullScreenContent.'),
+              debugPrint('$ad onAdShowedFullScreenContent.'),
           onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
-            print('$ad onAdDismissedFullScreenContent.');
+            debugPrint('$ad onAdDismissedFullScreenContent.');
             ad.dispose();
             _createRewardedInterstitialAd();
           },
           onAdFailedToShowFullScreenContent:
               (RewardedInterstitialAd ad, AdError error) {
-                print('$ad onAdFailedToShowFullScreenContent: $error');
+                debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
                 ad.dispose();
                 _createRewardedInterstitialAd();
               },
@@ -214,7 +216,7 @@ class _AdScreenState extends State<AdScreen> {
     _rewardedInterstitialAd!.setImmersiveMode(true);
     _rewardedInterstitialAd!.show(
       onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-        print('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
+        debugPrint('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
       },
     );
     _rewardedInterstitialAd = null;
